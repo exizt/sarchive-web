@@ -1,0 +1,12 @@
+
+* github : https://github.com/google/material-design-icons
+* 가이드 : https://google.github.io/material-design-icons/
+* 목록 확인 : https://material.io/icons
+
+
+사용법
+
+<i class="material-icons md-dark">face</i>
+
+안에 들어간 문자열에 따라서 아이콘 모양이 달라진다.
+

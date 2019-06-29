@@ -1,0 +1,11 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class SiteSoftware extends Model
+{
+    //
+	protected $fillable = ['title', 'link','description','image','category'];
+}

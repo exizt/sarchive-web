@@ -1,0 +1,32 @@
+@CHARSET "UTF-8";
+.site-layout-page {
+	min-height: 500px;
+}
+/* 네비게이션 링크 색상 */
+.sh-sidenav a{
+	color: #292b2c;
+}
+/* 네비게이션 항목별 헤더 */
+.sh-sidenav .sh-nav-header {
+	padding: .5rem 1rem;
+	margin-bottom: 0;
+	font-size: .875rem;
+	color: #636c72;
+	white-space: nowrap;
+}
+/* mouse over 색상 */
+.sh-sidenav .nav-link:hover, .sh-sidenav .nav-link:focus
+{
+	/*background-color: rgba(131, 179, 255, 0.3);*/
+	background-color: #6287B9;
+	color: #ffffff;
+}
+/* 구분선 */
+.sh-sidenav .sh-divider {
+	height: 1px;
+	width: 100%;
+	display: block; /* for use on default inline elements like span */
+	margin: 9px 0;
+	overflow: hidden;
+	background-color: #e5e5e5;
+}

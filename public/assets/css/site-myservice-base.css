@@ -1,0 +1,10 @@
+@charset "UTF-8";
+::selection {
+	background-color: rgb(225, 51, 0);
+	color: white;
+}
+
+::-moz-selection {
+	background-color: rgb(225, 51, 0);
+	color: white;
+}
