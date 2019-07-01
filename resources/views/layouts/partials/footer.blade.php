@@ -16,19 +16,7 @@
 				href="http://e2xist.tistory.com" target="_blank">Blog</a></li>
 
 		</ul>
-				<?php if(session('is_mobile')===TRUE){ ?>
-					<?php if(session('is_desktop_mode')===TRUE){ ?>
-					<p>
-			<a href="/?toggle_deskmode=Y" class="btn btn-primary btn-lg">Mobile
-				Mode</a>
-		</p>
-					<?php } else { ?>
-					<p>
-			<a href="/?toggle_deskmode=Y">Desktop Mode</a>
-		</p>
-					<?php } ?>
-				<?php } ?>
-				<p class="text-muted">© 2017 SH Hong. All rights reserved.</p>
+		<p class="text-muted">© 2017 SH Hong. All rights reserved.</p>
 	</div>
 </div>
 <div class="scrolltop">

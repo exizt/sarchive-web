@@ -11,5 +11,4 @@
 <div>@yield('content')</div>
 <footer>@include('layouts.partials.footer')</footer>
 </body>
-@include('layouts.modules.analytics')
 </html>

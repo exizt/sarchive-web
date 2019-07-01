@@ -45,11 +45,11 @@ return [
             'strict' => false,
             'engine' => null,
         ],
-        'mysql_incomesalary' => [
+        'mysql_chosimlogin' => [
             'driver' => 'mysql',
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
-            'database' => 'SITE_CHOSIM_INCOMESALARY',
+            'database' => 'SITE_CHOSIM_LARAVEL',
             'username' => env('DB_USERNAME', 'homestead'),
             'password' => env('DB_PASSWORD', 'secret'),
             'charset' => 'utf8',
@@ -57,7 +57,7 @@ return [
             'prefix' => '',
             'strict' => false,
             'engine' => null,
-        ],        
+        ],    
     ],
 
     /*
