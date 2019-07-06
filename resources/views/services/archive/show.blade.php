@@ -6,6 +6,10 @@
 <script src="/assets/lib/prism/prism.js"></script>
 
 <div class="container-fluid mt-4 mb-5">
+	위치
+	@foreach ($categoryPath as $item)
+	{{ $item->name }} &gt; 
+	@endforeach	
 	<nav aria-label="breadcrumb">
 		<ol class="breadcrumb">
 			@foreach ($categoryPath as $item)
@@ -13,7 +17,14 @@
 			@endforeach
 		</ol>
 	</nav>
-
+	설명
+	<div class="card">
+		<div class="card-body">
+			마지막 변경일시 {{ $article->updated_at->format('Y-m-d g:ia') }}<br>
+			생성일시 {{ $article->created_at->format('Y-m-d g:ia') }}
+		</div>
+	</div>
+	본문
 	<div class="card">
 		<div class="card-body">
 			<h5 class="card-title">{{ $article->title }}</h5>

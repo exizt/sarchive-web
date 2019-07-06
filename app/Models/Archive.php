@@ -20,7 +20,7 @@ class Archive extends Model
         $this->attributes['summary_var'] = $this->generateSummary($value,255);
     }
     
-    private function generateSummary($content,$char_length=255){
+    private function generateSummary($content, $char_length=255){
         // 길이가 너무 길 경우에 대비.
         if(mb_strlen($content) > 5000){
             $text = mb_substr($content,0,5000);
@@ -36,6 +36,6 @@ class Archive extends Model
         $text = str_replace("&nbsp;",' ',$text);
         $text = preg_replace('!\s+!', ' ', $text);
         
-        return mb_substr($text,0,$char_length);
+        return mb_substr($text, 0, $char_length);
     }
 }

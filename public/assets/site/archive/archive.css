@@ -6,3 +6,6 @@ p.cz-item-summary{
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
 }
+body{
+    background-color: #222;
+}
