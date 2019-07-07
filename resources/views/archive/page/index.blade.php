@@ -14,16 +14,10 @@
 					</div>
 					<hr class="mt-1">
 					<div class="list-group">
-						@foreach ($masterListSet as $item) <a class="list-group-item list-group-item-action flex-column align-items-start" href="{{ route($ROUTE_ID.'.show',$post->id) }}">
+						@foreach ($masterListSet as $item) <a class="list-group-item list-group-item-action flex-column align-items-start" href="{{ route($ROUTE_ID.'.show',$item->title) }}">
 							<div class="d-flex w-100 justify-content-between">
-								<h5 class="mb-1">{{ $post->title }}</h5>
-								<small>{{ $post->created_at->format('Y-m-d') }}</small>
-							</div>
-							<p class="mb-1 pl-md-3 cz-item-summary">
-								<small>{{ $post->summary_var }}</small>
-							</p>
-							<div class="d-flex justify-content-between">
-								<small>게시판 : {{ $post->category_name }}</small>
+								<h5 class="mb-1">{{ $item->title }}</h5>
+								<small>{{ $item->created_at->format('Y-m-d') }}</small>
 							</div>
 						</a> @endforeach
 					</div>
