@@ -85,7 +85,6 @@ class CategoryController extends Controller {
 	    
 	    //
 	    $article = Archive::where ( 'id', $id )->firstOrFail ();
-	    $categoryId = $article->category_id;
 	    
 	    // create dataSet
 	    $dataSet = $this->createViewData ();
@@ -108,14 +107,12 @@ class CategoryController extends Controller {
 		//
 		$title = $request->input ( 'title' );
 		$content = $request->input ( 'content' );
-		$category_id = $request->input ( 'category_id' , '1');
 		$reference = $request->input ('reference');
 
 
 		$dataSet = array ();
 		$dataSet ['title'] = $title;
 		$dataSet ['content'] = $content;
-		$dataSet ['category_id'] = $category_id;
 		$dataSet ['reference'] = $reference;
 
 		
@@ -145,13 +142,11 @@ class CategoryController extends Controller {
 		
 		$title = $request->input ( 'title' );
 		$content = $request->input ( 'content' );
-		$category_id = $request->input ( 'category_id' , '1');
 		$reference = $request->input ('reference');
 		
 		// saving
 		$article->title = $title;
 		$article->content = $content;
-		$article->category_id = $category_id;
 		$article->reference = $reference;
 		$article->save ();
 		
