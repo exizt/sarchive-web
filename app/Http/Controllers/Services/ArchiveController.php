@@ -138,7 +138,7 @@ class ArchiveController extends Controller {
 		$this->seperateServiceRoot($request);
 	    $article = Archive::where ( 'id', $id )->firstOrFail ();
 	    $categoryId = $article->category_id;
-	    
+		
 	    // create dataSet
 	    $dataSet = $this->createViewData ();
 	    $dataSet ['article'] = $article;
@@ -158,12 +158,8 @@ class ArchiveController extends Controller {
 	public function create(Request $request) {
 		$this->seperateServiceRoot($request);
 	    $categoryId = $request->input('category', $this->rootCategoryId);
-	    
-	    // 
-	    $article = collect ( new Archive () );
-	    $article->title = '';
-		$article->content = '';
-		$article->reference = '';
+
+		$article = new Archive();
 
 	    // dataSet 생성
 	    $dataSet = $this->createViewData ();
@@ -184,11 +180,12 @@ class ArchiveController extends Controller {
 		$this->seperateServiceRoot($request);
 	    $request->session()->reflash();
 	    $request->session()->keep(['devscrap-previousList']);
-	    
+		
+		
 	    //
 	    $article = Archive::where ( 'id', $id )->firstOrFail ();
 	    $categoryId = $article->category_id;
-	    
+
 	    // create dataSet
 	    $dataSet = $this->createViewData ();
 	    $dataSet ['article'] = $article;
@@ -256,6 +253,7 @@ class ArchiveController extends Controller {
 		$article->content = $content;
 		$article->category_id = $category_id;
 		$article->reference = $reference;
+		$article->category = $request->input ('category');
 		$article->save ();
 		
 		$this->updateCategoryCountingAll();

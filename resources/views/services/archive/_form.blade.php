@@ -59,9 +59,9 @@ tinymce.init({
 	</div>
 
 	<div class="form-group">
-		<label for="">분류 (ex: [분류명])</label>
-		<input name="" type="text" id="" class="form-control" value="" placeholder="" aria-label="">
-	</div>	
+		<label for="article-category">분류 (ex: [분류명A] [분류명B])</label>
+		<input name="category" type="text" id="article-category" class="form-control" value="{{ $article->category }}" placeholder="" aria-label="">
+	</div>
 
 		
 	<div class="form-group">

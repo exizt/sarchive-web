@@ -7,7 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class Archive extends Model
 {
     use FullTextSearch;
-    protected $fillable = ['title', 'content','unit_code','category_id','reference'];
+    protected $fillable = ['title', 'content','unit_code','category_id','reference','category'];
+    protected $attributes = ['title'=>'',
+     'content'=>'',
+     'unit_code'=>'',
+     'category_id'=>'',
+     'reference'=>'',
+     'category'=>''];
+    protected $appends = array (
+        'category_array' 
+    );
     protected $perPage = 15;
     /**
      * The columns of the full text index
@@ -37,5 +46,14 @@ class Archive extends Model
         $text = preg_replace('!\s+!', ' ', $text);
         
         return mb_substr($text, 0, $char_length);
+    }
+
+    public function getCategoryArrayAttribute(){
+        preg_match_all("/\[(.*?)\]/",$this->attributes['category'],$matches);
+
+        if(is_array($matches[1])){
+            return $matches[1];
+        }
+        return array();
     }
 }

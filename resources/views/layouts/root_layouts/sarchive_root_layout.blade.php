@@ -40,44 +40,20 @@
 </head>
 <script>
 const SERVICE_URI = "/{{Request::path()}}";
-
-$(document).ready(function(){
-	activeNavMenuItem("#navbarNav","{{request()->segment(1)}}");
-});
-$(document).ready(function(){
-    if (("standalone" in window.navigator) && window.navigator.standalone) {
-      // For iOS Apps
-      $('a').on('click', function(e){
-        e.preventDefault();
-        var new_location = $(this).attr('href');
-        if (new_location != undefined && new_location.substr(0, 1) != '#' && $(this).attr('data-method') == undefined){
-          window.location = new_location;
-        }
-      });
-	}
-});
-
 document.onkeyup = shortcutKeyEvent;
 </script>
 <body>
 	<header>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-			<a class="navbar-brand" href="{{ route($ROUTE_ID.'.index')}}"><i class="fa fa-superpowers fa-spin" aria-hidden="true"></i>&nbsp;&nbsp;S아카이브</a>
+			<a class="navbar-brand" href="/"><i class="fa fa-superpowers fa-spin" aria-hidden="true"></i>&nbsp;&nbsp;S아카이브</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
 
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav mr-auto">
-					@foreach ($nav as $item)
-    					@if ($item->id == $parameters['categoryId'])
-    					<li class="nav-item active"><a class="nav-link" href="{{ route($ROUTE_ID.'.index')}}?category={{ $item->id }}">{{ $item->name }}</a></li>
-    					@else
-    					<li class="nav-item"><a class="nav-link" href="{{ route($ROUTE_ID.'.index')}}?category={{ $item->id }}">{{ $item->name }}</a></li> 
-    					@endif
-					@endforeach
 				</ul>
-				<form class="form-inline my-2 my-lg-0" action="{{ route($ROUTE_ID.'.search')}}">
+				<form class="form-inline my-2 my-lg-0" action="{{ route('archives.search')}}">
 					<input class="form-control mr-sm-2 site-shortcut-key-f" type="search" placeholder="Search" aria-label="Search" name="q" value="{{ $parameters['q'] or ''}}">
 					<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 				</form>
