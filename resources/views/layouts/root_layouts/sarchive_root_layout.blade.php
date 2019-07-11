@@ -45,13 +45,21 @@ document.onkeyup = shortcutKeyEvent;
 <body>
 	<header>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-			<a class="navbar-brand" href="/"><i class="fa fa-superpowers fa-spin" aria-hidden="true"></i>&nbsp;&nbsp;S아카이브</a>
+			<a class="navbar-brand" href="/archives"><i class="fa fa-superpowers fa-spin" aria-hidden="true"></i>&nbsp;&nbsp;S아카이브</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
 
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav mr-auto">
+					<li class="nav-item"><a class="nav-link" href="/archives?category=2">데이터베이스</a></li> 
+					<li class="nav-item"><a class="nav-link" href="/archives?category=3">프론트엔드</a></li> 
+					<li class="nav-item"><a class="nav-link" href="/archives?category=4">웹 개발</a></li> 
+					<li class="nav-item"><a class="nav-link" href="/archives?category=5">윈도우 프로그래밍</a></li> 
+					<li class="nav-item"><a class="nav-link" href="/archives?category=6">iOS 앱 개발</a></li> 
+					<li class="nav-item"><a class="nav-link" href="/archives?category=7">안드로이드 앱 개발</a></li> 
+					<li class="nav-item"><a class="nav-link" href="/archives?category=17">개발 이론, 도구</a></li> 
+					<li class="nav-item"><a class="nav-link" href="/archives?category=45">기타</a></li> 
 				</ul>
 				<form class="form-inline my-2 my-lg-0" action="{{ route('archives.search')}}">
 					<input class="form-control mr-sm-2 site-shortcut-key-f" type="search" placeholder="Search" aria-label="Search" name="q" value="{{ $parameters['q'] or ''}}">
