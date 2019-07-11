@@ -50,27 +50,33 @@ class ArchiveController extends Controller {
 	    $categoryId = $request->input('category', $this->rootCategoryId);
 
 		/*
-	    $posts = Archive::select('archives.*',DB::raw('(select name from archive_categories as s where s.id = category_id) as category_name'))
+		|------------------------------------------------
+		| 게시판에 해당되는 게시글 목록을 위한 쿼리. 하위 게시판의 글까지 보여준다.
+		|------------------------------------------------
+		*/
+		/*
+		// 첫번째 쿼리. 
+	    $posts = Archive::select('archives.*',DB::raw('(select name from sa_boards as s where s.id = board_id) as category_name'))
 	      ->where ( 'unit_code', 'D')
-	      ->whereRaw('category_id in 
+	      ->whereRaw('board_id in 
             (
-            SELECT node.category_id
-            FROM archive_category_tree AS node ,
-                 archive_category_tree AS parent
+            SELECT node.board_id
+            FROM sa_board_tree AS node ,
+                 sa_board_tree AS parent
             WHERE node.lft BETWEEN parent.lft AND parent.rgt
-            and parent.category_id = ?
+            and parent.board_id = ?
             )',[$categoryId])->orderBy ( 'created_at', 'desc' )->paginate(30);
-        */
+		*/
 	    // 속도를 조금 더 손본 쿼리. 전에는 where in 구문을 활용했는데, 속도가 너무 느려서 join 방식으로 변경.
 	    //DB::enableQueryLog();
-	    $masterList = Archive::select(['archives.id', 'archives.title','archives.summary_var','archives.reference','archives.unit_code','archives.category_id','archives.created_at',
-	        'archives.updated_at',DB::raw('(select name from archive_categories as s where s.id = archives.category_id) as category_name')])
+	    $masterList = Archive::select(['archives.id', 'archives.title','archives.summary_var','archives.reference','archives.unit_code','archives.board_id','archives.created_at',
+	        'archives.updated_at',DB::raw('(select name from sa_boards as s where s.id = archives.board_id) as category_name')])
 	      ->join(DB::raw("(
-            SELECT node.category_id, parent.category_id as parent_id
-            FROM archive_category_tree AS node ,
-                 archive_category_tree AS parent
+            SELECT node.board_id, parent.board_id as parent_id
+            FROM sa_board_tree AS node ,
+				sa_board_tree AS parent
             WHERE node.lft BETWEEN parent.lft AND parent.rgt
-            ) as cate"),'cate.category_id','=','archives.category_id')
+            ) as cate"),'cate.board_id','=','archives.board_id')
             ->where ( 'cate.parent_id',$categoryId )->orderBy ( 'created_at', 'desc' )->paginate(20);
         //$queries = DB::getQueryLog();
         //print_r($queries);
@@ -87,7 +93,7 @@ class ArchiveController extends Controller {
         $dataSet ['categoryName'] = $archiveCategory->name;
         $dataSet ['categoryPath'] = $this->getCategoryPath($categoryId);
         $dataSet ['subcategories'] = $this->getSubCategories($categoryId);
-        $dataSet ['nav'] = $this->getDevMenus($categoryId);
+        //$dataSet ['nav'] = $this->getDevMenus($categoryId);
         return view ( self::VIEW_PATH . '.index', $dataSet );
 
 	}
@@ -106,13 +112,13 @@ class ArchiveController extends Controller {
 	    if(mb_strlen($word) < 2){
 	        echo '검색어가 너무 짧음.';
 	    } else {
-			$masterList = Archive::select('archives.*',DB::raw('(select name from archive_categories as s where s.id = archives.category_id) as category_name'))
+			$masterList = Archive::select('archives.*',DB::raw('(select name from sa_boards as s where s.id = archives.board_id) as category_name'))
 			->join(DB::raw("(
-				SELECT node.category_id, parent.category_id as parent_id
-				FROM archive_category_tree AS node ,
-					 archive_category_tree AS parent
+				SELECT node.board_id, parent.board_id as parent_id
+				FROM sa_board_tree AS node ,
+					sa_board_tree AS parent
 				WHERE node.lft BETWEEN parent.lft AND parent.rgt
-				) as cate"),'cate.category_id','=','archives.category_id')
+				) as cate"),'cate.board_id','=','archives.board_id')
 			->search($word)->where ( 'cate.parent_id', $categoryId)->paginate(30);
 
     	    // dataSet 생성
@@ -122,7 +128,7 @@ class ArchiveController extends Controller {
     	    $dataSet ['parameters']['q'] = $word;
     	    $dataSet ['categoryPath'] = $this->getCategoryPath($categoryId);
     	    $dataSet ['subcategories'] = $this->getSubCategories($categoryId);
-    	    $dataSet ['nav'] = $this->getDevMenus($categoryId);
+    	    //$dataSet ['nav'] = $this->getDevMenus($categoryId);
     	    return view ( self::VIEW_PATH . '.search', $dataSet );
 	        
 	    }
@@ -137,7 +143,7 @@ class ArchiveController extends Controller {
 	public function show(Request $request, $id) {
 		$this->seperateServiceRoot($request);
 	    $article = Archive::where ( 'id', $id )->firstOrFail ();
-	    $categoryId = $article->category_id;
+	    $categoryId = $article->board_id;
 		
 	    // create dataSet
 	    $dataSet = $this->createViewData ();
@@ -145,7 +151,7 @@ class ArchiveController extends Controller {
 	    $dataSet ['previousList'] = $this->getPreviousLink($request);
 	    $dataSet ['parameters']['categoryId'] = $categoryId;
 	    $dataSet ['categoryPath'] = $this->getCategoryPath($categoryId);
-	    $dataSet ['nav'] = $this->getDevMenus($categoryId);
+	    //$dataSet ['nav'] = $this->getDevMenus($categoryId);
 	    return view ( self::VIEW_PATH . '.show', $dataSet );
 	}
 	
@@ -166,7 +172,7 @@ class ArchiveController extends Controller {
 	    $dataSet ['article'] = $article;
 	    $dataSet ['categories'] = $this->getSubCategories($categoryId);
 	    $dataSet ['parameters']['categoryId'] = $categoryId;
-	    $dataSet ['nav'] = $this->getDevMenus($categoryId);
+	    //$dataSet ['nav'] = $this->getDevMenus($categoryId);
 	    return view ( self::VIEW_PATH . '.create', $dataSet );
 	}
 	
@@ -184,7 +190,7 @@ class ArchiveController extends Controller {
 		
 	    //
 	    $article = Archive::where ( 'id', $id )->firstOrFail ();
-	    $categoryId = $article->category_id;
+	    $categoryId = $article->board_id;
 
 	    // create dataSet
 	    $dataSet = $this->createViewData ();
@@ -192,7 +198,7 @@ class ArchiveController extends Controller {
 	    $dataSet ['categories'] = $this->getCategories($categoryId);
 	    $dataSet ['parameters']['categoryId'] = $categoryId;
 	    $dataSet ['categoryPath'] = $this->getCategoryPath($categoryId);
-	    $dataSet ['nav'] = $this->getDevMenus($categoryId);
+	    //$dataSet ['nav'] = $this->getDevMenus($categoryId);
 	    return view ( self::VIEW_PATH . '.edit', $dataSet );
 	    
 	}
@@ -208,14 +214,14 @@ class ArchiveController extends Controller {
 		//
 		$title = $request->input ( 'title' );
 		$content = $request->input ( 'content' );
-		$category_id = $request->input ( 'category_id' , '1');
+		$board_id = $request->input ( 'board_id' , '1');
 		$reference = $request->input ('reference');
 
 
 		$dataSet = array ();
 		$dataSet ['title'] = $title;
 		$dataSet ['content'] = $content;
-		$dataSet ['category_id'] = $category_id;
+		$dataSet ['board_id'] = $board_id;
 		$dataSet ['reference'] = $reference;
 
 		
@@ -245,13 +251,13 @@ class ArchiveController extends Controller {
 		
 		$title = $request->input ( 'title' );
 		$content = $request->input ( 'content' );
-		$category_id = $request->input ( 'category_id' , '1');
+		$board_id = $request->input ( 'board_id' , '1');
 		$reference = $request->input ('reference');
 		
 		// saving
 		$article->title = $title;
 		$article->content = $content;
-		$article->category_id = $category_id;
+		$article->board_id = $board_id;
 		$article->reference = $reference;
 		$article->category = $request->input ('category');
 		$article->save ();
@@ -291,12 +297,13 @@ class ArchiveController extends Controller {
 		$dataSet ['ROUTE_ID'] = $this->rootRouteId;
 	    $dataSet ['VIEW_PATH'] = self::VIEW_PATH;
 	    $dataSet ['parameters'] = array();
-	    $dataSet ['nav'] = $this->getDevMenus();
+	    //$dataSet ['nav'] = $this->getDevMenus();
 	    return $dataSet;
 	}
 
 	/**
 	 * 개발 아카이브 의 목록 조회
+	 * 최상위 메뉴를 조회함.
 	 */
 	protected function getDevMenus($categoryId='1'){
 	    $list = $this->getCategoryPath($categoryId);
@@ -336,13 +343,13 @@ class ArchiveController extends Controller {
 	
 	public function getCategoryPath($categoryId = 0)
 	{
-	    $list = DB::select('select parent.category_id as id, cate.name as name
-            from archive_category_tree as node,
-                archive_category_tree as parent,
-                archive_categories as cate
+	    $list = DB::select('select parent.board_id as id, cate.name as name
+            from sa_board_tree as node,
+			sa_board_tree as parent,
+                sa_boards as cate
             where node.lft between parent.lft and parent.rgt
-              and parent.category_id = cate.id
-              and node.category_id = ?
+              and parent.board_id = cate.id
+              and node.board_id = ?
             order by parent.lft',[$categoryId]);
 	    //Log::debug('ArchiveCategory::getCategoryPath');
 	    
@@ -372,18 +379,18 @@ class ArchiveController extends Controller {
 	 */
 	public function getSubCategories($categoryId = 0, $depth = 1)
 	{
-	    $list = DB::select("select concat( repeat(?, count(parent.category_id) - 1 - ?), cate.name) as name,
-                node.category_id as id,
+	    $list = DB::select("select concat( repeat(?, count(parent.board_id) - 1 - ?), cate.name) as name,
+                node.board_id as id,
                 cate.count as count
-            from archive_category_tree as node,
-                archive_category_tree as parent,
-                archive_category_tree as sub_parent,
-                archive_categories as cate
+            from sa_board_tree as node,
+				sa_board_tree as parent,
+				sa_board_tree as sub_parent,
+                sa_boards as cate
             where node.lft between parent.lft and parent.rgt
                 and node.lft between sub_parent.lft and sub_parent.rgt
-                and sub_parent.category_id = ?
-                and cate.id = node.category_id
-            group by node.category_id
+                and sub_parent.board_id = ?
+                and cate.id = node.board_id
+            group by node.board_id
             order by node.lft",[self::CATEGORY_SEPERATE_CHAR, $depth, $categoryId]);
 	    return $list;
 	}
@@ -394,25 +401,25 @@ class ArchiveController extends Controller {
 	private function updateCategoryCountingAll()
 	{
 	    /*
-	    $affected = DB::update('update archive_categories 
+	    $affected = DB::update('update sa_boards 
             set count = (select count(id) from archives
-            where archives.category_id = archive_categories.id
-            group by category_id)');
+            where archives.board_id = sa_boards.id
+            group by board_id)');
         */
 	    
 	    // 좀 더 세밀화 된 쿼리
-	    DB::update('update archive_categories
+	    DB::update('update sa_boards
             set count = (select count(archives.id)
                 from 
                 archives,
-                (SELECT node.category_id, parent.category_id as parent_id
-                	FROM archive_category_tree AS node ,
-                			 archive_category_tree AS parent
+                (SELECT node.board_id, parent.board_id as parent_id
+                	FROM sa_board_tree AS node ,
+                			 sa_board_tree AS parent
                 	WHERE node.lft BETWEEN parent.lft AND parent.rgt
                 ) as cate
                 WHERE 
-                cate.category_id = archives.category_id
-                and cate.parent_id = archive_categories.id
+                cate.board_id = archives.board_id
+                and cate.parent_id = sa_boards.id
                 group by cate.parent_id)');
 	    
 	}

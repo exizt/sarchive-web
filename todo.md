@@ -103,10 +103,13 @@ archives | 아카이브 테이블
   * content
   * summary
   * unit_code
-  * category_id
+  * board_id
   * summary_var
   * reference
   * category : [분류명][분류명2]
+* 인덱스
+  * fulltext_index (title, content) 'Full Text' : 검색용 인덱스
+  * sa_archives_latest_select_index : (board_id, created desc) 인덱스. 카테고리별로 정렬된 인덱스. 목록 불러올 때 이용되는 인덱스.
 
 
 categories | 분류 테이블
@@ -147,7 +150,18 @@ archive category relations 아카이브 카테고리 릴레이션 테이블 (아
   * archive_id : 분류에 해당되는 아카이브의 id
 
   
+
 sa_boards
+* 컬럼
+  * id 
+  * name : 명칭
+  * parent_id : 상위 게시판 id
+  * comment : 부가 설명
+  * count : 해당 게시판의 게시글 수
+* 인덱스
+  * sa_board_parent_index : (parent_id) Normal BTREE
+
+
 sa_board_tree
 
 

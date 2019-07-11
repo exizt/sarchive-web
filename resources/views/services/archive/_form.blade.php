@@ -47,7 +47,7 @@ tinymce.init({
 
 	<div class="form-group">
 		<label for="articleCategorySelect">게시판 선택</label>
-    	<select name="category_id" class="form-control" title="게시판 선택" id="articleCategorySelect">
+    	<select name="board_id" class="form-control" title="게시판 선택" id="articleCategorySelect">
     		@foreach ($categories as $cate)
     			@if ($cate->id == $parameters['categoryId'])
     			<option value="{{ $cate->id }}" selected>{{ $cate->name }}</option>

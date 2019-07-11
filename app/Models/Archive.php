@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Archive extends Model
 {
     use FullTextSearch;
-    protected $fillable = ['title', 'content','unit_code','category_id','reference','category'];
+    protected $fillable = ['title', 'content','unit_code','board_id','reference','category'];
     protected $attributes = ['title'=>'',
      'content'=>'',
      'unit_code'=>'',
-     'category_id'=>'',
+     'board_id'=>'',
      'reference'=>'',
      'category'=>''];
     protected $appends = array (
