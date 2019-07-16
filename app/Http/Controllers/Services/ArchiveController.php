@@ -5,15 +5,15 @@ namespace App\Http\Controllers\Services;
 use App\Http\Controllers\Controller;
 use App\Models\Archive;
 use App\Models\ArchiveBoard;
+use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class ArchiveController extends Controller {
 	protected const VIEW_PATH = 'services.archive';
-	protected const CATEGORY_ROOT_DEV = 1;
-	protected const CATEGORY_ROOT_GENERAL = 29;
-	protected $rootCategoryId = self::CATEGORY_ROOT_DEV;
-	protected $rootRouteId = 'archives';
+	protected const ROUTE_ID = 'archives';
+	protected $ArchiveProfile;
 	protected const CATEGORY_SEPERATE_CHAR = '―';
 
 	/**
@@ -23,20 +23,6 @@ class ArchiveController extends Controller {
 		$this->middleware ( 'auth' );
 	}
 
-	/**
-	 * 분기에 따른 처리.
-	 * '개발 전용' 과 '일반 전용' 으로 구분. 향후에 더 나뉘어질 수 있음. 귀찮으니 하드코딩한다. 
-	 */
-	private function seperateServiceRoot(Request $request)
-	{
-		if($request->segment(1)=='NormalArchives'){
-			$this->rootRouteId = 'NormalArchives';
-			$this->rootCategoryId = self::CATEGORY_ROOT_GENERAL;
-		} else {
-			$this->rootRouteId = 'archives';
-			$this->rootCategoryId = self::CATEGORY_ROOT_DEV;
-		}
-	}
 
 	/**
 	 * Display a listing of the resource.
@@ -45,7 +31,7 @@ class ArchiveController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function index(Request $request) {
-		$this->seperateServiceRoot($request);
+		$this->getArchiveProfile($request);
 
 	    $boardId = $request->input('board', $this->ArchiveProfile->root_board_id);
 
@@ -103,7 +89,7 @@ class ArchiveController extends Controller {
 	 * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
 	 */
 	public function search(Request $request) {
-		$this->seperateServiceRoot($request);
+		$this->getArchiveProfile($request);
 
 	    $boardId = $request->input('board', $this->ArchiveProfile->root_board_id);
 	    $word = $request->input('q','');
@@ -140,7 +126,7 @@ class ArchiveController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function show(Request $request, $id) {
-		$this->seperateServiceRoot($request);
+		$this->getArchiveProfile($request);
 	    $article = Archive::where ( 'id', $id )->firstOrFail ();
 	    $boardId = $article->board_id;
 		
@@ -161,7 +147,7 @@ class ArchiveController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function create(Request $request) {
-		$this->seperateServiceRoot($request);
+		$this->getArchiveProfile($request);
 	    $boardId = $request->input('board', $this->ArchiveProfile->root_board_id);
 
 		$article = new Archive();
@@ -182,7 +168,7 @@ class ArchiveController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function edit(Request $request, $id) {
-		$this->seperateServiceRoot($request);
+		$this->getArchiveProfile($request);
 	    $request->session()->reflash();
 	    $request->session()->keep(['devscrap-previousList']);
 		
@@ -209,7 +195,7 @@ class ArchiveController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function store(Request $request) {
-		$this->seperateServiceRoot($request);
+		$this->getArchiveProfile($request);
 		//
 		$title = $request->input ( 'title' );
 		$content = $request->input ( 'content' );
@@ -230,7 +216,7 @@ class ArchiveController extends Controller {
 		$this->updateCategoryCountingAll();
 		
 		// result processing
-		return redirect ()->route ( $this->rootRouteId . '.index' )->withSuccess ( 'New Post Successfully Created.' );
+		return redirect ()->route ( self::ROUTE_ID . '.index' )->withSuccess ( 'New Post Successfully Created.' );
 	}
 	
 	/**
@@ -241,7 +227,7 @@ class ArchiveController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function update(Request $request, $id) {
-		$this->seperateServiceRoot($request);
+		$this->getArchiveProfile($request);
 		$request->session()->reflash();
 		$request->session()->keep(['devscrap-previousList']);
 		
@@ -266,7 +252,7 @@ class ArchiveController extends Controller {
 		if ($request->action === 'continue') {
 			return redirect ()->back ()->withSuccess ( 'Post saved.' );
 		}
-		return redirect ()->route ( $this->rootRouteId . '.show', $id)->withSuccess ( 'Post saved.' );
+		return redirect ()->route ( self::ROUTE_ID . '.show', $id)->withSuccess ( 'Post saved.' );
 	}
 	
 	/**
@@ -283,7 +269,7 @@ class ArchiveController extends Controller {
 	    $this->updateCategoryCountingAll();
 	    
 		return redirect()
-		->route($this->rootRouteId.'.index')
+		->route(self::ROUTE_ID.'.index')
 		->withSuccess('Post deleted.');
 	}
 	
@@ -293,13 +279,40 @@ class ArchiveController extends Controller {
 	 */
 	protected function createViewData() {
 	    $dataSet = array ();
-		$dataSet ['ROUTE_ID'] = $this->rootRouteId;
+		$dataSet ['ROUTE_ID'] = self::ROUTE_ID;
 	    $dataSet ['VIEW_PATH'] = self::VIEW_PATH;
-	    $dataSet ['parameters'] = array();
+	    $dataSet ['parameters'] = ['profile'=>$this->ArchiveProfile->id];
 	    //$dataSet ['nav'] = $this->getDevMenus();
 	    return $dataSet;
 	}
 
+	
+	/**
+	 * 분기에 따른 처리.
+	 * '개발 전용' 과 '일반 전용' 으로 구분. 향후에 더 나뉘어질 수 있음. 귀찮으니 하드코딩한다. 
+	 */
+	private function getArchiveProfile(Request $request)
+	{
+		$userId = Auth::id();
+
+		if($request->has('profile')){
+			$profileId = $request->input('profile');
+			// routeId 를 이용한 접근
+			//$this->ArchiveProfile = Profile::select(['name','root_board_id','route'])->where ( [['user_id', $userId ],['route',$ArchiveRouteId]])->firstOrFail ();
+	
+			// profileId 를 이용한 접근
+			$this->ArchiveProfile = Profile::select(['id','name','root_board_id','route'])
+				->where ( [['user_id', $userId ],['id',$profileId]])
+				->firstOrFail ();
+			
+		} else {
+			$this->ArchiveProfile = Profile::select(['id','name','root_board_id','route'])
+			->where ( [['user_id', $userId ],['is_default','1']])
+			->firstOrFail ();
+		}
+	}
+
+	
 	/**
 	 * 개발 아카이브 의 목록 조회
 	 * 최상위 메뉴를 조회함.
@@ -330,13 +343,13 @@ class ArchiveController extends Controller {
 		$previous_identifier = strtok($previous,'?');
 		
 		// 해당 패턴과 일치하거나 index 의 주소인 경우에 previous 세션에 저장
-		if($previous_identifier == route ( $this->rootRouteId . '.index')){
+		if($previous_identifier == route ( self::ROUTE_ID . '.index')){
 			$request->session()->flash($session_previousName, $previous);
 		}
 		
 		//session 에 해당 값이 있으면 세션 값 사용. 없으면 목록 주소로 대체.
 		return ($request->session()->get($session_previousName,'') != '') ?
-		$request->session()->get($session_previousName,'') : route ( $this->rootRouteId . '.index');
+		$request->session()->get($session_previousName,'') : route ( self::ROUTE_ID . '.index');
 	}
 	
 	

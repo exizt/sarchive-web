@@ -41,7 +41,7 @@
 			</div>
 		</div>
 		<hr>
-		<div class="text-xs-center">{{ $articles->appends(['q' => $parameters['q']])->links() }}</div>
+		<div class="text-xs-center">{{ $articles->appends(['q' => $parameters['q'],'profile'=> $parameters['profile']])->links() }}</div>
 	</div>
 </div>
 @stop

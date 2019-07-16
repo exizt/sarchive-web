@@ -62,6 +62,9 @@ document.onkeyup = shortcutKeyEvent;
 					<li class="nav-item"><a class="nav-link" href="/archives?board=45">기타</a></li> 
 				</ul>
 				<form class="form-inline my-2 my-lg-0" action="{{ route('archives.search')}}">
+					@isset($parameters['profile'])
+						<input type="hidden" name="profile" value="{{ $parameters['profile']}}">
+					@endisset
 					<input class="form-control mr-sm-2 site-shortcut-key-f" type="search" placeholder="Search" aria-label="Search" name="q" value="{{ $parameters['q'] or ''}}">
 					<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 				</form>
@@ -69,11 +72,8 @@ document.onkeyup = shortcutKeyEvent;
 					<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink_My" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ Auth::user()->name }}</a>
 						<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink_My">
 							<a class="dropdown-item site-shortcut-key-n site-shortcut-key-a" href="{{ route($ROUTE_ID.'.create') }}">글쓰기</a>
-							@if( $ROUTE_ID == 'NormalArchives')
-							<a class="dropdown-item" href="{{ route('archives.index')}}">개발 분류로 이동</a>
-							@else
-							<a class="dropdown-item" href="{{ route('NormalArchives.index')}}">일반 분류로 이동</a>
-							@endif
+							<a class="dropdown-item" href="{{ route('archives.index')}}?profile=1">개발 분류로 이동</a>
+							<a class="dropdown-item" href="{{ route('archives.index')}}?profile=2">일반 분류로 이동</a>
 							<a class="dropdown-item" href="/page/단축키">단축키</a>
 							<a class="dropdown-item" href="/admin/archiveCategory">카테고리 관리</a>
 							<div class="dropdown-divider"></div>
