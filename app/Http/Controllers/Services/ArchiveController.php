@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Services;
 
 use App\Http\Controllers\Controller;
 use App\Models\Archive;
-use App\Models\ArchiveCategory;
+use App\Models\ArchiveBoard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -47,7 +47,7 @@ class ArchiveController extends Controller {
 	public function index(Request $request) {
 		$this->seperateServiceRoot($request);
 
-	    $categoryId = $request->input('category', $this->rootCategoryId);
+	    $boardId = $request->input('board', $this->ArchiveProfile->root_board_id);
 
 		/*
 		|------------------------------------------------
@@ -77,23 +77,22 @@ class ArchiveController extends Controller {
 				sa_board_tree AS parent
             WHERE node.lft BETWEEN parent.lft AND parent.rgt
             ) as cate"),'cate.board_id','=','archives.board_id')
-            ->where ( 'cate.parent_id',$categoryId )->orderBy ( 'created_at', 'desc' )->paginate(20);
+            ->where ( 'cate.parent_id',$boardId )->orderBy ( 'created_at', 'desc' )->paginate(20);
         //$queries = DB::getQueryLog();
         //print_r($queries);
 		
-		$archiveCategory = ArchiveCategory::select(['name', 'comment'])->where ( 'id', $categoryId )->firstOrFail ();
+		$archiveBoard = ArchiveBoard::select(['name', 'comment'])->where ( 'id', $boardId )->firstOrFail ();
 
-        //$categoryName = ArchiveCategory::select('name')->where ( 'id', $categoryId )->firstOrFail ()->name;
+        //$categoryName = ArchiveBoard::select('name')->where ( 'id', $boardId )->firstOrFail ()->name;
 		
 		// dataSet 생성
         $dataSet = $this->createViewData ();
         $dataSet ['posts'] = $masterList;
-		$dataSet ['parameters']['categoryId'] = $categoryId;
-		$dataSet ['archiveCategory'] = $archiveCategory;
-        $dataSet ['categoryName'] = $archiveCategory->name;
-        $dataSet ['categoryPath'] = $this->getCategoryPath($categoryId);
-        $dataSet ['subcategories'] = $this->getSubCategories($categoryId);
-        //$dataSet ['nav'] = $this->getDevMenus($categoryId);
+		$dataSet ['archiveBoard'] = $archiveBoard;
+        $dataSet ['categoryPath'] = $this->getCategoryPath($boardId);
+        $dataSet ['subcategories'] = $this->getSubCategories($boardId);
+		$dataSet ['parameters']['boardId'] = $boardId;
+        //$dataSet ['nav'] = $this->getDevMenus($boardId);
         return view ( self::VIEW_PATH . '.index', $dataSet );
 
 	}
@@ -106,7 +105,7 @@ class ArchiveController extends Controller {
 	public function search(Request $request) {
 		$this->seperateServiceRoot($request);
 
-	    $categoryId = $request->input('category', $this->rootCategoryId);
+	    $boardId = $request->input('board', $this->ArchiveProfile->root_board_id);
 	    $word = $request->input('q','');
 	    
 	    if(mb_strlen($word) < 2){
@@ -119,16 +118,16 @@ class ArchiveController extends Controller {
 					sa_board_tree AS parent
 				WHERE node.lft BETWEEN parent.lft AND parent.rgt
 				) as cate"),'cate.board_id','=','archives.board_id')
-			->search($word)->where ( 'cate.parent_id', $categoryId)->paginate(30);
+			->search($word)->where ( 'cate.parent_id', $boardId)->orderBy('archives.created_at','desc')->paginate(30);
 
     	    // dataSet 생성
     	    $dataSet = $this->createViewData ();
     	    $dataSet ['articles'] = $masterList;
-    	    $dataSet ['parameters']['categoryId'] = $categoryId;
+    	    $dataSet ['parameters']['boardId'] = $boardId;
     	    $dataSet ['parameters']['q'] = $word;
-    	    $dataSet ['categoryPath'] = $this->getCategoryPath($categoryId);
-    	    $dataSet ['subcategories'] = $this->getSubCategories($categoryId);
-    	    //$dataSet ['nav'] = $this->getDevMenus($categoryId);
+    	    $dataSet ['categoryPath'] = $this->getCategoryPath($boardId);
+    	    $dataSet ['subcategories'] = $this->getSubCategories($boardId);
+    	    //$dataSet ['nav'] = $this->getDevMenus($boardId);
     	    return view ( self::VIEW_PATH . '.search', $dataSet );
 	        
 	    }
@@ -143,15 +142,15 @@ class ArchiveController extends Controller {
 	public function show(Request $request, $id) {
 		$this->seperateServiceRoot($request);
 	    $article = Archive::where ( 'id', $id )->firstOrFail ();
-	    $categoryId = $article->board_id;
+	    $boardId = $article->board_id;
 		
 	    // create dataSet
 	    $dataSet = $this->createViewData ();
 	    $dataSet ['article'] = $article;
 	    $dataSet ['previousList'] = $this->getPreviousLink($request);
-	    $dataSet ['parameters']['categoryId'] = $categoryId;
-	    $dataSet ['categoryPath'] = $this->getCategoryPath($categoryId);
-	    //$dataSet ['nav'] = $this->getDevMenus($categoryId);
+	    $dataSet ['parameters']['boardId'] = $boardId;
+	    $dataSet ['categoryPath'] = $this->getCategoryPath($boardId);
+	    //$dataSet ['nav'] = $this->getDevMenus($boardId);
 	    return view ( self::VIEW_PATH . '.show', $dataSet );
 	}
 	
@@ -163,16 +162,16 @@ class ArchiveController extends Controller {
 	 */
 	public function create(Request $request) {
 		$this->seperateServiceRoot($request);
-	    $categoryId = $request->input('category', $this->rootCategoryId);
+	    $boardId = $request->input('board', $this->ArchiveProfile->root_board_id);
 
 		$article = new Archive();
 
 	    // dataSet 생성
 	    $dataSet = $this->createViewData ();
 	    $dataSet ['article'] = $article;
-	    $dataSet ['categories'] = $this->getSubCategories($categoryId);
-	    $dataSet ['parameters']['categoryId'] = $categoryId;
-	    //$dataSet ['nav'] = $this->getDevMenus($categoryId);
+	    $dataSet ['categories'] = $this->getSubCategories($boardId);
+	    $dataSet ['parameters']['boardId'] = $boardId;
+	    //$dataSet ['nav'] = $this->getDevMenus($boardId);
 	    return view ( self::VIEW_PATH . '.create', $dataSet );
 	}
 	
@@ -190,15 +189,15 @@ class ArchiveController extends Controller {
 		
 	    //
 	    $article = Archive::where ( 'id', $id )->firstOrFail ();
-	    $categoryId = $article->board_id;
+	    $boardId = $article->board_id;
 
 	    // create dataSet
 	    $dataSet = $this->createViewData ();
 	    $dataSet ['article'] = $article;
-	    $dataSet ['categories'] = $this->getCategories($categoryId);
-	    $dataSet ['parameters']['categoryId'] = $categoryId;
-	    $dataSet ['categoryPath'] = $this->getCategoryPath($categoryId);
-	    //$dataSet ['nav'] = $this->getDevMenus($categoryId);
+	    $dataSet ['categories'] = $this->getCategories($boardId);
+	    $dataSet ['parameters']['boardId'] = $boardId;
+	    $dataSet ['categoryPath'] = $this->getCategoryPath($boardId);
+	    //$dataSet ['nav'] = $this->getDevMenus($boardId);
 	    return view ( self::VIEW_PATH . '.edit', $dataSet );
 	    
 	}
@@ -305,13 +304,13 @@ class ArchiveController extends Controller {
 	 * 개발 아카이브 의 목록 조회
 	 * 최상위 메뉴를 조회함.
 	 */
-	protected function getDevMenus($categoryId='1'){
-	    $list = $this->getCategoryPath($categoryId);
+	protected function getDevMenus($boardId='1'){
+	    $list = $this->getCategoryPath($boardId);
 	    $id = 1;
 	    if(count($list)>=1){
 	        $id = $list[0]->id;
 	    }
-	    return ArchiveCategory::where('parent_id',$id)->get();
+	    return ArchiveBoard::where('parent_id',$id)->get();
 	}
 	
 	/**
@@ -341,7 +340,7 @@ class ArchiveController extends Controller {
 	}
 	
 	
-	public function getCategoryPath($categoryId = 0)
+	public function getCategoryPath($boardId = 0)
 	{
 	    $list = DB::select('select parent.board_id as id, cate.name as name
             from sa_board_tree as node,
@@ -350,20 +349,20 @@ class ArchiveController extends Controller {
             where node.lft between parent.lft and parent.rgt
               and parent.board_id = cate.id
               and node.board_id = ?
-            order by parent.lft',[$categoryId]);
-	    //Log::debug('ArchiveCategory::getCategoryPath');
+            order by parent.lft',[$boardId]);
+	    //Log::debug('ArchiveBoard::getCategoryPath');
 	    
 	    return $list;
 	}
 	
 	/**
-	 * categoryId 를 기준으로 상위 노드를 탐색하고, 해당되는 분류의 카테고리들을 출력한다.
-	 * @param number $categoryId
+	 * boardId 를 기준으로 상위 노드를 탐색하고, 해당되는 분류의 카테고리들을 출력한다.
+	 * @param number $boardId
 	 * @return
 	 */
-	public function getCategories($categoryId=1)
+	public function getCategories($boardId=1)
 	{
-	    $list = $this->getCategoryPath($categoryId);
+	    $list = $this->getCategoryPath($boardId);
 	    $id = 1;
 	    if(count($list)>=1){
 	        $id = $list[0]->id;
@@ -374,10 +373,10 @@ class ArchiveController extends Controller {
 	/**
 	 * 하위 카테고리 Tree 를 조회.
 	 * 최상위 depth 는 0 이라고 볼 때, 이 메서드는 depth 를 최소 1 이상 에서 사용하게 됨.
-	 * @param number $categoryId
+	 * @param number $boardId
 	 * @param number $depth
 	 */
-	public function getSubCategories($categoryId = 0, $depth = 1)
+	public function getSubCategories($boardId = 0, $depth = 1)
 	{
 	    $list = DB::select("select concat( repeat(?, count(parent.board_id) - 1 - ?), cate.name) as name,
                 node.board_id as id,
@@ -391,7 +390,7 @@ class ArchiveController extends Controller {
                 and sub_parent.board_id = ?
                 and cate.id = node.board_id
             group by node.board_id
-            order by node.lft",[self::CATEGORY_SEPERATE_CHAR, $depth, $categoryId]);
+            order by node.lft",[self::CATEGORY_SEPERATE_CHAR, $depth, $boardId]);
 	    return $list;
 	}
 	
