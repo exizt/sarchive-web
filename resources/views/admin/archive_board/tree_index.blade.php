@@ -50,7 +50,7 @@ function doSave(jsonNodes){
 	//console.log(jsonNodes);
 	$.ajax({
         method : 'POST',
-        url: '/admin/archiveCategory/updateList',
+        url: '/admin/archiveBoard/updateList',
         dataType: 'json',
 		data: { 
 			profileId : _selectedProfileId,
@@ -65,7 +65,7 @@ function doSave(jsonNodes){
 function ajaxJSTree(profileId){
     $.ajax({
         method : 'GET',
-        url: '/admin/archiveCategory/index_ajax',
+        url: '/admin/archiveBoard/index_ajax',
         dataType: 'json',
         data: {profile:profileId}, //json 타입
         success: function(json){

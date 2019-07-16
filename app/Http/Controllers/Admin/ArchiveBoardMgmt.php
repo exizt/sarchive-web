@@ -11,8 +11,8 @@ use App\Models\Profile;
 
 class ArchiveBoardMgmt extends Controller
 {
-	protected const VIEW_PATH = 'admin.archive_category';
-	protected const ROUTE_ID = 'admin.archiveCategory';
+	protected const VIEW_PATH = 'admin.archive_board';
+	protected const ROUTE_ID = 'admin.archiveBoard';
 	protected const CATEGORY_ROOT_DEV = 1;
 	protected const CATEGORY_ROOT_GENERAL = 29;
 	protected const UNIT_CD_DEV = 'D';
