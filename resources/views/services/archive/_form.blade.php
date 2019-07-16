@@ -46,10 +46,10 @@ tinymce.init({
 	</div>
 
 	<div class="form-group">
-		<label for="articleCategorySelect">게시판 선택</label>
-    	<select name="board_id" class="form-control" title="게시판 선택" id="articleCategorySelect">
+		<label for="boardSelectInput">게시판 선택</label>
+    	<select name="board_id" class="form-control" title="게시판 선택" id="boardSelectInput">
     		@foreach ($categories as $cate)
-    			@if ($cate->id == $parameters['categoryId'])
+    			@if ($cate->id == $parameters['boardId'])
     			<option value="{{ $cate->id }}" selected>{{ $cate->name }}</option>
     			@else 
     			<option value="{{ $cate->id }}">{{ $cate->name }}</option>

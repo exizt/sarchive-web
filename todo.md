@@ -1,19 +1,16 @@
-# To-Do
-* 
+# Todo
+* 상단 메뉴를 수정하고 DB저장과 json 파일 저장 하고 Ajax 로 호출하게 하기.
+* 프로필 관리 페이지 만들기.
+* 프로필 선택 페이지 만들기.
+* 글 작성/수정 시에 '글 출처' 에서 '펌글' or '내가 작성함' 을 선택해서 입력하게 하기.
+* 상단 메뉴. profile 설정에 따라서 다르게 나오게 하기. (음...)
+* boardId 로 진입시에 profileId 를 찾아서 처리하게 하는 부분 필요.
 
 # URLs
-/archives/[게시물번호]
-
-/category/[카테고리명(한글가능)]
-
-* CategoryController
-
-/page/[페이지명(한글가능)]
-
-* PageController
-
-/board/[게시판번호]
-
+* /archives/[게시물번호]
+* /category/[카테고리명(한글가능)] : CategoryController
+* /page/[페이지명(한글가능)] : PageController
+* /board/[게시판번호] : 
 
 
 
@@ -31,7 +28,12 @@
 게시판 board
 * 과거의 카테고리 개념. 상위 게시판 개념이 존재함. 트리형 카테고리 개념.
 
+프로필 Profiles
+* 아카이브의 단위를 나누는 개념. '개발 아카이브' '일반 아카이브' 로 나누거나 혹은 더 세부적으로 나눌 때에 이용. 프로필로 나뉜 아카이브에 따라서 게시판과 분류가 다르게 관리됨.
+* URL 로 별도로 동작되게 할지, Session 을 이용할지 고민 중..
 
+
+유저 -> 프로필 -> 게시물, 카테고리, 분류
 
 # 레이아웃
 상단에 검색 폼은 항상 나오도록 해야 함. 검색이 가장 기본이 되도록 함.
@@ -91,6 +93,9 @@ profiles | 프로필 테이블
   * user_id
   * name
   * text : 설명 텍스트 등.
+* 인덱스
+  * sa_profiles_user_index : (user_id, id) user_id 를 기준으로 profiles 를 조회하기 위함.
+  * sa_profiles_user_route_index : (user_id, route) route 를 기준으로 조회하기 위함.
 
 
 archives | 아카이브 테이블

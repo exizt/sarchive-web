@@ -52,14 +52,14 @@ document.onkeyup = shortcutKeyEvent;
 
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav mr-auto">
-					<li class="nav-item"><a class="nav-link" href="/archives?category=2">데이터베이스</a></li> 
-					<li class="nav-item"><a class="nav-link" href="/archives?category=3">프론트엔드</a></li> 
-					<li class="nav-item"><a class="nav-link" href="/archives?category=4">웹 개발</a></li> 
-					<li class="nav-item"><a class="nav-link" href="/archives?category=5">윈도우 프로그래밍</a></li> 
-					<li class="nav-item"><a class="nav-link" href="/archives?category=6">iOS 앱 개발</a></li> 
-					<li class="nav-item"><a class="nav-link" href="/archives?category=7">안드로이드 앱 개발</a></li> 
-					<li class="nav-item"><a class="nav-link" href="/archives?category=17">개발 이론, 도구</a></li> 
-					<li class="nav-item"><a class="nav-link" href="/archives?category=45">기타</a></li> 
+					<li class="nav-item"><a class="nav-link" href="/archives?board=2">데이터베이스</a></li> 
+					<li class="nav-item"><a class="nav-link" href="/archives?board=3">프론트엔드</a></li> 
+					<li class="nav-item"><a class="nav-link" href="/archives?board=4">웹 개발</a></li> 
+					<li class="nav-item"><a class="nav-link" href="/archives?board=5">윈도우 프로그래밍</a></li> 
+					<li class="nav-item"><a class="nav-link" href="/archives?board=6">iOS 앱 개발</a></li> 
+					<li class="nav-item"><a class="nav-link" href="/archives?board=7">안드로이드 앱 개발</a></li> 
+					<li class="nav-item"><a class="nav-link" href="/archives?board=17">개발 이론, 도구</a></li> 
+					<li class="nav-item"><a class="nav-link" href="/archives?board=45">기타</a></li> 
 				</ul>
 				<form class="form-inline my-2 my-lg-0" action="{{ route('archives.search')}}">
 					<input class="form-control mr-sm-2 site-shortcut-key-f" type="search" placeholder="Search" aria-label="Search" name="q" value="{{ $parameters['q'] or ''}}">
