@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js"></script>
+<script src="/assets/lib/jstree/jstree.min.js"></script>
+<link rel="stylesheet" href="/assets/lib/jstree/themes/default/style.min.css" />
+<script>
+$(function () { 
+
+    //createJSTree([{id: 1, text: "개발", parent: "#"}]);
+    ajaxJSTree();
+
+    $("#confirm").on("click",function(){
+        //console.log("dd");
+        var jsonNodes = $('#jstree').jstree(true).get_json('#', { flat: true, no_state: true, no_li_attr:true, no_data
+:true, no_a_attr:true });
+        console.log(jsonNodes);
+        var jsonData = JSON.stringify(jsonNodes );
+        //console.log(jsonData);
+    });
+
+
+
+
+});
+
+function ajaxJSTree(){
+    $.ajax({
+        method : 'GET',
+        url: '/admin/archiveCategory/index2',
+        dataType: 'json',
+        data: {}, //json 타입
+        success: function(json){
+            var data = [];
+            $.each(json.boards,function(i,item){
+                var locData = {};
+                locData.id = item.id;
+                locData.text = item.name;
+                if(item.parent == '0'){
+                    locData.parent = '#';
+                } else {
+                    locData.parent = item.parent;
+                }
+                data[i] = locData;
+            });
+            createJSTree(data)
+        },
+    });
+}
+function createJSTree(dataSet){
+    console.log(dataSet);
+    $('#jstree').jstree({
+        "core":{
+            "themes" : { "stripes" : true },
+            "check_callback" : true,
+            "data" : dataSet
+        },
+        "plugins" : [ "dnd" ]
+    }); 
+}
+</script>
+</head>
+<body>
+    <div id="jstree"></div>
+<button id="confirm">확인</button>
+</body>
+</html>
