@@ -13,7 +13,6 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth'])->name('admin.')->prefix('admin')->group(function(){
     Route::resource('archiveBoard', 'Admin\ArchiveBoardMgmt', ['except'=>['show']]);
     Route::get('archiveBoard/index_ajax', 'Admin\ArchiveBoardMgmt@index_ajax');
-    Route::get('archiveBoard/index3', 'Admin\ArchiveBoardMgmt@index3');
     Route::post('archiveBoard/updateList', 'Admin\ArchiveBoardMgmt@updateList');
     
 });
