@@ -33,44 +33,8 @@ class ArchiveBoardMgmt extends Controller
      */
     public function index(Request $request)
     {
-        $this->getArchiveProfile($request);
-
-        $unitCd = $request->input('unit',self::UNIT_CD_DEV);
-        $categoryId = (!$request->has('category')) ? $this->getCategoryRootId($unitCd) : $categoryId = $request->input('category');
-        /*
-        if(!$request->has('category')){
-            $categoryId = $this->getCategoryRootId($unitCd);
-        } else {
-            $categoryId = $request->input('category');
-        }
-        */
-        
         $dataSet = $this->createViewData ();
-        $dataSet ['categories'] = $this->getCategories($categoryId);
-        $dataSet ['parameters']['unit'] = $unitCd;
         return view ( self::VIEW_PATH . '.index', $dataSet );
-    }
-
-        /**
-     * Archive 카테고리 목록을 출력한다.
-     * @return \Illuminate\Http\Response
-     */
-    public function index3(Request $request)
-    {
-        $unitCd = $request->input('unit',self::UNIT_CD_DEV);
-        $categoryId = (!$request->has('category')) ? $this->getCategoryRootId($unitCd) : $categoryId = $request->input('category');
-        /*
-        if(!$request->has('category')){
-            $categoryId = $this->getCategoryRootId($unitCd);
-        } else {
-            $categoryId = $request->input('category');
-        }
-        */
-        
-        $dataSet = $this->createViewData ();
-        $dataSet ['categories'] = $this->getCategories($categoryId);
-        $dataSet ['parameters']['unit'] = $unitCd;
-        return view ( self::VIEW_PATH . '.tree_index', $dataSet );
     }
 
     /**
@@ -167,7 +131,7 @@ class ArchiveBoardMgmt extends Controller
     	$item = ArchiveBoard::create ( $dataSet );
     	$item->save ();
     	
-    	$this->updateCategoryTree();
+    	$this->updateListTreeTable();
     	
     	
     	
@@ -211,7 +175,7 @@ class ArchiveBoardMgmt extends Controller
     	    $item->parent_id = $request->input ( 'parent_id' );
     	}
     	$item->save ();
-    	$this->updateCategoryTree();
+    	$this->updateListTreeTable();
 	
     	return redirect ()->route ( self::ROUTE_ID . '.edit', ['id'=>$id])->with ('message', '변경이 완료되었습니다.' );
     }
@@ -245,6 +209,7 @@ class ArchiveBoardMgmt extends Controller
                 ]);
             //print_r($sql);
         }
+        $this->updateListTreeTable();
     }
 
     /**
@@ -262,7 +227,7 @@ class ArchiveBoardMgmt extends Controller
             return redirect()->route(self::ROUTE_ID.'.edit',$id)->withErrors(array('message'=>'게시글이 하나라도 있는 카테고리는 삭제할 수 없습니다.'));            
         } else {
             $item->delete();
-            $this->updateCategoryTree();
+            $this->updateListTreeTable();
             return redirect()
             ->route(self::ROUTE_ID.'.index')
             ->with('message','카테고리를 삭제하였습니다.');
@@ -306,6 +271,10 @@ class ArchiveBoardMgmt extends Controller
 		}
 	}
 
+    
+    private function updateListTreeTable(){
+        DB::statement('call procedure_insert_menus()');
+    }
 
     /**
      * 
@@ -364,10 +333,7 @@ class ArchiveBoardMgmt extends Controller
             order by node.lft",[self::CATEGORY_SEPERATE_CHAR, $depth, $boardId]);
 	    return $list;
 	}
-    
-    private function updateCategoryTree(){
-        DB::statement('call procedure_insert_menus()');
-    }
+
     
     /**
      * Unit Code 를 기준으로 카테고리 Root Id 를 가져오는 메서드
