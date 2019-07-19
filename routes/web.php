@@ -14,5 +14,5 @@ Route::middleware(['auth'])->name('admin.')->prefix('admin')->group(function(){
     Route::resource('archiveBoard', 'Admin\ArchiveBoardMgmt', ['except'=>['show']]);
     Route::get('archiveBoard/index_ajax', 'Admin\ArchiveBoardMgmt@index_ajax');
     Route::post('archiveBoard/updateList', 'Admin\ArchiveBoardMgmt@updateList');
-    
+    Route::view('advanced','admin.advanced',['ROUTE_ID'=>'advanced']);
 });

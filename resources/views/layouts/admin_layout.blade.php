@@ -7,7 +7,7 @@
                 <li class="list-group-item"><a href="/admin/archiveBoard">게시판 설정</a></li>
                 <li class="list-group-item">페이지 설정</li>
                 <li class="list-group-item">아카이브 프로필 설정</li>
-                <li class="list-group-item">&nbsp;</li>
+                <li class="list-group-item"><a href="/admin/advanced">고급 기능</a></li>
                 <li class="list-group-item">&nbsp;</li>
             </ul>
         </div>
