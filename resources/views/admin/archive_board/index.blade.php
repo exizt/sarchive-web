@@ -4,18 +4,32 @@
 @section('content')
 <div class="my-3">
 	<h3>게시판 목록</h3>
-	<a href="{{ route($ROUTE_ID.'.create') }}" class="btn btn-sm btn-outline-success">카테고리 추가</a>
+</div>
+<div id="messages">
+	<div class="shh-alert-msg-tpl alert alert-success alert-dismissible fade show" role="alert" style="display:none">
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
 </div>
 <ul class="nav nav-tabs" id="navTab">
 	<li class="nav-item"><a class="nav-link active" href="#" data-profile="1">개발 아카이브</a></li>
 	<li class="nav-item"><a class="nav-link" href="#" data-profile="2">일반 아카이브</a></li>
 </ul>
-<div id="jstree"></div>
-<button id="confirm">확인</button>
+
+<div id="tree-container"></div>
+<button id="shh-btn-save" class="btn btn-sm btn-primary">저장</button>
+<button id="shh-btn-create" class="btn btn-sm btn-outline-success">게시판 추가</button>
+<button id="shh-btn-rename" class="btn btn-sm btn-outline-success">이름 변경</button>
+<button id="shh-btn-delete" class="btn btn-sm btn-outline-success">삭제</button>
+<button id="shh-btn-save-test" class="btn btn-sm btn-outline-success">저장 (테스트)</button>
+
 <script src="/assets/lib/jstree/jstree.min.js"></script>
 <link rel="stylesheet" href="/assets/lib/jstree/themes/default/style.min.css" />
 <script>
 var _selectedProfileId = "1";
+var _jstreeSelector = "#tree-container";
+var _deletedBoardIds = new Array()
 $(function () {
 	_selectedProfileId = $("#navTab a").first().data("profile")
 	
@@ -29,34 +43,101 @@ $(function () {
 
     ajaxJSTree(_selectedProfileId);
 
-    $("#confirm").on("click",function(){
-        var jsonNodes = $('#jstree').jstree(true).get_json('#', { 
-			flat: true, no_state: true, no_li_attr:true, no_data:true, 
-			no_a_attr:true })
-        //console.log(jsonNodes);
-        var jsonData = JSON.stringify(jsonNodes)
-		//console.log(jsonData);
-		doSave(jsonNodes);
-    });
+    $("#shh-btn-save").on("click",function(){
+        saveJSTree(true)
+	});
+	$("#shh-btn-save-test").on("click",function(){
+        saveJSTree(false)
+	});
+	
+	$("#shh-btn-create").on("click",jstree_create)
+	$("#shh-btn-rename").on("click",jstree_rename)
+	$("#shh-btn-delete").on("click",jstree_delete)
+
 });
 
+function saveJSTree(executeFlag){
+	var jsonNodes = $(_jstreeSelector).jstree(true).get_json('#', { 
+		flat: true, no_state: true, no_li_attr:true, no_data:true, 
+		no_a_attr:true })
+	//var jsonData = JSON.stringify(jsonNodes)
+	var dataSet = {};
+	dataSet.jsonNodes = jsonNodes
+	dataSet.deleted = _deletedBoardIds
+	if(executeFlag){
+		doSave(dataSet);
+	} else {
+		console.log(dataSet);
+	}
+}
 
-function doSave(jsonNodes){
-	//console.log(jsonNodes);
-	$.ajax({
-        method : 'POST',
+function jstree_create() {
+	var ref = $(_jstreeSelector).jstree(true),
+		sel = ref.get_selected();
+	if(!sel.length) { return false; }
+	sel = sel[0];
+	sel = ref.create_node(sel, {"type":"file"});
+	if(sel) {
+		ref.edit(sel);
+	}
+};
+function jstree_rename() {
+	var ref = $(_jstreeSelector).jstree(true),
+		sel = ref.get_selected();
+	if(!sel.length) { return false; }
+	sel = sel[0];
+	ref.edit(sel);
+};
+function jstree_delete() {
+	var ref = $(_jstreeSelector).jstree(true),
+		sel = ref.get_selected();
+	if(!sel.length) { return false; }
+	ref.delete_node(sel);
+};
+
+
+
+function doSave(dataSet){
+	var s;
+	$.post({
         url: '/admin/archiveBoard/updateList',
         dataType: 'json',
+		beforeSend: function(){
+			s = showAlertMessage("waiting...",'warning');
+		},
 		data: { 
 			profileId : _selectedProfileId,
-			listData: jsonNodes
-		}, //json 타입
-        success: function(json){
-			// ajaxJSTree(1)
-			
-        },
-    });
+			deletedList : dataSet.deleted,
+			listData: dataSet.jsonNodes
+		},
+    }).done(function(json){
+		showAlertMessage("저장되었습니다.")
+    }).always(function(){
+		s.alert("close")
+	});
 }
+
+
+function showAlertMessage(msg, alert){
+	var s = $("#messages").find(".shh-alert-msg-tpl").first().clone();
+	if(msg==="") msg = "&nbsp;"
+	s.removeClass("shh-alert-msg-tpl")
+	s.append(msg)
+	s.show() //tpl 에는 display:none 이기 때문에, 이것을 제거. (참고. 아직 DOM 에 추가되지 않은 object 변수상태임)
+	// bootstrap 의 기능인 alert() 가 있을 시에 아래 동작.
+	if(jQuery().alert) {
+		s.alert()
+	}
+	if(alert=="warning"){
+		s.removeClass("alert-success").addClass("alert-warning")
+	} else if(alert=="danger"||alert=="error") {
+		s.removeClass("alert-success").addClass("alert-danger")
+	}
+	s.appendTo("#messages");
+	return s;
+}
+
+
 function ajaxJSTree(profileId){
     $.ajax({
         method : 'GET',
@@ -83,12 +164,13 @@ function ajaxJSTree(profileId){
 }
 function createJSTree(){
     //console.log(dataSet);
-    $('#jstree').jstree({
+    $(_jstreeSelector).jstree({
         "core":{
             "themes" : { "stripes" : true },
-            "check_callback" : true,
+            "check_callback" : jstree_check_callback,
+			"multiple" : false
         },
-		"plugins" : [ "dnd", "types", "state" ],
+		"plugins" : [ "dnd", "types", "state", "contextmenu", ],
 		"types" : {     
 			"#" : {
 				"max_children" : 1
@@ -96,11 +178,33 @@ function createJSTree(){
 		},
     }); 
 }
+
+function jstree_check_callback( op, node, parent, pos, more){
+	// 루트 노드는 건들지 않도록 함.
+	if(op === "delete_node"|| op === "copy_node" || op === "move_node"){
+		if(parent.id === "#"){
+			console.log("루트 노드는 이동,삭제,복사를 불허합니다.");
+			return false;
+		}
+	}
+	if(op === "delete_node"){
+		if(node.id.charAt(0)!=="j"){
+			_deletedBoardIds.push(node.id)
+		}
+		$.each(node.children_d,function(k,v){
+			if(v.charAt(0)!=="j"){
+				_deletedBoardIds.push(v)
+			}
+		})
+	}
+	return true;
+}
 function redrawJSTree(dataJson){
-	$jstree = $('#jstree')
+	var $jstree = $(_jstreeSelector)
 	$jstree.jstree(true).settings.core.data = dataJson
 	$jstree.jstree(true).refresh()
 }
+
 </script>
 
 @stop

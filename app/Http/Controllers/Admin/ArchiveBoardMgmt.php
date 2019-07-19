@@ -45,7 +45,6 @@ class ArchiveBoardMgmt extends Controller
     {
         $this->getArchiveProfile($request);
         
-
         //$dataSet ['boards'] = $this->getCategories($categoryId);
         /*
         $dataSet ['boards'] = DB::select("select cate.name as name,
@@ -193,23 +192,56 @@ class ArchiveBoardMgmt extends Controller
         //print_r($_POST);
         $profileId = $request->input('profileId');
         $listData = $request->input('listData');
+        $deletedList = $request->input('deletedList');
 
-        //print_r($listData);
+        $changedIdList = array();
+
+        // 트리에서 변경된 내용을 적용함
+        // 새로운 항목에서는 id 가 'j1_1' 과 같은 형태이므로, 이 경우에는 insert_id 로 변경해주는 로직 추가함.
         foreach($listData as $i => $item){
             //$id = $item['id'];
             //$text = $item['text'];
             //$parent = $item['parent'];
 
-            
-            ArchiveBoard::updateOrInsert(['id'=>$item['id']],
-                [
-                    'parent_id'=>$item['parent'],
-                    'index' => $i,
-                    'profile_id' => $profileId
-                ]);
+            if($item['parent'][0] == 'j'){
+                if(array_key_exists($item['parent'],$changedIdList)){
+                    $item['parent'] = $changedIdList[$item['parent']];
+                }
+            }
+
+            if($item['id'][0] == 'j'){
+                $archiveBoard = ArchiveBoard::create(['parent_id'=>$item['parent'],
+                'index' => $i,
+                'name' => $item['text'],
+                'profile_id' => $profileId]);
+                $changedIdList[$item['id']] = $archiveBoard->id;
+            } else {
+                ArchiveBoard::updateOrInsert(['id'=>$item['id']],
+                    [
+                        'parent_id'=>$item['parent'],
+                        'index' => $i,
+                        'name' => $item['text'],
+                        'profile_id' => $profileId
+                    ]);
+            }
             //print_r($sql);
         }
+
+        foreach($deletedList as $deletedId){
+            if($deletedId[0]=='j'){
+                continue;
+            }
+            $archiveBoard = ArchiveBoard::findOrFail($deletedId);
+            $archiveBoard->delete();
+        }
+
+        // tree table 수정. (프로시저 호출)
         $this->updateListTreeTable();
+
+        $dataSet = array();
+        $dataSet['success'] = '변경 완료되었습니다.';
+
+        return response()->json($dataSet);
     }
 
     /**

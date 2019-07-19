@@ -71,7 +71,7 @@ document.onkeyup = shortcutKeyEvent;
 				<ul class="navbar-nav">
 					<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink_My" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ Auth::user()->name }}</a>
 						<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink_My">
-							<a class="dropdown-item site-shortcut-key-n site-shortcut-key-a" href="{{ route($ROUTE_ID.'.create') }}">글쓰기</a>
+							<a class="dropdown-item site-shortcut-key-n site-shortcut-key-a" href="{{ route('archives.create') }}">글쓰기</a>
 							<a class="dropdown-item" href="{{ route('archives.index')}}?profile=1">개발 분류로 이동</a>
 							<a class="dropdown-item" href="{{ route('archives.index')}}?profile=2">일반 분류로 이동</a>
 							<a class="dropdown-item" href="/page/단축키">단축키</a>
