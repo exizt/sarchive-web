@@ -192,9 +192,10 @@ class ArchiveBoardMgmt extends Controller
         //print_r($_POST);
         $profileId = $request->input('profileId');
         $listData = $request->input('listData');
-        $deletedList = $request->input('deletedList');
+        $deletedList = $request->input('deletedList', array());
 
         $changedIdList = array();
+        $depthPathList = array();//depth 와 path 를 다루기 위한 배열
 
         // 트리에서 변경된 내용을 적용함
         // 새로운 항목에서는 id 가 'j1_1' 과 같은 형태이므로, 이 경우에는 insert_id 로 변경해주는 로직 추가함.
@@ -203,6 +204,25 @@ class ArchiveBoardMgmt extends Controller
             //$text = $item['text'];
             //$parent = $item['parent'];
 
+            // depth 를 생성하기 위한 구문.
+            {
+                if($item['parent']=='0'||$item['parent']==0){
+                    $item['depth'] = 1;
+                    $item['path'][] = ['text'=>$item['text'],'id'=>$item['id']];
+                } else {
+                    $t_parent = $item['parent'];
+                    $item['depth'] = $depthPathList[$t_parent]['depth'] + 1;
+                    //$item['path'] = $depthPathList[$t_parent]['path'].' > '.$item['text'];
+                    $item['path'] = $depthPathList[$t_parent]['path'];
+                    $item['path'][] = ['text'=>$item['text'],'id'=>$item['id']];
+                }
+                $depthPathList[$item['id']] = [
+                    'depth' => $item['depth'],
+                    'path' => $item['path']
+                ];
+            }
+
+            // parent_id 값이 j 로 시작되는 경우, changedIdList 에 있는 값으로 변경.
             if($item['parent'][0] == 'j'){
                 if(array_key_exists($item['parent'],$changedIdList)){
                     $item['parent'] = $changedIdList[$item['parent']];
@@ -210,10 +230,16 @@ class ArchiveBoardMgmt extends Controller
             }
 
             if($item['id'][0] == 'j'){
-                $archiveBoard = ArchiveBoard::create(['parent_id'=>$item['parent'],
-                'index' => $i,
-                'name' => $item['text'],
-                'profile_id' => $profileId]);
+                $archiveBoard = ArchiveBoard::create([
+                    'parent_id'=>$item['parent'],
+                    'index' => $i,
+                    'name' => $item['text'],
+                    'depth' => $item['depth'],
+                    'path' => $item['path'],
+                    'profile_id' => $profileId]
+                );
+
+                // 신규 생성된 id 를 changedIdList 에 추가함.
                 $changedIdList[$item['id']] = $archiveBoard->id;
             } else {
                 ArchiveBoard::updateOrInsert(['id'=>$item['id']],
@@ -221,21 +247,26 @@ class ArchiveBoardMgmt extends Controller
                         'parent_id'=>$item['parent'],
                         'index' => $i,
                         'name' => $item['text'],
+                        'depth' => $item['depth'],
+                        'path' => json_encode($item['path']),
                         'profile_id' => $profileId
                     ]);
             }
             //print_r($sql);
         }
 
-        foreach($deletedList as $deletedId){
-            if($deletedId[0]=='j'){
-                continue;
+        // 삭제된 카테고리 부분을 처리하는 루틴.
+        if(is_array($deletedList)){
+            foreach($deletedList as $deletedId){
+                if($deletedId[0]=='j'){
+                    continue;
+                }
+                $archiveBoard = ArchiveBoard::findOrFail($deletedId);
+                $archiveBoard->delete();
             }
-            $archiveBoard = ArchiveBoard::findOrFail($deletedId);
-            $archiveBoard->delete();
         }
 
-        // tree table 수정. (프로시저 호출)
+        // tree table 작성. (프로시저 호출)
         $this->updateListTreeTable();
 
         $dataSet = array();

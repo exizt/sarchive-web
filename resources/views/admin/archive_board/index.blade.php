@@ -57,6 +57,7 @@ $(function () {
 });
 
 function saveJSTree(executeFlag){
+
 	var jsonNodes = $(_jstreeSelector).jstree(true).get_json('#', { 
 		flat: true, no_state: true, no_li_attr:true, no_data:true, 
 		no_a_attr:true })
@@ -67,7 +68,8 @@ function saveJSTree(executeFlag){
 	if(executeFlag){
 		doSave(dataSet);
 	} else {
-		console.log(dataSet);
+		//console.log(dataSet);
+		console.log(JSON.stringify(dataSet));
 	}
 }
 

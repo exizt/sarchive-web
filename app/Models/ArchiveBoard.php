@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ArchiveBoard extends Model
 {
-    protected $fillable = ['profile_id','name', 'parent_id','comment','index'];
+    protected $fillable = ['profile_id','name', 'parent_id','comment','index','depth','path'];
     protected $table = 'sa_boards';
 
 

@@ -75,9 +75,8 @@ document.onkeyup = shortcutKeyEvent;
 							<a class="dropdown-item" href="{{ route('archives.index')}}?profile=1">개발 분류로 이동</a>
 							<a class="dropdown-item" href="{{ route('archives.index')}}?profile=2">일반 분류로 이동</a>
 							<a class="dropdown-item" href="/page/단축키">단축키</a>
-							<a class="dropdown-item" href="/admin/archiveCategory">카테고리 관리</a>
 							<div class="dropdown-divider"></div>
-							<a class="dropdown-item" href="{{ config('app.c_site_url','') }}/admin">사이트 관리</a>
+							<a class="dropdown-item" href="/admin">아카이브 관리</a>
 							<a class="dropdown-item" href="{{ config('app.c_site_url','') }}">사이트로 이동</a> 
 							<div class="dropdown-divider"></div>
 							<a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i
