@@ -46,4 +46,17 @@
 		<div class="text-xs-center">{{ $posts->appends(['board' => $parameters['boardId']])->links() }}</div>
 	</div>
 </div>
+<script>
+	$(function(){
+		ajaxBoardList()
+	})
+	
+	function ajaxBoardList(){
+		$.getJSON("/archives/ajax_boards",{
+			board_id : 1
+		},function(data){
+			console.log(data)
+		})
+	}
+	</script>
 @stop
