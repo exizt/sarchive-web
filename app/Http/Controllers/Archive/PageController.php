@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class PageController extends Controller {
-	protected const VIEW_PATH = 'archive.page';
+	protected const VIEW_PATH = 'app.page';
 	protected const ROUTE_ID = 'page';
 
 	/**

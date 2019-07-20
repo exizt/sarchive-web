@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class ArchiveController extends Controller {
-	protected const VIEW_PATH = 'services.archive';
+	protected const VIEW_PATH = 'app.archive';
 	protected const ROUTE_ID = 'archives';
 	protected $ArchiveProfile;
 	protected const CATEGORY_SEPERATE_CHAR = '―';
