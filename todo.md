@@ -93,9 +93,10 @@ profiles | 프로필 테이블
   * user_id
   * name
   * text : 설명 텍스트 등.
+  * route : deprecated.
 * 인덱스
   * sa_profiles_user_index : (user_id, id) user_id 를 기준으로 profiles 를 조회하기 위함.
-  * sa_profiles_user_route_index : (user_id, route) route 를 기준으로 조회하기 위함.
+  * sa_profiles_user_route_index : (user_id, route) route 를 기준으로 조회하기 위함. 안 쓸 듯...
 
 
 archives | 아카이브 테이블
@@ -103,18 +104,17 @@ archives | 아카이브 테이블
 * 설명 : 글 내용. 
 * 참고) 차후에 다중 구성을 할 수 있음. (탭 구성으로 해서 엑셀 문서 처럼...)
 * 컬럼
-  * id
-  * title
-  * content
-  * summary
-  * unit_code
-  * board_id
-  * summary_var
-  * reference
+  * id : 아카이브 ID
+  * title : 아카이브 제목
+  * content : 아카이브 내용
+  * board_id : 게시판 id
+  * profile_id : 이게 왜 들어간건지 아직 고민중...
+  * summary_var : 내용 요약글. (varchar 255)
+  * reference : 출처. 링크 등.
   * category : [분류명][분류명2]
 * 인덱스
-  * fulltext_index (title, content) 'Full Text' : 검색용 인덱스
   * sa_archives_latest_select_index : (board_id, created desc) 인덱스. 카테고리별로 정렬된 인덱스. 목록 불러올 때 이용되는 인덱스.
+  * fulltext_index (title, content) 'Full Text' : 검색용 인덱스
 
 
 categories | 분류 테이블
@@ -161,13 +161,26 @@ sa_boards
   * id 
   * name : 명칭
   * parent_id : 상위 게시판 id
+  * profile_id : 아카이브 프로필 id
   * comment : 부가 설명
   * count : 해당 게시판의 게시글 수
+  * index : 정렬 순서
+  * depth : 깊이
+  * path : 경로
 * 인덱스
-  * sa_board_parent_index : (parent_id) Normal BTREE
+  * sa_boards_profile_index : (profile_id, index) Normal BTREE : where (profile_id) order by(index) 를 위함. 일반적인 조회.
+  * sa_board_parent_index : (parent_id) Normal BTREE : parent_id 로 역탐색 할 때를 위함. 자식노드 탐색할 때 위함.
 
 
 sa_board_tree
+* 목적 : 하위 분류의 아카이브 들을 묶어서 검색하기 위한 용도.
+* 컬럼
+  * lft : 좌 범위 포지션
+  * rgt : 우 범위 포지션
+  * board_id : 게시판 id
+* 인덱스
+  * sa_board_tree_boardid_index (board_id) Unique BTREE : board_id 로 탐색할 경우에 대한 인덱스.
+  * lft 는 pk 인덱스
 
 
 # 네이밍 룰
