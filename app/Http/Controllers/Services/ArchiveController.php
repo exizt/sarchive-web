@@ -43,7 +43,6 @@ class ArchiveController extends Controller {
 		/*
 		// 첫번째 쿼리. 
 	    $posts = Archive::select('archives.*',DB::raw('(select name from sa_boards as s where s.id = board_id) as category_name'))
-	      ->where ( 'unit_code', 'D')
 	      ->whereRaw('board_id in 
             (
             SELECT node.board_id
@@ -55,7 +54,7 @@ class ArchiveController extends Controller {
 		*/
 	    // 속도를 조금 더 손본 쿼리. 전에는 where in 구문을 활용했는데, 속도가 너무 느려서 join 방식으로 변경.
 	    //DB::enableQueryLog();
-	    $masterList = Archive::select(['archives.id', 'archives.title','archives.summary_var','archives.reference','archives.unit_code','archives.board_id','archives.created_at',
+	    $masterList = Archive::select(['archives.id', 'archives.title','archives.summary_var','archives.reference','archives.board_id','archives.created_at',
 	        'archives.updated_at',DB::raw('(select name from sa_boards as s where s.id = archives.board_id) as category_name')])
 	      ->join(DB::raw("(
             SELECT node.board_id, parent.board_id as parent_id

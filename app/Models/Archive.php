@@ -7,10 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class Archive extends Model
 {
     use FullTextSearch;
-    protected $fillable = ['title', 'content','unit_code','board_id','reference','category'];
+    protected $fillable = ['title', 'content','board_id','reference','category'];
     protected $attributes = ['title'=>'',
      'content'=>'',
-     'unit_code'=>'',
      'board_id'=>'',
      'reference'=>'',
      'category'=>''];
@@ -25,7 +24,6 @@ class Archive extends Model
     
     public function setContentAttribute($value){
         $this->attributes['content'] = $value;
-        //$this->attributes['summary'] = $this->generateSummary($value,300);
         $this->attributes['summary_var'] = $this->generateSummary($value,255);
     }
     
