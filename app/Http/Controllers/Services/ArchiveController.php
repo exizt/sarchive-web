@@ -75,8 +75,8 @@ class ArchiveController extends Controller {
         $dataSet = $this->createViewData ();
         $dataSet ['posts'] = $masterList;
 		$dataSet ['archiveBoard'] = $archiveBoard;
-        $dataSet ['categoryPath'] = $this->getCategoryPath($boardId);
-        $dataSet ['subcategories'] = $this->getSubCategories($boardId);
+        //$dataSet ['categoryPath'] = $this->getCategoryPath($boardId);
+        //$dataSet ['subcategories'] = $this->getSubCategories($boardId);
 		$dataSet ['parameters']['boardId'] = $boardId;
         //$dataSet ['nav'] = $this->getDevMenus($boardId);
         return view ( self::VIEW_PATH . '.index', $dataSet );
@@ -119,6 +119,33 @@ class ArchiveController extends Controller {
 	    }
 	}
 	
+	/**
+	 * 아카이브 화면에서 nav 메뉴를 가져오는 Ajax 부분.
+	 */
+	public function ajaxGetBoardList(Request $request){
+		// 프로필 아이디 도 확인해봐야 함...
+		// user_id 로 profile id 와 같이 조회해서 있는지를 체크하면 됨.
+
+		$boardId = $request->input('board_id',1);
+
+		$currentNode = ArchiveBoard::select(['id','name','parent_id','path','depth'])->where ( 'id', $boardId )->firstOrFail ();
+
+		$masterList = DB::select("select id, name, parent_id, count, depth
+		from `sa_boards`
+		inner join (
+		 select node.board_id as node_id, parent.board_id as parent_node_id
+		 from sa_board_tree as node, sa_board_tree as parent 
+		 where node.lft between parent.lft and parent.rgt 
+		   and parent.board_id = ?
+		   ) as tree 
+	   on `tree`.`node_id` = `sa_boards`.`id` 
+	   order by `index` asc",[$boardId]);
+
+		$dataSet['list'] = $masterList;
+		$dataSet['current'] = $currentNode;
+		return response()->json($dataSet);
+	}
+
 	/**
 	 * 글 본문 읽기
 	 *

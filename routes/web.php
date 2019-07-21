@@ -6,6 +6,7 @@ Route::get ( '/', 'Home@index' );
 // SArchive ----------------------------
 Route::middleware(['auth'])->group(function () {
     Route::get('archives/search', 'Services\ArchiveController@search')->name('archives.search');
+    Route::get('archives/ajax_boards', 'Services\ArchiveController@ajaxGetBoardList');
     Route::resource('archives', 'Services\ArchiveController');
     Route::resource('page', 'Archive\PageController');
     Route::view('admin','admin.index',['ROUTE_ID'=>'archives']);

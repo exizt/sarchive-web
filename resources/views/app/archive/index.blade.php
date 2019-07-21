@@ -1,7 +1,7 @@
 @extends('layouts.archive_layout') 
 @section('title',"$archiveBoard->name") 
 @section('content')
-<div>
+<div id="curBoardId" data-current-board="{{ $parameters['boardId']}}">
 	<div class="mt-4 mb-5">
 		<div class="container-fluid">
 			<div class="row">
@@ -32,13 +32,10 @@
 				<div class="col-md-3">
 					<h4 class="px-2">현재 위치</h4>
 					<nav aria-label="breadcrumb">
-						<ol class="breadcrumb">	@foreach ($categoryPath as $item)	<li class="breadcrumb-item"><a href="{{ route($ROUTE_ID.'.index')}}?board={{$item->id}}">{{ $item->name }}</a></li> @endforeach
-						</ol>
+						<ol class="breadcrumb" id="shh-nav-board-path"></ol>
 					</nav>
 					<h5>게시판</h5>
-					<div class="list-group list-group-flush">
-						@foreach ($subcategories as $item) <a href="{{ route($ROUTE_ID.'.index')}}?board={{ $item->id }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">{{ $item->name }} <span class="badge badge-secondary badge-pill">{{ $item->count }}</span></a> @endforeach
-					</div>
+					<div class="list-group" id="shh-nav-board-list"></div>
 				</div>
 			</div>
 		</div>
@@ -52,10 +49,36 @@
 	})
 	
 	function ajaxBoardList(){
+		var boardId = $("#curBoardId").data("currentBoard")
+		//console.log(boardId)
 		$.getJSON("/archives/ajax_boards",{
-			board_id : 1
+			board_id : boardId
 		},function(data){
-			console.log(data)
+			//console.log(data)
+			
+			var current = data.current
+			var curPath = JSON.parse(current.path)
+
+			$.each(curPath,function(i,item){
+				//console.log(item)
+				var html = '<li class="breadcrumb-item"><a href="archives?board='
+				+item.id
+				+'">'
+				+item.text
+				+'</a></li> '
+				$("#shh-nav-board-path").append(html)
+			})
+			$.each(data.list, function(i,item){
+				var depth = item.depth - current.depth
+				if(depth >3) return
+				var html = '<a href="archives?board='
+				+item.id
+				+'" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">'
+				+">".repeat(depth)+"&nbsp;"+item.name
+				+' <span class="badge badge-secondary badge-pill">'+item.count+'</span></a>'
+
+				$("#shh-nav-board-list").append(html)
+			})
 		})
 	}
 	</script>
