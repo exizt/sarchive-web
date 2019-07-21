@@ -42,7 +42,7 @@ class ArchiveController extends Controller {
 		*/
 		/*
 		// 첫번째 쿼리. 
-	    $posts = Archive::select('archives.*',DB::raw('(select name from sa_boards as s where s.id = board_id) as category_name'))
+	    $posts = Archive::select('sa_archives.*',DB::raw('(select name from sa_boards as s where s.id = board_id) as category_name'))
 	      ->whereRaw('board_id in 
             (
             SELECT node.board_id
@@ -54,14 +54,14 @@ class ArchiveController extends Controller {
 		*/
 	    // 속도를 조금 더 손본 쿼리. 전에는 where in 구문을 활용했는데, 속도가 너무 느려서 join 방식으로 변경.
 	    //DB::enableQueryLog();
-	    $masterList = Archive::select(['archives.id', 'archives.title','archives.summary_var','archives.reference','archives.board_id','archives.created_at',
-	        'archives.updated_at',DB::raw('(select name from sa_boards as s where s.id = archives.board_id) as category_name')])
+	    $masterList = Archive::select(['sa_archives.id', 'sa_archives.title','sa_archives.summary_var','sa_archives.reference','sa_archives.board_id','sa_archives.created_at',
+	        'sa_archives.updated_at',DB::raw('(select name from sa_boards as s where s.id = sa_archives.board_id) as category_name')])
 	      ->join(DB::raw("(
             SELECT node.board_id, parent.board_id as parent_id
             FROM sa_board_tree AS node ,
 				sa_board_tree AS parent
             WHERE node.lft BETWEEN parent.lft AND parent.rgt
-            ) as cate"),'cate.board_id','=','archives.board_id')
+            ) as cate"),'cate.board_id','=','sa_archives.board_id')
             ->where ( 'cate.parent_id',$boardId )->orderBy ( 'created_at', 'desc' )->paginate(20);
         //$queries = DB::getQueryLog();
         //print_r($queries);
@@ -96,14 +96,14 @@ class ArchiveController extends Controller {
 	    if(mb_strlen($word) < 2){
 	        echo '검색어가 너무 짧음.';
 	    } else {
-			$masterList = Archive::select('archives.*',DB::raw('(select name from sa_boards as s where s.id = archives.board_id) as category_name'))
+			$masterList = Archive::select('sa_archives.*',DB::raw('(select name from sa_boards as s where s.id = sa_archives.board_id) as category_name'))
 			->join(DB::raw("(
 				SELECT node.board_id, parent.board_id as parent_id
 				FROM sa_board_tree AS node ,
 					sa_board_tree AS parent
 				WHERE node.lft BETWEEN parent.lft AND parent.rgt
-				) as cate"),'cate.board_id','=','archives.board_id')
-			->search($word)->where ( 'cate.parent_id', $boardId)->orderBy('archives.created_at','desc')->paginate(30);
+				) as cate"),'cate.board_id','=','sa_archives.board_id')
+			->search($word)->where ( 'cate.parent_id', $boardId)->orderBy('sa_archives.created_at','desc')->paginate(30);
 
     	    // dataSet 생성
     	    $dataSet = $this->createViewData ();
@@ -447,16 +447,16 @@ class ArchiveController extends Controller {
 	    
 	    // 좀 더 세밀화 된 쿼리
 	    DB::update('update sa_boards
-            set count = (select count(archives.id)
+            set count = (select count(sa_archives.id)
                 from 
-                archives,
+                sa_archives,
                 (SELECT node.board_id, parent.board_id as parent_id
                 	FROM sa_board_tree AS node ,
                 			 sa_board_tree AS parent
                 	WHERE node.lft BETWEEN parent.lft AND parent.rgt
                 ) as cate
                 WHERE 
-                cate.board_id = archives.board_id
+                cate.board_id = sa_archives.board_id
                 and cate.parent_id = sa_boards.id
                 group by cate.parent_id)');
 	    

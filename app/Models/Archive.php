@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Archive extends Model
 {
     use FullTextSearch;
+    protected $table = 'sa_archives';
+    
     protected $fillable = ['title', 'content','board_id','reference','category'];
     protected $attributes = ['title'=>'',
      'content'=>'',
