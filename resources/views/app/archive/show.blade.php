@@ -9,8 +9,8 @@
 	게시판 경로
 	<nav aria-label="breadcrumb">
 		<ol class="breadcrumb">
-			@foreach ($categoryPath as $item)
-			<li class="breadcrumb-item"><a href="{{ route($ROUTE_ID.'.index')}}?category={{$item->id}}">{{ $item->name }}</a></li> 
+			@foreach ($boardPath as $item)
+			<li class="breadcrumb-item"><a href="{{ route($ROUTE_ID.'.index')}}?board={{$item->id}}">{{ $item->text }}</a></li> 
 			@endforeach
 		</ol>
 	</nav>

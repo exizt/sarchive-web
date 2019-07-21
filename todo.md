@@ -1,13 +1,14 @@
 # Todo
 * 상단 메뉴를 수정하고 DB저장과 json 파일 저장 하고 Ajax 로 호출하게 하기.
+  * 상단 메뉴. profile 설정에 따라서 다르게 나오게 하기. (음...) json ? file 방식 ? db 방식?
 * 프로필 관리 페이지 만들기.
-* 프로필 선택 페이지 만들기.
+* 프로필 선택 페이지 만들기. (이 화면이 메인화면이 될 수도 있음)
 * 글 작성/수정 시에 '글 출처' 에서 '펌글' or '내가 작성함' 을 선택해서 입력하게 하기.
-* 상단 메뉴. profile 설정에 따라서 다르게 나오게 하기. (음...)
 * boardId 로 진입시에 profileId 를 찾아서 처리하게 하는 부분 필요.
 
+
 # URLs
-* /archives/[게시물번호]
+* /archives/[게시물번호] : ArchiveController
 * /category/[카테고리명(한글가능)] : CategoryController
 * /page/[페이지명(한글가능)] : PageController
 * /board/[게시판번호] : 
