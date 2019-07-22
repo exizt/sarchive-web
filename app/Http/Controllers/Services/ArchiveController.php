@@ -176,12 +176,15 @@ class ArchiveController extends Controller {
 	    $boardId = $request->input('board', $this->ArchiveProfile->root_board_id);
 
 		$article = new Archive;
+		$archiveBoardList = ArchiveBoard::select(['id','name','parent_id','depth'])
+		->where ( 'profile_id', $this->ArchiveProfile->id )
+		->orderBy('index','asc')->get();
 
 	    // dataSet 생성
 	    $dataSet = $this->createViewData ();
 	    $dataSet ['article'] = $article;
-	    $dataSet ['categories'] = $this->getSubCategories($boardId);
 	    $dataSet ['parameters']['boardId'] = $boardId;
+		$dataSet ['boardList'] = $archiveBoardList;
 	    return view ( self::VIEW_PATH . '.create', $dataSet );
 	}
 	
@@ -201,13 +204,15 @@ class ArchiveController extends Controller {
 	    $article = Archive::where ( 'id', $id )->firstOrFail ();
 	    $boardId = $article->board_id;
 
+		$archiveBoardList = ArchiveBoard::select(['id','name','parent_id','depth'])
+		->where ( 'profile_id', $this->ArchiveProfile->id )
+		->orderBy('index','asc')->get();
+
 	    // create dataSet
 	    $dataSet = $this->createViewData ();
 	    $dataSet ['article'] = $article;
-	    $dataSet ['categories'] = $this->getCategories($boardId);
 	    $dataSet ['parameters']['boardId'] = $boardId;
-	    $dataSet ['categoryPath'] = $this->getCategoryPath($boardId);
-	    //$dataSet ['nav'] = $this->getDevMenus($boardId);
+		$dataSet ['boardList'] = $archiveBoardList;
 	    return view ( self::VIEW_PATH . '.edit', $dataSet );
 	    
 	}
@@ -304,7 +309,6 @@ class ArchiveController extends Controller {
 		$dataSet ['ROUTE_ID'] = self::ROUTE_ID;
 	    $dataSet ['VIEW_PATH'] = self::VIEW_PATH;
 	    $dataSet ['parameters'] = ['profile'=>$this->ArchiveProfile->id];
-	    //$dataSet ['nav'] = $this->getDevMenus();
 	    return $dataSet;
 	}
 
@@ -334,103 +338,9 @@ class ArchiveController extends Controller {
 		}
 	}
 
-	
-	/**
-	 * 개발 아카이브 의 목록 조회
-	 * 최상위 메뉴를 조회함.
-	 */
-	protected function getDevMenus($boardId='1'){
-	    $list = $this->getCategoryPath($boardId);
-	    $id = 1;
-	    if(count($list)>=1){
-	        $id = $list[0]->id;
-	    }
-	    return ArchiveBoard::where('parent_id',$id)->get();
-	}
-	
-	/**
-	 * 이전 링크 주소.
-	 * 바로 이전 주소를 가지고 셋팅을 하는데, '새로고침' 을 하는 경우도 있기 때문에, 세션에 넣어두고 활용한다.
-	 * @param Request $rqeust
-	 * @return string
-	 */
-	protected function getPreviousLink(Request $request)
-	{
-		$session_previousName = 'devscrap-previousList';
-		// 바로 이전 주소가 list 형태의 index 경로라면, flash session 에 저장.
-		$request->session()->reflash();
-		$request->session()->keep([$session_previousName]);
 		
-		$previous = url()->previous();
-		$previous_identifier = strtok($previous,'?');
-		
-		// 해당 패턴과 일치하거나 index 의 주소인 경우에 previous 세션에 저장
-		if($previous_identifier == route ( self::ROUTE_ID . '.index')){
-			$request->session()->flash($session_previousName, $previous);
-		}
-		
-		//session 에 해당 값이 있으면 세션 값 사용. 없으면 목록 주소로 대체.
-		return ($request->session()->get($session_previousName,'') != '') ?
-		$request->session()->get($session_previousName,'') : route ( self::ROUTE_ID . '.index');
-	}
-	
-	
-	public function getCategoryPath($boardId = 0)
-	{
-	    $list = DB::select('select parent.board_id as id, cate.name as name
-            from sa_board_tree as node,
-			sa_board_tree as parent,
-                sa_boards as cate
-            where node.lft between parent.lft and parent.rgt
-              and parent.board_id = cate.id
-              and node.board_id = ?
-            order by parent.lft',[$boardId]);
-	    //Log::debug('ArchiveBoard::getCategoryPath');
-	    
-	    return $list;
-	}
-	
 	/**
-	 * boardId 를 기준으로 상위 노드를 탐색하고, 해당되는 분류의 카테고리들을 출력한다.
-	 * @param number $boardId
-	 * @return
-	 */
-	public function getCategories($boardId=1)
-	{
-	    $list = $this->getCategoryPath($boardId);
-	    $id = 1;
-	    if(count($list)>=1){
-	        $id = $list[0]->id;
-	    }
-	    return $this->getSubCategories($id);
-	}
-	
-	/**
-	 * 하위 카테고리 Tree 를 조회.
-	 * 최상위 depth 는 0 이라고 볼 때, 이 메서드는 depth 를 최소 1 이상 에서 사용하게 됨.
-	 * @param number $boardId
-	 * @param number $depth
-	 */
-	public function getSubCategories($boardId = 0, $depth = 1)
-	{
-	    $list = DB::select("select concat( repeat(?, count(parent.board_id) - 1 - ?), cate.name) as name,
-                node.board_id as id,
-                cate.count as count
-            from sa_board_tree as node,
-				sa_board_tree as parent,
-				sa_board_tree as sub_parent,
-                sa_boards as cate
-            where node.lft between parent.lft and parent.rgt
-                and node.lft between sub_parent.lft and sub_parent.rgt
-                and sub_parent.board_id = ?
-                and cate.id = node.board_id
-            group by node.board_id
-            order by node.lft",[self::CATEGORY_SEPERATE_CHAR, $depth, $boardId]);
-	    return $list;
-	}
-	
-	/**
-	 * board 테이블의 count 값을 갱신
+	 * boardList 테이블의 count 값을 갱신
 	 */
 	private function updateBoardCount()
 	{
@@ -459,8 +369,104 @@ class ArchiveController extends Controller {
 	}
 	
 	/**
-	 * 카테고리의 게시글 카운팅을 하나씩 변경하려고...
+	 * 이전 링크 주소.
+	 * 바로 이전 주소를 가지고 셋팅을 하는데, '새로고침' 을 하는 경우도 있기 때문에, 세션에 넣어두고 활용한다.
+	 * 뭔가 동작이 원하는 느낌이 아니다...살펴봐야 할 듯...
+	 * @param Request $rqeust
+	 * @return string
 	 */
-	private function updateCategoryCounting(){}
+	protected function getPreviousLink(Request $request)
+	{
+		$session_previousName = 'devscrap-previousList';
+		// 바로 이전 주소가 list 형태의 index 경로라면, flash session 에 저장.
+		$request->session()->reflash();
+		$request->session()->keep([$session_previousName]);
+		
+		$previous = url()->previous();
+		$previous_identifier = strtok($previous,'?');
+		
+		// 해당 패턴과 일치하거나 index 의 주소인 경우에 previous 세션에 저장
+		if($previous_identifier == route ( self::ROUTE_ID . '.index')){
+			$request->session()->flash($session_previousName, $previous);
+		}
+		
+		//session 에 해당 값이 있으면 세션 값 사용. 없으면 목록 주소로 대체.
+		return ($request->session()->get($session_previousName,'') != '') ?
+		$request->session()->get($session_previousName,'') : route ( self::ROUTE_ID . '.index');
+	}
+
+	/**
+	 * 개발 아카이브 의 목록 조회
+	 * 최상위 메뉴를 조회함.
+	 * @deprecated
+	 */
+	protected function getDevMenus($boardId='1'){
+	    $list = $this->getCategoryPath($boardId);
+	    $id = 1;
+	    if(count($list)>=1){
+	        $id = $list[0]->id;
+	    }
+	    return ArchiveBoard::where('parent_id',$id)->get();
+	}
+	
+	/**
+	 * @deprecated
+	 */
+	public function getCategoryPath($boardId = 0)
+	{
+	    $list = DB::select('select parent.board_id as id, cate.name as name
+            from sa_board_tree as node,
+			sa_board_tree as parent,
+                sa_boards as cate
+            where node.lft between parent.lft and parent.rgt
+              and parent.board_id = cate.id
+              and node.board_id = ?
+            order by parent.lft',[$boardId]);
+	    //Log::debug('ArchiveBoard::getCategoryPath');
+	    
+	    return $list;
+	}
+	
+	/**
+	 * boardId 를 기준으로 상위 노드를 탐색하고, 해당되는 분류의 카테고리들을 출력한다.
+	 * @param number $boardId
+	 * @return
+	 * @deprecated
+	 */
+	public function getCategories($boardId=1)
+	{
+	    $list = $this->getCategoryPath($boardId);
+	    $id = 1;
+	    if(count($list)>=1){
+	        $id = $list[0]->id;
+	    }
+	    return $this->getSubCategories($id);
+	}
+	
+	/**
+	 * 하위 카테고리 Tree 를 조회.
+	 * 최상위 depth 는 0 이라고 볼 때, 이 메서드는 depth 를 최소 1 이상 에서 사용하게 됨.
+	 * @param number $boardId
+	 * @param number $depth
+	 * @deprecated
+	 */
+	public function getSubCategories($boardId = 0, $depth = 1)
+	{
+	    $list = DB::select("select concat( repeat(?, count(parent.board_id) - 1 - ?), cate.name) as name,
+                node.board_id as id,
+                cate.count as count
+            from sa_board_tree as node,
+				sa_board_tree as parent,
+				sa_board_tree as sub_parent,
+                sa_boards as cate
+            where node.lft between parent.lft and parent.rgt
+                and node.lft between sub_parent.lft and sub_parent.rgt
+                and sub_parent.board_id = ?
+                and cate.id = node.board_id
+            group by node.board_id
+            order by node.lft",[self::CATEGORY_SEPERATE_CHAR, $depth, $boardId]);
+	    return $list;
+	}
+
 	    
 }
