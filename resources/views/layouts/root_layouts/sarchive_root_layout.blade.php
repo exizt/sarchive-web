@@ -35,6 +35,7 @@
 @stack('script-head')
 <!--<script src="/assets/js/site-shortcut.js"></script>-->
 <link rel="stylesheet" href="/assets/site/archive/archive.css">
+<script src="/assets/js/core-func.js"></script>
 <script src="/assets/js/shortcut-key-event.js"></script>
 <script src="/assets/site/archive/archive.js"></script>
 </head>
@@ -42,7 +43,7 @@
 const SERVICE_URI = "/{{Request::path()}}";
 document.onkeyup = shortcutKeyEvent;
 </script>
-<body>
+<body @isset($parameters) @foreach ($parameters as $k => $v) data-{{$k}}="{{$v}}" @endforeach @endisset >
 	<header>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 			<a class="navbar-brand" href="/archives"><i class="fa fa-superpowers fa-spin" aria-hidden="true"></i>&nbsp;&nbsp;S아카이브</a>
@@ -51,16 +52,7 @@ document.onkeyup = shortcutKeyEvent;
 			</button>
 
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul class="navbar-nav mr-auto">
-					<li class="nav-item"><a class="nav-link" href="/archives?board=2">데이터베이스</a></li> 
-					<li class="nav-item"><a class="nav-link" href="/archives?board=3">프론트엔드</a></li> 
-					<li class="nav-item"><a class="nav-link" href="/archives?board=4">웹 개발</a></li> 
-					<li class="nav-item"><a class="nav-link" href="/archives?board=5">윈도우 프로그래밍</a></li> 
-					<li class="nav-item"><a class="nav-link" href="/archives?board=6">iOS 앱 개발</a></li> 
-					<li class="nav-item"><a class="nav-link" href="/archives?board=7">안드로이드 앱 개발</a></li> 
-					<li class="nav-item"><a class="nav-link" href="/archives?board=17">개발 이론, 도구</a></li> 
-					<li class="nav-item"><a class="nav-link" href="/archives?board=45">기타</a></li> 
-				</ul>
+				<ul class="navbar-nav mr-auto" id="shh-header-navbar"></ul>
 				<form class="form-inline my-2 my-lg-0" action="{{ route('archives.search')}}">
 					@isset($parameters['profile'])
 						<input type="hidden" name="profile" value="{{ $parameters['profile']}}">
@@ -103,4 +95,19 @@ document.onkeyup = shortcutKeyEvent;
         </div>
 	</footer>
 </body>
+<script>
+	$(function(){
+		ajaxHeaderNav()
+	})
+	function ajaxHeaderNav(){
+		$.getJSON("/archives/ajax_headerNav",{
+			profile : wrapData($("body").data("profile"),1)
+		},function(data){
+			$.each(data.list, function(i,item){
+				var html = '<li class="nav-item"><a class="nav-link" href="/archives?board='+item.id+'">'+item.name+'</a></li>'
+				$("#shh-header-navbar").append(html)
+			})
+		})
+	}
+</script>
 </html>

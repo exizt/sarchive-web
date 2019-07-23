@@ -120,7 +120,7 @@ class ArchiveController extends Controller {
 	/**
 	 * 아카이브 화면에서 nav 메뉴를 가져오는 Ajax 부분.
 	 */
-	public function ajaxGetBoardList(Request $request){
+	public function doAjax_getBoardList(Request $request){
 		// 프로필 아이디 도 확인해봐야 함...
 		// user_id 로 profile id 와 같이 조회해서 있는지를 체크하면 됨.
 
@@ -141,6 +141,17 @@ class ArchiveController extends Controller {
 
 		$dataSet['list'] = $masterList;
 		$dataSet['current'] = $currentNode;
+		return response()->json($dataSet);
+	}
+
+	public function doAjax_getHeaderNav(Request $request){
+		$this->getArchiveProfile($request);
+		//$archiveBoardList = ArchiveBoard::find($article->board_id);
+		$masterList = $archiveBoardList = ArchiveBoard::select(['id','name','parent_id','depth'])
+		->where([['profile_id',$this->ArchiveProfile->id],['depth','2']])
+		->orderBy('index','asc')->get();
+
+		$dataSet['list'] = $masterList;
 		return response()->json($dataSet);
 	}
 
