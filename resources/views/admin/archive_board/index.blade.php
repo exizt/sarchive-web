@@ -17,7 +17,7 @@
 	<li class="nav-item"><a class="nav-link" href="#" data-profile="2">일반 아카이브</a></li>
 </ul>
 
-<div id="tree-container"></div>
+<div id="tree-container" class="mt-1 mb-3"></div>
 <button id="shh-btn-save" class="btn btn-sm btn-primary">저장</button>
 <button id="shh-btn-create" class="btn btn-sm btn-outline-success">게시판 추가</button>
 <button id="shh-btn-rename" class="btn btn-sm btn-outline-success">이름 변경</button>
@@ -210,4 +210,4 @@ function redrawJSTree(dataJson){
 
 </script>
 
-@stop
+@endsection
