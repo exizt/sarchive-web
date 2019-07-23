@@ -235,9 +235,9 @@ class ArchiveBoardMgmt extends Controller
                     'index' => $i,
                     'name' => $item['text'],
                     'depth' => $item['depth'],
-                    'path' => $item['path'],
-                    'profile_id' => $profileId]
-                );
+                    'path' => json_encode($item['path']),
+                    'profile_id' => $profileId
+                ]);
 
                 // 신규 생성된 id 를 changedIdList 에 추가함.
                 $changedIdList[$item['id']] = $archiveBoard->id;

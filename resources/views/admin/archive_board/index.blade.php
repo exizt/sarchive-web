@@ -116,6 +116,7 @@ function doSave(dataSet){
 		showAlertMessage("저장되었습니다.")
     }).always(function(){
 		s.alert("close")
+		ajaxJSTree(_selectedProfileId)
 	});
 }
 
