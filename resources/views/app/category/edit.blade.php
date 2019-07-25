@@ -19,7 +19,7 @@ $(function() {
 		<input type="hidden" name="_method" value="PUT">
 
 		<div class="card mt-3">
-			<h5 class="card-header">글 수정</h5>
+			<h5 class="card-header">분류 : ({{ $item->name }}) 편집</h5>
 			<div class="card-body px-1 px-md-3">
 				@include($VIEW_PATH.'._form')
 				<div class="d-flex w-100 justify-content-between">

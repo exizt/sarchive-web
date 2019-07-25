@@ -55,8 +55,8 @@ class ArchiveController extends Controller {
 		*/
 	    // 속도를 조금 더 손본 쿼리. 전에는 where in 구문을 활용했는데, 속도가 너무 느려서 join 방식으로 변경.
 	    //DB::enableQueryLog();
-	    $masterList = Archive::select(['id', 'title','summary_var','reference','board_id','created_at','updated_at'
-			,DB::raw('(select name from sa_boards as s where s.id = board_id) as category_name')])
+	    $masterList = Archive::select(['id', 'title','summary_var','reference','board_id','created_at','updated_at','category'
+			,DB::raw('(select name from sa_boards as s where s.id = board_id) as board')])
 	      	->join(DB::raw("(
             select node.board_id as t_board_id, parent.board_id as t_parent_id
             from sa_board_tree AS node ,
@@ -74,7 +74,7 @@ class ArchiveController extends Controller {
 		
 		// dataSet 생성
         $dataSet = $this->createViewData ();
-        $dataSet ['posts'] = $masterList;
+        $dataSet ['masterList'] = $masterList;
 		$dataSet ['archiveBoard'] = $archiveBoard;
 		$dataSet ['parameters']['boardId'] = $boardId;
         return view ( self::VIEW_PATH . '.index', $dataSet );
@@ -95,7 +95,7 @@ class ArchiveController extends Controller {
 	    if(mb_strlen($word) < 2){
 	        echo '검색어가 너무 짧음.';
 	    } else {
-			$masterList = Archive::select(['id', 'title','summary_var','reference','board_id','created_at','updated_at'
+			$masterList = Archive::select(['id', 'title','summary_var','reference','board_id','created_at','updated_at','category'
 				,DB::raw('(select name from sa_boards as s where s.id = board_id) as category_name')])
 				->join(DB::raw("(
 				select node.board_id as t_board_id, parent.board_id as t_parent_id
@@ -295,7 +295,7 @@ class ArchiveController extends Controller {
 			ArchiveCategoryRel::where('archive_id',$id)->delete();
 
 			foreach($article->category_array as $item){
-				ArchiveCategoryRel::create(['archive_id'=>$id,'category'=>$item]);
+				ArchiveCategoryRel::create(['profile_id'=>$this->ArchiveProfile->id,'archive_id'=>$id,'category'=>$item]);
 			}
 		}
 

@@ -8,12 +8,13 @@
 				<div class="col-md-9">
 					<div class="row px-0 mx-0">
 						<div class="d-flex w-100 justify-content-between">
-						<h4 class="">분류 : {{ $parameters['category']}}</h4>
-							<small class="text-mute">Page {{ $archives->currentPage() }} of {{ $archives->lastPage() }}</small>
+							<h4 class="">분류 : {{ $parameters['category']}}&nbsp;&nbsp;&nbsp;<a class="btn btn-outline-info btn-sm site-shortcut-key-e" href="{{ route($ROUTE_ID.'.edit',$parameters['category']) }}" role="button">편집</a>
+						</h4>
+						<small class="text-mute">Page {{ $archives->currentPage() }}/{{ $archives->lastPage() }}</small>
 						</div>
-						<p class="lead"></p>
+						<p class="lead">{{ $ArchiveCategory->text }}</p>
 					</div>
-					<hr class="mt-1">
+					<h6>분류에 해당하는 글 목록</h6>
 					<div class="list-group">
 						@foreach ($archives as $item) <a class="list-group-item list-group-item-action flex-column align-items-start" href="{{ route($ROUTE_ID.'.show',$item->id) }}">
 							<div class="d-flex w-100 justify-content-between">

@@ -9,22 +9,23 @@
 					<div class="row px-0 mx-0">
 						<div class="d-flex w-100 justify-content-between">
 							<h4 class="">게시글 목록 (선택된 게시판 : {{ $archiveBoard->name }})</h4>
-							<small class="text-mute">Page {{ $posts->currentPage() }} of {{ $posts->lastPage() }}</small>
+							<small class="text-mute">Page {{ $masterList->currentPage() }} of {{ $masterList->lastPage() }}</small>
 						</div>
 						<p class="lead">{{ $archiveBoard->comment }}</p>
 					</div>
 					<hr class="mt-1">
 					<div class="list-group">
-						@foreach ($posts as $post) <a class="list-group-item list-group-item-action flex-column align-items-start" href="{{ route($ROUTE_ID.'.show',$post->id) }}">
+						@foreach ($masterList as $item) <a class="list-group-item list-group-item-action flex-column align-items-start" href="{{ route($ROUTE_ID.'.show',$item->id) }}">
 							<div class="d-flex w-100 justify-content-between">
-								<h5 class="mb-1">{{ $post->title }}</h5>
-								<small>{{ $post->created_at->format('Y-m-d') }}</small>
+								<h5 class="mb-1">{{ $item->title }}</h5>
+								<small>{{ $item->created_at->format('Y-m-d') }}</small>
 							</div>
 							<p class="mb-1 pl-md-3 cz-item-summary">
-								<small>{{ $post->summary_var }}</small>
+								<small>{{ $item->summary_var }}</small>
 							</p>
 							<div class="d-flex justify-content-between">
-								<small>게시판 : {{ $post->category_name }}</small>
+								<small>게시판 : {{ $item->board }}</small>
+								<small>분류 : {{ $item->category }}</small>
 							</div>
 						</a> @endforeach
 					</div>
@@ -40,7 +41,7 @@
 			</div>
 		</div>
 		<hr>
-		<div class="text-xs-center">{{ $posts->appends(['board' => $parameters['boardId']])->links() }}</div>
+		<div class="text-xs-center">{{ $masterList->appends(['board' => $parameters['boardId']])->links() }}</div>
 	</div>
 </div>
 <script>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Archive;
 use App\Models\ArchiveCategory;
 use App\Models\ArchiveCategoryRel;
+use App\Models\ArchiveCategoryParentRel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -44,6 +45,8 @@ class CategoryController extends Controller {
 	public function show(Request $request, $name_enc) {
 		$name = urldecode($name_enc);
 		
+		$archiveCategory = ArchiveCategory::firstOrNew (['name'=>$name]);
+
 		// 이 분류에 속하는 문서 목록을 출력해준다
 		$masterList = Archive::select(['sa_archives.id', 'sa_archives.title','sa_archives.summary_var','sa_archives.reference','sa_archives.board_id','sa_archives.created_at','sa_archives.updated_at'])
 	      	->join("sa_category_archive_rel as rel",'rel.archive_id','=','id')
@@ -55,6 +58,7 @@ class CategoryController extends Controller {
 	    // create dataSet
 	    $dataSet = $this->createViewData ();
 		$dataSet ['archives'] = $masterList;
+		$dataSet ['ArchiveCategory'] = $archiveCategory;
 		$dataSet ['parameters']['category'] = $name;
 	    return view ( self::VIEW_PATH . '.show', $dataSet );
 	}
@@ -102,6 +106,24 @@ class CategoryController extends Controller {
 		$archiveCategory->parent = $request->input ('parent');
 		$archiveCategory->save ();
 		
+		//parent 에 대한 처리
+		{
+			ArchiveCategoryParentRel::where([
+				['profile_id','=','1'],
+				['child',$archiveCategory->name]
+			])->delete();
+
+			
+			foreach($archiveCategory->parent_array as $item){
+				ArchiveCategoryParentRel::create([
+					'profile_id' => 1,
+					'parent'=>$item,
+					'child'=>$archiveCategory->name
+				]);
+			}
+		}
+
+
 		// after processing
 		if ($request->action === 'continue') {
 			return redirect ()->back ()->withSuccess ( 'Post saved.' );

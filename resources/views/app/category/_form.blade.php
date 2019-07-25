@@ -37,16 +37,15 @@ tinymce.init({
 });
 </script>
 <div class="">
-	<h4>{{ $item->name }}</h4>
-
 	<input name="id" type="hidden" class="form-control" value="{{ $item->id }}" placeholder="" aria-label="">
 
 	<div class="form-group">
-		<textarea name="text" class="form-control" rows="14" id="content" placeholder="내용">{{ htmlentities($item->text) }}</textarea>
+		<label for="item-content">분류 설명</label>
+		<textarea name="text" class="form-control" rows="14" id="item-content" placeholder="내용">{{ htmlentities($item->text) }}</textarea>
 	</div>
 
 	<div class="form-group">
-		<label for="article-parent">상위 분류 (ex: [분류명A] [분류명B])</label>
-		<input name="parent" type="text" id="article-parent" class="form-control" value="{{ $item->parent }}" placeholder="" aria-label="">
+		<label for="item-parent">상위 분류 (ex: [분류명A] [분류명B])</label>
+		<input name="parent" type="text" id="item-parent" class="form-control" value="{{ $item->parent }}" placeholder="" aria-label="">
 	</div>
 </div>
