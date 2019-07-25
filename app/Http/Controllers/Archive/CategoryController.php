@@ -3,13 +3,15 @@
 namespace App\Http\Controllers\Archive;
 
 use App\Http\Controllers\Controller;
-use App\Models\Page;
+use App\Models\Archive;
+use App\Models\ArchiveCategory;
+use App\Models\ArchiveCategoryRel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller {
-	protected const VIEW_PATH = 'archive.page';
-	protected const ROUTE_ID = 'page';
+	protected const VIEW_PATH = 'app.category';
+	protected const ROUTE_ID = 'category';
 
 	/**
 	 * 생성자
@@ -33,44 +35,28 @@ class CategoryController extends Controller {
 
 	}
 	
-
 	/**
 	 * 글 본문 읽기
 	 *
 	 * @param int $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function show(Request $request, $pageTitle) {
-	    $pageData = Page::where ( 'title', $pageTitle )->firstOrFail ();
-	    
+	public function show(Request $request, $name_enc) {
+		$name = urldecode($name_enc);
+		
+		// 이 분류에 속하는 문서 목록을 출력해준다
+		$masterList = Archive::select(['sa_archives.id', 'sa_archives.title','sa_archives.summary_var','sa_archives.reference','sa_archives.board_id','sa_archives.created_at','sa_archives.updated_at'])
+	      	->join("sa_category_archive_rel as rel",'rel.archive_id','=','id')
+			->where ( 'rel.category',$name )
+			->orderBy ( 'sa_archives.created_at', 'desc' )
+			->paginate(20);
+
+
 	    // create dataSet
 	    $dataSet = $this->createViewData ();
-	    $dataSet ['page'] = $pageData;
+		$dataSet ['archives'] = $masterList;
+		$dataSet ['parameters']['category'] = $name;
 	    return view ( self::VIEW_PATH . '.show', $dataSet );
-	}
-	
-	
-	/**
-	 * 글 작성
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function create(Request $request) {
-	    $categoryId = $request->input('category', $this->rootCategoryId);
-	    
-	    // 
-	    $article = collect ( new Archive () );
-	    $article->title = '';
-		$article->content = '';
-		$article->reference = '';
-
-	    // dataSet 생성
-	    $dataSet = $this->createViewData ();
-	    $dataSet ['article'] = $article;
-	    $dataSet ['categories'] = $this->getSubCategories($categoryId);
-	    $dataSet ['parameters']['categoryId'] = $categoryId;
-	    $dataSet ['nav'] = $this->getDevMenus($categoryId);
-	    return view ( self::VIEW_PATH . '.create', $dataSet );
 	}
 	
 	/**
@@ -79,52 +65,20 @@ class CategoryController extends Controller {
 	 * @param int $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function edit(Request $request, $id) {
-	    $request->session()->reflash();
-	    $request->session()->keep(['devscrap-previousList']);
-	    
+	public function edit(Request $request, $name_enc) {
+		$name = urldecode($name_enc);
+
 	    //
-	    $article = Archive::where ( 'id', $id )->firstOrFail ();
+	    $archiveCategory = ArchiveCategory::firstOrNew (['name'=>$name]);
 	    
 	    // create dataSet
 	    $dataSet = $this->createViewData ();
-	    $dataSet ['article'] = $article;
-	    $dataSet ['categories'] = $this->getCategories($categoryId);
-	    $dataSet ['parameters']['categoryId'] = $categoryId;
-	    $dataSet ['categoryPath'] = $this->getCategoryPath($categoryId);
-	    $dataSet ['nav'] = $this->getDevMenus($categoryId);
+	    $dataSet ['item'] = $archiveCategory;
+	    //$dataSet ['parameters']['categoryId'] = $categoryId;
 	    return view ( self::VIEW_PATH . '.edit', $dataSet );
 	    
 	}
-	
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @param \Illuminate\Http\Request $request        	
-	 * @return \Illuminate\Http\Response
-	 */
-	public function store(Request $request) {
-		//
-		$title = $request->input ( 'title' );
-		$content = $request->input ( 'content' );
-		$reference = $request->input ('reference');
 
-
-		$dataSet = array ();
-		$dataSet ['title'] = $title;
-		$dataSet ['content'] = $content;
-		$dataSet ['reference'] = $reference;
-
-		
-		$article = Archive::create ( $dataSet );
-		$article->save ();
-		
-		$this->updateCategoryCountingAll();
-		
-		// result processing
-		return redirect ()->route ( $this->rootRouteId . '.index' )->withSuccess ( 'New Post Successfully Created.' );
-	}
-	
 	/**
 	 * Update the specified resource in storage.
 	 *
@@ -132,30 +86,27 @@ class CategoryController extends Controller {
 	 * @param int $id        	
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update(Request $request, $id) {
-		$this->seperateServiceRoot($request);
-		$request->session()->reflash();
-		$request->session()->keep(['devscrap-previousList']);
-		
-		// 있는 값인지 id 체크
-		$article = Archive::findOrFail ( $id );
-		
-		$title = $request->input ( 'title' );
-		$content = $request->input ( 'content' );
-		$reference = $request->input ('reference');
+	public function update(Request $request, $name_enc) {
+		$name = urldecode($name_enc);
+
+		$id = $request->input ('id');
+
+		if(is_numeric($id) && $id > 0){
+			$archiveCategory = ArchiveCategory::findOrFail ($id);
+		} else {
+			$archiveCategory = ArchiveCategory::firstOrNew (['name'=>$name]);
+		}
 		
 		// saving
-		$article->title = $title;
-		$article->content = $content;
-		$article->reference = $reference;
-		$article->save ();
+		$archiveCategory->text = $request->input ('text');
+		$archiveCategory->parent = $request->input ('parent');
+		$archiveCategory->save ();
 		
-		$this->updateCategoryCountingAll();
 		// after processing
 		if ($request->action === 'continue') {
 			return redirect ()->back ()->withSuccess ( 'Post saved.' );
 		}
-		return redirect ()->route ( $this->rootRouteId . '.show', $id)->withSuccess ( 'Post saved.' );
+		return redirect ()->route ( self::ROUTE_ID . '.show', $name_enc)->withSuccess ( 'Post saved.' );
 	}
 	
 	/**
@@ -166,13 +117,11 @@ class CategoryController extends Controller {
 	 */
 	public function destroy($id) {
 
-	    $article = Archive::findOrFail($id);
-	    $article->delete();
-		
-	    $this->updateCategoryCountingAll();
+	    $item = ArchiveCategory::findOrFail($id);
+	    $item->delete();
 	    
 		return redirect()
-		->route($this->rootRouteId.'.index')
+		->route(self::ROUTE_ID.'.index')
 		->withSuccess('Post deleted.');
 	}
 	

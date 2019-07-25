@@ -21,7 +21,7 @@
 			* 생성일시 : {{ $article->created_at->format('Y-m-d g:ia') }}<br>
 			* 분류 : 
 			@foreach ($article->category_array as $item)
-				<a href="/분류/{{$item}}">[{{$item}}]</a>&nbsp;
+				<a href="/category/{{urlencode($item)}}">[{{$item}}]</a>&nbsp;
 			@endforeach
 		</div>
 	</div>

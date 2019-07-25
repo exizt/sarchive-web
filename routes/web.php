@@ -10,6 +10,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('archives/ajax_headerNav', 'Services\ArchiveController@doAjax_getHeaderNav');
     Route::resource('archives', 'Services\ArchiveController');
     Route::resource('page', 'Archive\PageController');
+    Route::resource('category', 'Archive\CategoryController');
+    //Route::get('category/{name?}', 'Archive\CategoryController@show')->where('category','(.*)');
     Route::view('admin','admin.index',['ROUTE_ID'=>'archives']);
 });
 Route::middleware(['auth'])->name('admin.')->prefix('admin')->group(function(){

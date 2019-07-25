@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Services;
 use App\Http\Controllers\Controller;
 use App\Models\Archive;
 use App\Models\ArchiveBoard;
+use App\Models\ArchiveCategoryRel;
 use App\Models\Profile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -274,18 +275,30 @@ class ArchiveController extends Controller {
 		$content = $request->input ( 'content' );
 		$board_id = $request->input ( 'board_id' , '1');
 		$reference = $request->input ('reference');
-		
+		$category = $request->input ('category');
+
 		// saving
 		// 있는 값인지 id 체크
 		$article = Archive::findOrFail ( $id );
+		$beforeCategory = $article->category;
 		$article->title = $title;
 		$article->content = $content;
 		$article->board_id = $board_id;
 		$article->reference = $reference;
-		$article->category = $request->input ('category');
+		$article->category = $category;
 		$article->save ();
-		
+
 		$this->updateBoardCount();
+
+		// category 관련 처리
+		if($beforeCategory != $category){
+			ArchiveCategoryRel::where('archive_id',$id)->delete();
+
+			foreach($article->category_array as $item){
+				ArchiveCategoryRel::create(['archive_id'=>$id,'category'=>$item]);
+			}
+		}
+
 		// after processing
 		if ($request->action === 'continue') {
 			return redirect ()->back ()->withSuccess ( 'Post saved.' );
