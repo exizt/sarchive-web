@@ -32,7 +32,6 @@ class PageController extends Controller {
         return view ( self::VIEW_PATH . '.index', $dataSet );
 
 	}
-	
 
 	/**
 	 * 글 본문 읽기
@@ -45,7 +44,10 @@ class PageController extends Controller {
 	    
 	    // create dataSet
 	    $dataSet = $this->createViewData ();
-	    $dataSet ['page'] = $pageData;
+		$dataSet ['page'] = $pageData;
+		if($request->has('profile')){
+			$dataSet ['parameters']['profile'] = $request->input('profile');
+		}
 	    return view ( self::VIEW_PATH . '.show', $dataSet );
 	}
 	

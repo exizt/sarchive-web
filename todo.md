@@ -40,6 +40,7 @@
 북마크
 * bookmark : 임시로 북마크 하는 것을 의미. 잠시 뒤에 볼 것 같은 항목들을 북마크 하는 것.
 * favorite : 매우 자주 찾을 것 같은 문서를 의미.
+* 인덱싱을 고려할 때에 별도의 테이블로 구성하는 것이 좋을 듯.
 
 
 # 레이아웃
@@ -115,10 +116,10 @@ Archives | 아카이브 테이블
   * title : 아카이브 제목
   * content : 아카이브 내용
   * board_id : 게시판 id
-  * profile_id : 이게 왜 들어간건지 아직 고민중...
   * summary_var : 내용 요약글. (varchar 255)
   * reference : 출처. 링크 등.
   * category : [분류명][분류명2]
+  * profile_id : 거의 사용되지 않는 값. 차후의 통계나 활용을 위해 넣어둔 컬럼. 값을 제대로 넣도록 함.
 * 인덱스
   * sa_archives_latest_select_index : (board_id, created desc) 인덱스. 카테고리별로 정렬된 인덱스. 목록 불러올 때 이용되는 인덱스.
   * fulltext_index (title, content) 'Full Text' : 검색용 인덱스

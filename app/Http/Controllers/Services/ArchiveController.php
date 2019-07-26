@@ -31,8 +31,8 @@ class ArchiveController extends Controller {
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function index(Request $request) {
-		$this->getArchiveProfile($request);
+	public function index(Request $request, $profileId) {
+		$this->getArchiveProfileFromID($profileId);
 
 	    $boardId = $request->input('board', $this->ArchiveProfile->root_board_id);
 
@@ -76,7 +76,8 @@ class ArchiveController extends Controller {
         $dataSet = $this->createViewData ();
         $dataSet ['masterList'] = $masterList;
 		$dataSet ['archiveBoard'] = $archiveBoard;
-		$dataSet ['parameters']['boardId'] = $boardId;
+		$dataSet ['parameters']['board'] = $boardId;
+		$dataSet ['parameters']['profile'] = $profileId;
         return view ( self::VIEW_PATH . '.index', $dataSet );
 
 	}
@@ -111,7 +112,7 @@ class ArchiveController extends Controller {
     	    // dataSet 생성
     	    $dataSet = $this->createViewData ();
     	    $dataSet ['articles'] = $masterList;
-    	    $dataSet ['parameters']['boardId'] = $boardId;
+    	    $dataSet ['parameters']['board'] = $boardId;
     	    $dataSet ['parameters']['q'] = $word;
     	    return view ( self::VIEW_PATH . '.search', $dataSet );
 	        
@@ -162,16 +163,17 @@ class ArchiveController extends Controller {
 	 * @param int $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function show(Request $request, $id) {
-		$this->getArchiveProfile($request);
-	    $article = Archive::where ( 'id', $id )->firstOrFail ();
+	public function show(Request $request, $profileId, $archiveId) {
+		//$this->getArchiveProfile($request);
+	    $article = Archive::where ( 'id', $archiveId )->firstOrFail ();
 		$archiveBoard = ArchiveBoard::find($article->board_id);
-	    //$boardId = $article->board_id;
+
 		
 	    // create dataSet
 	    $dataSet = $this->createViewData ();
 	    $dataSet ['article'] = $article;
-	    $dataSet ['parameters']['boardId'] = $article->board_id;
+		//$dataSet ['parameters']['board'] = $article->board_id;
+		$dataSet ['parameters']['profile'] = $profileId;
 		$dataSet ['boardPath'] = json_decode($archiveBoard->path);
 	    $dataSet ['previousList'] = $this->getPreviousLink($request);
 	    return view ( self::VIEW_PATH . '.show', $dataSet );
@@ -183,19 +185,21 @@ class ArchiveController extends Controller {
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function create(Request $request) {
-		$this->getArchiveProfile($request);
+	public function create(Request $request, $profileId) {
+		$this->getArchiveProfileFromID($profileId);
 	    $boardId = $request->input('board', $this->ArchiveProfile->root_board_id);
 
 		$article = new Archive;
 		$archiveBoardList = ArchiveBoard::select(['id','name','parent_id','depth'])
-		->where ( 'profile_id', $this->ArchiveProfile->id )
+		->where ( 'profile_id', $profileId )
 		->orderBy('index','asc')->get();
 
 	    // dataSet 생성
 	    $dataSet = $this->createViewData ();
 	    $dataSet ['article'] = $article;
-	    $dataSet ['parameters']['boardId'] = $boardId;
+		//$dataSet ['parameters']['board'] = $boardId;
+		$dataSet ['parameters']['profile'] = $profileId;
+		$dataSet ['selectedBoard'] = $boardId;
 		$dataSet ['boardList'] = $archiveBoardList;
 	    return view ( self::VIEW_PATH . '.create', $dataSet );
 	}
@@ -206,24 +210,25 @@ class ArchiveController extends Controller {
 	 * @param int $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function edit(Request $request, $id) {
-		$this->getArchiveProfile($request);
+	public function edit(Request $request, $profileId, $archiveId) {
+		$this->getArchiveProfileFromID($profileId);
 	    $request->session()->reflash();
 	    $request->session()->keep(['devscrap-previousList']);
 		
-		
 	    //
-	    $article = Archive::where ( 'id', $id )->firstOrFail ();
+	    $article = Archive::where ( 'id', $archiveId )->firstOrFail ();
 	    $boardId = $article->board_id;
 
+		// 게시판 목록을 조회. 셀렉트박스 를 만들기 위함.
 		$archiveBoardList = ArchiveBoard::select(['id','name','parent_id','depth'])
-		->where ( 'profile_id', $this->ArchiveProfile->id )
+		->where ( 'profile_id', $profileId )
 		->orderBy('index','asc')->get();
 
 	    // create dataSet
 	    $dataSet = $this->createViewData ();
-	    $dataSet ['article'] = $article;
-	    $dataSet ['parameters']['boardId'] = $boardId;
+		$dataSet ['article'] = $article;
+		$dataSet ['parameters']['profile'] = $profileId;
+	    $dataSet ['selectedBoard'] = $boardId;
 		$dataSet ['boardList'] = $archiveBoardList;
 	    return view ( self::VIEW_PATH . '.edit', $dataSet );
 	    
@@ -235,13 +240,14 @@ class ArchiveController extends Controller {
 	 * @param \Illuminate\Http\Request $request        	
 	 * @return \Illuminate\Http\Response
 	 */
-	public function store(Request $request) {
-		$this->getArchiveProfile($request);
+	public function store(Request $request, $profileId) {
+		$this->getArchiveProfileFromID($profileId);
 		//
 		$title = $request->input ( 'title' );
 		$content = $request->input ( 'content' );
 		$board_id = $request->input ( 'board_id' , '1');
 		$reference = $request->input ('reference');
+		$category = $request->input ('category');
 
 		// insert row		
 		$article = new Archive;
@@ -249,13 +255,18 @@ class ArchiveController extends Controller {
 		$article->content = $content;
 		$article->board_id = $board_id;
 		$article->reference = $reference;
-		$article->category = $request->input ('category');
+		$article->category = $category;
+		$article->profile_id = $profileId;
 		$article->save ();
 		
 		$this->updateBoardCount();
 		
+		foreach($article->category_array as $item){
+			ArchiveCategoryRel::create(['profile_id'=>$profileId,'archive_id'=>$archiveId,'category'=>$item]);
+		}
+
 		// result processing
-		return redirect ()->route ( self::ROUTE_ID . '.index' )->withSuccess ( 'New Post Successfully Created.' );
+		return redirect ()->route ( self::ROUTE_ID . '.show',['profile'=>$profileId, 'archive'=>$article->id] )->withSuccess ( 'New Post Successfully Created.' );
 	}
 	
 	/**
@@ -265,7 +276,7 @@ class ArchiveController extends Controller {
 	 * @param int $id        	
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update(Request $request, $id) {
+	public function update(Request $request, $profileId, $archiveId) {
 		$this->getArchiveProfile($request);
 		$request->session()->reflash();
 		$request->session()->keep(['devscrap-previousList']);
@@ -279,7 +290,7 @@ class ArchiveController extends Controller {
 
 		// saving
 		// 있는 값인지 id 체크
-		$article = Archive::findOrFail ( $id );
+		$article = Archive::findOrFail ( $archiveId );
 		$beforeCategory = $article->category;
 		$article->title = $title;
 		$article->content = $content;
@@ -292,10 +303,10 @@ class ArchiveController extends Controller {
 
 		// category 관련 처리
 		if($beforeCategory != $category){
-			ArchiveCategoryRel::where('archive_id',$id)->delete();
+			ArchiveCategoryRel::where('archive_id',$archiveId)->delete();
 
 			foreach($article->category_array as $item){
-				ArchiveCategoryRel::create(['profile_id'=>$this->ArchiveProfile->id,'archive_id'=>$id,'category'=>$item]);
+				ArchiveCategoryRel::create(['profile_id'=>$profileId,'archive_id'=>$archiveId,'category'=>$item]);
 			}
 		}
 
@@ -303,7 +314,7 @@ class ArchiveController extends Controller {
 		if ($request->action === 'continue') {
 			return redirect ()->back ()->withSuccess ( 'Post saved.' );
 		}
-		return redirect ()->route ( self::ROUTE_ID . '.show', $id)->withSuccess ( 'Post saved.' );
+		return redirect ()->route ( self::ROUTE_ID . '.show',['profile'=>$profileId, 'archive'=>$article->id])->withSuccess ( 'Post saved.' );
 	}
 	
 	/**
@@ -312,15 +323,15 @@ class ArchiveController extends Controller {
 	 * @param int $id        	
 	 * @return \Illuminate\Http\Response
 	 */
-	public function destroy($id) {
+	public function destroy($profileId, $archiveId) {
 
-	    $article = Archive::findOrFail($id);
-	    $article->delete();
+	    $item = Archive::findOrFail($archiveId);
+	    $item->delete();
 		
 	    $this->updateBoardCount();
 	    
 		return redirect()
-		->route(self::ROUTE_ID.'.index')
+		->route(self::ROUTE_ID.'.index', ['profile'=>$profileId])
 		->withSuccess('Post deleted.');
 	}
 	
@@ -332,7 +343,7 @@ class ArchiveController extends Controller {
 	    $dataSet = array ();
 		$dataSet ['ROUTE_ID'] = self::ROUTE_ID;
 	    $dataSet ['VIEW_PATH'] = self::VIEW_PATH;
-	    $dataSet ['parameters'] = ['profile'=>$this->ArchiveProfile->id];
+	    $dataSet ['parameters'] = array();
 	    return $dataSet;
 	}
 
@@ -361,6 +372,21 @@ class ArchiveController extends Controller {
 			->firstOrFail ();
 		}
 	}
+
+		
+	/**
+	 * 분기에 따른 처리.
+	 * '개발 전용' 과 '일반 전용' 으로 구분. 향후에 더 나뉘어질 수 있음. 귀찮으니 하드코딩한다. 
+	 */
+	private function getArchiveProfileFromID($profileId)
+	{
+		$userId = Auth::id();
+		// profileId 를 이용한 접근
+		$this->ArchiveProfile = Profile::select(['id','name','root_board_id','route'])
+			->where ( [['user_id', Auth::id() ],['id',$profileId]])
+			->firstOrFail ();
+	}
+
 
 		
 	/**
@@ -410,13 +436,13 @@ class ArchiveController extends Controller {
 		$previous_identifier = strtok($previous,'?');
 		
 		// 해당 패턴과 일치하거나 index 의 주소인 경우에 previous 세션에 저장
-		if($previous_identifier == route ( self::ROUTE_ID . '.index')){
+		if($previous_identifier == route ( self::ROUTE_ID . '.index', ['profile'=>1])){
 			$request->session()->flash($session_previousName, $previous);
 		}
 		
 		//session 에 해당 값이 있으면 세션 값 사용. 없으면 목록 주소로 대체.
 		return ($request->session()->get($session_previousName,'') != '') ?
-		$request->session()->get($session_previousName,'') : route ( self::ROUTE_ID . '.index');
+		$request->session()->get($session_previousName,'') : route ( self::ROUTE_ID . '.index', ['profile'=>1]);
 	}
 
 	/**

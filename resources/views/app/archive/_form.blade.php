@@ -49,7 +49,11 @@ tinymce.init({
 		<label for="boardSelectInput">게시판 선택</label>
     	<select name="board_id" class="form-control" title="게시판 선택" id="boardSelectInput">
     		@foreach ($boardList as $cate)
-    			<option value="{{ $cate->id }}" @if ($cate->id == $parameters['boardId']) selected @endif>{{ str_repeat('🢒',$cate->depth).' '.$cate->name }}</option>
+				@isset($selectedBoard)
+				<option value="{{ $cate->id }}" @if ($cate->id == $selectedBoard) selected @endif>{{ str_repeat('🢒',$cate->depth).' '.$cate->name }}</option>
+				@else
+				<option value="{{ $cate->id }}">{{ str_repeat('🢒',$cate->depth).' '.$cate->name }}</option>
+				@endisset
     		@endforeach
     	</select>
 	</div>
