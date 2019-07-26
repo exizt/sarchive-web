@@ -1,7 +1,7 @@
 @extends('layouts.archive_layout') 
 @section('title',"$archiveBoard->name") 
 @section('content')
-<div id="curBoardId" data-current-board="{{ $parameters['boardId']}}">
+<div id="curBoardId" data-current-board="{{ $parameters['board']}}">
 	<div class="mt-4 mb-5">
 		<div class="container-fluid">
 			<div class="row">
@@ -15,7 +15,7 @@
 					</div>
 					<hr class="mt-1">
 					<div class="list-group">
-						@foreach ($masterList as $item) <a class="list-group-item list-group-item-action flex-column align-items-start" href="{{ route($ROUTE_ID.'.show',$item->id) }}">
+						@foreach ($masterList as $item) <a class="list-group-item list-group-item-action flex-column align-items-start" href="{{ route('archives.show',['profile'=>$parameters['profile'],'archive'=>$item->id]) }}">
 							<div class="d-flex w-100 justify-content-between">
 								<h5 class="mb-1">{{ $item->title }}</h5>
 								<small>{{ $item->created_at->format('Y-m-d') }}</small>
@@ -41,7 +41,7 @@
 			</div>
 		</div>
 		<hr>
-		<div class="text-xs-center">{{ $masterList->appends(['board' => $parameters['boardId']])->links() }}</div>
+		<div class="text-xs-center">{{ $masterList->appends(['board' => $parameters['board'],'profile'=>$parameters['profile']])->links() }}</div>
 	</div>
 </div>
 <script>
@@ -51,6 +51,8 @@
 	
 	function ajaxBoardList(){
 		var boardId = $("#curBoardId").data("currentBoard")
+		var profileId = $("body").data("profile")
+
 		//console.log(boardId)
 		$.getJSON("/archives/ajax_boards",{
 			board_id : boardId
@@ -62,21 +64,23 @@
 
 			$.each(curPath,function(i,item){
 				//console.log(item)
-				var html = '<li class="breadcrumb-item"><a href="archives?board='
-				+item.id
-				+'">'
-				+item.text
-				+'</a></li> '
+				var html = '<li class="breadcrumb-item"><a href="/'
+				+ profileId + '/archives?board='
+				+ item.id
+				+ '">'
+				+ item.text
+				+ '</a></li> '
 				$("#shh-nav-board-path").append(html)
 			})
 			$.each(data.list, function(i,item){
 				var depth = item.depth - current.depth
 				if(depth >3) return
-				var html = '<a href="archives?board='
-				+item.id
-				+'" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">'
-				+">".repeat(depth)+"&nbsp;"+item.name
-				+' <span class="badge badge-secondary badge-pill">'+item.count+'</span></a>'
+				var html = '<a href="/'
+				+ profileId + '/archives?board='
+				+ item.id
+				+ '" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">'
+				+ ">".repeat(depth)+"&nbsp;"+item.name
+				+ ' <span class="badge badge-secondary badge-pill">'+item.count+'</span></a>'
 
 				$("#shh-nav-board-list").append(html)
 			})

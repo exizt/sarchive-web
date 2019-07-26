@@ -14,7 +14,7 @@ $(function() {
 </script>
 
 <div class="container-fluid mt-4 mb-5">
-	<form class="form-horizontal" role="form" method="POST" action="{{ route($ROUTE_ID.'.update',$article->id) }}">
+	<form class="form-horizontal" role="form" method="POST" action="{{ route($ROUTE_ID.'.update',['profile'=>$parameters['profile'],'archive'=>$article->id]) }}">
 		<input type="hidden" name="_token" value="{{ csrf_token() }}">
 		<input type="hidden" name="_method" value="PUT">
 
@@ -26,7 +26,7 @@ $(function() {
 					<div>
 						<button type="submit" class="btn btn-primary btn-sm site-shortcut-key-s" name="action" value="finished">저장</button>
 						<button type="submit" class="btn btn-outline-success btn-sm" name="action" value="continue">중간 저장</button>
-						<a class="btn btn-outline-secondary btn-sm site-shortcut-key-c" href="{{ url()->previous() }}" role="button">뒤로</a>
+						<a class="btn btn-outline-secondary btn-sm site-shortcut-key-c" href="{{ route($ROUTE_ID.'.show',['profile'=>$parameters['profile'],'archive'=>$article->id]) }}" role="button">글 보기</a>
 					</div>
 					<button type="button" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#modal-delete">삭제</button>
 				</div>
@@ -48,7 +48,7 @@ $(function() {
 				<p class="lead">정말 삭제하시겠습니까?</p>
 			</div>
 			<div class="modal-footer">
-				<form method="POST" action="{{ route($ROUTE_ID.'.destroy',$article->id) }}">
+				<form method="POST" action="{{ route($ROUTE_ID.'.destroy',['profile'=>$parameters['profile'],'archive'=>$article->id]) }}">
 					<input type="hidden" name="_token" value="{{ csrf_token() }}"> <input type="hidden" name="_method" value="DELETE">
 					<button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
 					<button type="submit" class="btn btn-danger">예</button>

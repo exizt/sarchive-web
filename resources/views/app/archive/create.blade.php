@@ -14,7 +14,7 @@ $(function() {
 </script>
 
 <div class="container-fluid mt-4 mb-5">
-	<form class="form-horizontal" role="form" method="POST" action="{{ route($ROUTE_ID.'.store') }}">
+	<form class="form-horizontal" role="form" method="POST" action="{{ route($ROUTE_ID.'.store',['profile'=>$parameters['profile']]) }}">
 		<input type="hidden" name="_token" value="{{ csrf_token() }}">
 
 		<div class="card mt-3">
@@ -23,7 +23,7 @@ $(function() {
 				@include($VIEW_PATH.'._form')
 				<div class="d-flex w-100 justify-content-between">
 					<button type="submit" class="btn btn-primary btn-sm site-shortcut-key-s">저장</button>
-					<a class="btn btn-secondary btn-sm site-shortcut-key-c" href="{{ route($ROUTE_ID.'.index') }}" role="button">뒤로</a>
+					<a class="btn btn-secondary btn-sm site-shortcut-key-c" href="{{ route($ROUTE_ID.'.index',['profile'=>$parameters['profile']]) }}" role="button">뒤로</a>
 				</div>
 			</div>
 		</div>

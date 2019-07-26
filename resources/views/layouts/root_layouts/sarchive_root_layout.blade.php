@@ -46,7 +46,11 @@ document.onkeyup = shortcutKeyEvent;
 <body @isset($parameters) @foreach ($parameters as $k => $v) data-{{$k}}="{{$v}}" @endforeach @endisset >
 	<header>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+			@isset($parameters['profile']) 
+			<a class="navbar-brand" href="/{{$parameters['profile']}}/archives"><i class="fa fa-superpowers fa-spin" aria-hidden="true"></i>&nbsp;&nbsp;S아카이브</a>
+			@else
 			<a class="navbar-brand" href="/archives"><i class="fa fa-superpowers fa-spin" aria-hidden="true"></i>&nbsp;&nbsp;S아카이브</a>
+			@endisset
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
@@ -63,10 +67,16 @@ document.onkeyup = shortcutKeyEvent;
 				<ul class="navbar-nav">
 					<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink_My" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ Auth::user()->name }}</a>
 						<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink_My">
-							<a class="dropdown-item site-shortcut-key-n site-shortcut-key-a" href="{{ route('archives.create') }}">글쓰기</a>
-							<a class="dropdown-item" href="{{ route('archives.index')}}?profile=1">개발 분류로 이동</a>
-							<a class="dropdown-item" href="{{ route('archives.index')}}?profile=2">일반 분류로 이동</a>
+							@isset($parameters['profile'])
+							<a class="dropdown-item site-shortcut-key-n site-shortcut-key-a" href="{{ route('archives.create',['profile'=>$parameters['profile']]) }}">글쓰기</a>
+							@endisset
+							<a class="dropdown-item" href="{{ route('archives.index',['profile'=>1])}}">개발 분류로 이동</a>
+							<a class="dropdown-item" href="{{ route('archives.index',['profile'=>2])}}">일반 분류로 이동</a>
+							@isset($parameters['profile']) 
+							<a class="dropdown-item" href="/page/단축키?profile={{$parameters['profile']}}">단축키</a>
+							@else
 							<a class="dropdown-item" href="/page/단축키">단축키</a>
+							@endisset
 							<div class="dropdown-divider"></div>
 							<a class="dropdown-item" href="/admin">아카이브 관리</a>
 							<a class="dropdown-item" href="{{ config('app.c_site_url','') }}">사이트로 이동</a> 
@@ -100,11 +110,13 @@ document.onkeyup = shortcutKeyEvent;
 		ajaxHeaderNav()
 	})
 	function ajaxHeaderNav(){
+		var profileId = wrapData($("body").data("profile"),1)
 		$.getJSON("/archives/ajax_headerNav",{
-			profile : wrapData($("body").data("profile"),1)
+			profile : profileId
 		},function(data){
 			$.each(data.list, function(i,item){
-				var html = '<li class="nav-item"><a class="nav-link" href="/archives?board='+item.id+'">'+item.name+'</a></li>'
+				var html = '<li class="nav-item"><a class="nav-link" href="/'
+				+ profileId + '/archives?board='+item.id+'">'+item.name+'</a></li>'
 				$("#shh-header-navbar").append(html)
 			})
 		})

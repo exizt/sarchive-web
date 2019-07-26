@@ -207,6 +207,7 @@ function redrawJSTree(dataJson){
 	var $jstree = $(_jstreeSelector)
 	$jstree.jstree(true).settings.core.data = dataJson
 	$jstree.jstree(true).refresh()
+	_deletedBoardIds = new Array();
 }
 
 </script>

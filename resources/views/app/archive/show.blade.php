@@ -10,7 +10,7 @@
 	<nav aria-label="breadcrumb">
 		<ol class="breadcrumb">
 			@foreach ($boardPath as $item)
-			<li class="breadcrumb-item"><a href="{{ route($ROUTE_ID.'.index')}}?board={{$item->id}}">{{ $item->text }}</a></li> 
+			<li class="breadcrumb-item"><a href="{{ route($ROUTE_ID.'.index',['profile'=>$parameters['profile']])}}?board={{$item->id}}">{{ $item->text }}</a></li> 
 			@endforeach
 		</ol>
 	</nav>
@@ -40,7 +40,7 @@
 	<div class="form-group row">
 		<div class="col-md-10 col-md-offset-2">
 			<a class="btn btn-primary btn-sm site-shortcut-key-c" href="{{ $previousList }}" role="button">목록</a>
-			<a class="btn btn-outline-info btn-sm site-shortcut-key-e" href="{{ route($ROUTE_ID.'.edit',$article->id) }}" role="button">편집</a>
+			<a class="btn btn-outline-info btn-sm site-shortcut-key-e" href="{{ route($ROUTE_ID.'.edit',['profile'=>$parameters['profile'],'archive'=>$article->id]) }}" role="button">편집</a>
 		</div>
 	</div>
 </div>
@@ -59,7 +59,7 @@
 				</p>
 			</div>
 			<div class="modal-footer">
-				<form method="POST" action="{{ route($ROUTE_ID.'.destroy',$article->id) }}">
+				<form method="POST" action="{{ route($ROUTE_ID.'.destroy',['profile'=>$parameters['profile'],'archive'=>$article->id]) }}">
 					<input type="hidden" name="_token" value="{{ csrf_token() }}"> <input type="hidden" name="_method" value="DELETE">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 					<button type="submit" class="btn btn-danger">
