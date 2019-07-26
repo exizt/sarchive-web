@@ -204,30 +204,37 @@ class ArchiveBoardMgmt extends Controller
             //$text = $item['text'];
             //$parent = $item['parent'];
 
-            // depth 를 생성하기 위한 구문.
-            {
-                if($item['parent']=='0'||$item['parent']==0){
-                    $item['depth'] = 1;
-                    $item['path'][] = ['text'=>$item['text'],'id'=>$item['id']];
-                } else {
-                    $t_parent = $item['parent'];
-                    $item['depth'] = $depthPathList[$t_parent]['depth'] + 1;
-                    //$item['path'] = $depthPathList[$t_parent]['path'].' > '.$item['text'];
-                    $item['path'] = $depthPathList[$t_parent]['path'];
-                    $item['path'][] = ['text'=>$item['text'],'id'=>$item['id']];
-                }
-                $depthPathList[$item['id']] = [
-                    'depth' => $item['depth'],
-                    'path' => $item['path']
-                ];
-            }
-
             // parent_id 값이 j 로 시작되는 경우, changedIdList 에 있는 값으로 변경.
             if($item['parent'][0] == 'j'){
                 if(array_key_exists($item['parent'],$changedIdList)){
                     $item['parent'] = $changedIdList[$item['parent']];
                 }
             }
+
+            // depth 를 생성하기 위한 구문.
+            {
+                if($item['parent']=='0'||$item['parent']==0){
+                    ///... 최상위 루트의 경우
+                    $item['depth'] = 1;
+                    $item['path'][] = ['text'=>$item['text'],'id'=>$item['id']];
+                
+                } else {
+                    ///... 루트 외의 경우
+                    
+                    $t_parent = $item['parent'];
+                    $item['depth'] = $depthPathList[$t_parent]['depth'] + 1;
+                    //$item['path'] = $depthPathList[$t_parent]['path'].' > '.$item['text'];
+                    $item['path'] = $depthPathList[$t_parent]['path'];
+                    $item['path'][] = ['text'=>$item['text'],'id'=>$item['id']];
+                }
+                /*
+                $depthPathList[$item['id']] = [
+                    'depth' => $item['depth'],
+                    'path' => $item['path']
+                ];
+                */
+            }
+
 
             if($item['id'][0] == 'j'){
                 $archiveBoard = ArchiveBoard::create([
@@ -241,8 +248,12 @@ class ArchiveBoardMgmt extends Controller
 
                 // 신규 생성된 id 를 changedIdList 에 추가함.
                 $changedIdList[$item['id']] = $archiveBoard->id;
+                $depthPathList[$archiveBoard->id] = [
+                    'depth' => $item['depth'],
+                    'path' => $item['path']
+                ];                
             } else {
-                ArchiveBoard::updateOrInsert(['id'=>$item['id']],
+                $archiveBoard = ArchiveBoard::updateOrInsert(['id'=>$item['id']],
                     [
                         'parent_id'=>$item['parent'],
                         'index' => $i,
@@ -251,7 +262,12 @@ class ArchiveBoardMgmt extends Controller
                         'path' => json_encode($item['path']),
                         'profile_id' => $profileId
                     ]);
+                    $depthPathList[$item['id']] = [
+                        'depth' => $item['depth'],
+                        'path' => $item['path']
+                    ];
             }
+
             //print_r($sql);
         }
 
@@ -261,7 +277,7 @@ class ArchiveBoardMgmt extends Controller
                 if($deletedId[0]=='j'){
                     continue;
                 }
-                $archiveBoard = ArchiveBoard::findOrFail($deletedId);
+                $archiveBoard = ArchiveBoard::find($deletedId);
                 $archiveBoard->delete();
             }
         }
