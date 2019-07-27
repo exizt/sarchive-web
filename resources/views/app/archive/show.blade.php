@@ -9,9 +9,11 @@
 	게시판 경로
 	<nav aria-label="breadcrumb">
 		<ol class="breadcrumb">
+			@isset ($boardPath)
 			@foreach ($boardPath as $item)
 			<li class="breadcrumb-item"><a href="{{ route($ROUTE_ID.'.index',['profile'=>$parameters['profile']])}}?board={{$item->id}}">{{ $item->text }}</a></li> 
 			@endforeach
+			@endisset
 		</ol>
 	</nav>
 	정보

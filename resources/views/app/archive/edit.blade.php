@@ -26,7 +26,7 @@ $(function() {
 					<div>
 						<button type="submit" class="btn btn-primary btn-sm site-shortcut-key-s" name="action" value="finished">저장</button>
 						<button type="submit" class="btn btn-outline-success btn-sm" name="action" value="continue">중간 저장</button>
-						<a class="btn btn-outline-secondary btn-sm site-shortcut-key-c" href="{{ route($ROUTE_ID.'.show',['profile'=>$parameters['profile'],'archive'=>$article->id]) }}" role="button">글 보기</a>
+						<a class="btn btn-outline-secondary btn-sm site-shortcut-key-c" href="{{ $cancelButtonLink }}" role="button">취소</a>
 					</div>
 					<button type="button" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#modal-delete">삭제</button>
 				</div>

@@ -164,18 +164,22 @@ class ArchiveController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function show(Request $request, $profileId, $archiveId) {
-		//$this->getArchiveProfile($request);
+		$this->getArchiveProfileFromID($profileId);
 	    $article = Archive::where ( 'id', $archiveId )->firstOrFail ();
 		$archiveBoard = ArchiveBoard::find($article->board_id);
-
 		
+		if($article->profile_id != $profileId){
+			// fail 처리 하기. (사실 안 해도 되지만..)
+			abort(404);
+		}
+
 	    // create dataSet
 	    $dataSet = $this->createViewData ();
-	    $dataSet ['article'] = $article;
+		$dataSet ['article'] = $article;
+		$dataSet ['boardPath'] = json_decode($archiveBoard->path);
+	    $dataSet ['previousList'] = $this->makePreviousListLink($request, $profileId);
 		//$dataSet ['parameters']['board'] = $article->board_id;
 		$dataSet ['parameters']['profile'] = $profileId;
-		$dataSet ['boardPath'] = json_decode($archiveBoard->path);
-	    $dataSet ['previousList'] = $this->getPreviousLink($request);
 	    return view ( self::VIEW_PATH . '.show', $dataSet );
 	}
 	
@@ -199,6 +203,7 @@ class ArchiveController extends Controller {
 	    $dataSet ['article'] = $article;
 		//$dataSet ['parameters']['board'] = $boardId;
 		$dataSet ['parameters']['profile'] = $profileId;
+		$dataSet ['cancelButtonLink'] = $this->makePreviousListLink($request,$profileId);
 		$dataSet ['selectedBoard'] = $boardId;
 		$dataSet ['boardList'] = $archiveBoardList;
 	    return view ( self::VIEW_PATH . '.create', $dataSet );
@@ -228,6 +233,7 @@ class ArchiveController extends Controller {
 	    $dataSet = $this->createViewData ();
 		$dataSet ['article'] = $article;
 		$dataSet ['parameters']['profile'] = $profileId;
+		$dataSet ['cancelButtonLink'] = $this->makePreviousShowLink($request,$profileId, $archiveId);
 	    $dataSet ['selectedBoard'] = $boardId;
 		$dataSet ['boardList'] = $archiveBoardList;
 	    return view ( self::VIEW_PATH . '.edit', $dataSet );
@@ -324,6 +330,7 @@ class ArchiveController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function destroy($profileId, $archiveId) {
+		$this->getArchiveProfileFromID($profileId);
 
 	    $item = Archive::findOrFail($archiveId);
 	    $item->delete();
@@ -375,8 +382,10 @@ class ArchiveController extends Controller {
 
 		
 	/**
-	 * 분기에 따른 처리.
-	 * '개발 전용' 과 '일반 전용' 으로 구분. 향후에 더 나뉘어질 수 있음. 귀찮으니 하드코딩한다. 
+	 * Archive Profile 의 정보를 조회. 
+	 * this->ArchiveProfile 에 내용이 담긴다.
+	 * profileId 를 인수로 받고, userID 를 통하여 일차적으로 인증을 한다.
+	 * 해당 profile Id 에 접근 권한이 있는지 체크하게 됨. 권한이 없으면 Fail
 	 */
 	private function getArchiveProfileFromID($profileId)
 	{
@@ -418,6 +427,34 @@ class ArchiveController extends Controller {
 	    
 	}
 	
+	/**
+	 * 이전 링크 주소.
+	 * 바로 이전 주소를 가지고 셋팅을 하는데, '새로고침' 을 하는 경우도 있기 때문에, 세션에 넣어두고 활용한다.
+	 * 뭔가 동작이 원하는 느낌이 아니다...살펴봐야 할 듯...
+	 * @param Request $rqeust
+	 * @return string
+	 */
+	protected function makePreviousListLink(Request $request, $profileId)
+	{
+		$previous = url()->previous();
+		
+		$routeLink = route ( self::ROUTE_ID . '.index', ['profile'=> $profileId]);
+
+		return (strtok($previous,'?') == $routeLink) ? $previous : $routeLink;
+	}
+
+	/**
+	 * '취소 링크' 생성.
+	 */
+	protected function makePreviousShowLink(Request $request, $profileId, $archiveId)
+	{
+		$previous = url()->previous();
+		
+		$routeLink = route ( self::ROUTE_ID . '.show', ['profile'=> $profileId, 'archive'=>$archiveId]);
+
+		return (strtok($previous,'?') == $routeLink) ? $previous : $routeLink;
+	}
+
 	/**
 	 * 이전 링크 주소.
 	 * 바로 이전 주소를 가지고 셋팅을 하는데, '새로고침' 을 하는 경우도 있기 때문에, 세션에 넣어두고 활용한다.

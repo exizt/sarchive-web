@@ -41,7 +41,7 @@
 			</div>
 		</div>
 		<hr>
-		<div class="text-xs-center">{{ $masterList->appends(['board' => $parameters['board'],'profile'=>$parameters['profile']])->links() }}</div>
+		<div class="text-xs-center">{{ $masterList->appends(['board' => $parameters['board']])->links() }}</div>
 	</div>
 </div>
 <script>
