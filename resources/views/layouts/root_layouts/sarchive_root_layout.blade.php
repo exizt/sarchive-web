@@ -38,6 +38,23 @@
 <script src="/assets/js/core-func.js"></script>
 <script src="/assets/js/shortcut-key-event.js"></script>
 <script src="/assets/site/archive/archive.js"></script>
+<script>
+$(function(){
+	ajaxHeaderNav()
+})
+function ajaxHeaderNav(){
+	var profileId = wrapData($("body").data("profile"),1)
+	$.getJSON("/archives/ajax_headerNav",{
+		profile : profileId
+	},function(data){
+		$.each(data.list, function(i,item){
+			var html = '<li class="nav-item"><a class="nav-link" href="/'
+			+ profileId + '/archives?board='+item.id+'">'+item.name+'</a></li>'
+			$("#shh-header-navbar").append(html)
+		})
+	})
+}
+</script>
 </head>
 <script>
 const SERVICE_URI = "/{{Request::path()}}";
@@ -110,21 +127,4 @@ document.onkeyup = shortcutKeyEvent;
         </div>
 	</footer>
 </body>
-<script>
-	$(function(){
-		ajaxHeaderNav()
-	})
-	function ajaxHeaderNav(){
-		var profileId = wrapData($("body").data("profile"),1)
-		$.getJSON("/archives/ajax_headerNav",{
-			profile : profileId
-		},function(data){
-			$.each(data.list, function(i,item){
-				var html = '<li class="nav-item"><a class="nav-link" href="/'
-				+ profileId + '/archives?board='+item.id+'">'+item.name+'</a></li>'
-				$("#shh-header-navbar").append(html)
-			})
-		})
-	}
-</script>
 </html>
