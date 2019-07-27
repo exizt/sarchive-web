@@ -12,8 +12,9 @@
 	</div>
 </div>
 <ul class="nav nav-tabs" id="navTab">
-	<li class="nav-item"><a class="nav-link active" href="#" data-profile="1">개발 아카이브</a></li>
-	<li class="nav-item"><a class="nav-link" href="#" data-profile="2">일반 아카이브</a></li>
+	@foreach ($ArchiveProfileList as $item)
+	<li class="nav-item"><a class="nav-link" href="#" data-profile="{{$item->id}}">{{$item->name}}</a></li>
+	@endforeach
 </ul>
 
 <div id="tree-container" class="mt-1 mb-3"></div>
@@ -26,10 +27,11 @@
 <script src="/assets/lib/jstree/jstree.min.js"></script>
 <link rel="stylesheet" href="/assets/lib/jstree/themes/default/style.min.css" />
 <script>
-var _selectedProfileId = "1";
+var _selectedProfileId = "";
 var _jstreeSelector = "#tree-container";
 var _deletedBoardIds = new Array()
 $(function () {
+	$("#navTab a").first().addClass("active");
 	_selectedProfileId = $("#navTab a").first().data("profile")
 	
 	createJSTree();

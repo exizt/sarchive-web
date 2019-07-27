@@ -9,7 +9,7 @@ class Archive extends Model
     use FullTextSearch;
     protected $table = 'sa_archives';
     
-    protected $fillable = ['title', 'content','board_id','reference','category'];
+    protected $fillable = ['title', 'content','board_id','reference','category','profile_id'];
     protected $attributes = ['title'=>'',
      'content'=>'',
      'board_id'=>'',

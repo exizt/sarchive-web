@@ -33,7 +33,15 @@ class ArchiveBoardMgmt extends Controller
      */
     public function index(Request $request)
     {
+        
+        // 아카이브 프로필을 조회
+        $userId = Auth::id();
+        $archiveProfiles = Profile::select(['id','name','text','root_board_id','is_default','created_at'])
+        ->where('user_id',$userId)
+        ->orderBy('created_at','asc')->get();
+        
         $dataSet = $this->createViewData ();
+        $dataSet['ArchiveProfileList'] = $archiveProfiles;
         return view ( self::VIEW_PATH . '.index', $dataSet );
     }
 
