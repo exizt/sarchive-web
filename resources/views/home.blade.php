@@ -1,23 +1,21 @@
-@extends('layouts.mainpage') 
-
-@section('title','HelloWorld')
-
+@extends('layouts.archive_layout') 
+@section('title','S아카이브')
 @section('content')
-<script src="/assets/lib/jquery-plugins-my/jquery-rollover/jquery.rollover.js"></script>
-<div class="py-5 d-none d-sm-block" style="background-color: #628AC7;">
-	<div class="container py-5 text-center">
-		<h1 class="display-1">S Archive Demo</h1>
-		<p class="lead">Source Archive</p>
-	</div>
-</div>
-<div class="d-sm-none" style="background-color: #628AC7;">
-	<div class="container py-5 text-center">
-		<h1 class="">S Archive Demo</h1>
-		<h3>Source Archive</h3>
-	</div>
-</div>
-<div class="py-5" style="background-color: #eee;">
+<div class="py-5">
 	<div class="container">
+		<div class="list-group">
+			@foreach ($masterList as $item)
+			<a class="list-group-item list-group-item-action flex-column align-items-start" href="{{ route('archives.index',$item->id) }}">
+				<div class="d-flex w-100 justify-content-between">
+					<h5 class="mb-1">{{ $item->name }}</h5>
+					<small>{{ $item->created_at->format('Y-m-d') }}</small>
+				</div>
+				<p class="mb-1 pl-md-3 cz-item-summary">
+					<small>{{ $item->text }}</small>
+				</p>
+			</a>
+			@endforeach
+		</div>
 	</div>
 </div>
 @stop

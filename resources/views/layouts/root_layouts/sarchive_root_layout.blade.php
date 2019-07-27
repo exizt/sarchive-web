@@ -49,7 +49,7 @@ document.onkeyup = shortcutKeyEvent;
 			@isset($parameters['profile']) 
 			<a class="navbar-brand" href="/{{$parameters['profile']}}/archives"><i class="fa fa-superpowers fa-spin" aria-hidden="true"></i>&nbsp;&nbsp;S아카이브</a>
 			@else
-			<a class="navbar-brand" href="/archives"><i class="fa fa-superpowers fa-spin" aria-hidden="true"></i>&nbsp;&nbsp;S아카이브</a>
+			<a class="navbar-brand" href="/"><i class="fa fa-superpowers fa-spin" aria-hidden="true"></i>&nbsp;&nbsp;S아카이브</a>
 			@endisset
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
@@ -67,19 +67,24 @@ document.onkeyup = shortcutKeyEvent;
 				<ul class="navbar-nav">
 					<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink_My" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ Auth::user()->name }}</a>
 						<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink_My">
+							<h6 class="dropdown-header">기능</h6>
 							@isset($parameters['profile'])
 							<a class="dropdown-item site-shortcut-key-n site-shortcut-key-a" href="{{ route('archives.create',['profile'=>$parameters['profile']]) }}">글쓰기</a>
 							@endisset
-							<a class="dropdown-item" href="{{ route('archives.index',['profile'=>1])}}">개발 분류로 이동</a>
-							<a class="dropdown-item" href="{{ route('archives.index',['profile'=>2])}}">일반 분류로 이동</a>
 							@isset($parameters['profile']) 
 							<a class="dropdown-item" href="/page/단축키?profile={{$parameters['profile']}}">단축키</a>
 							@else
-							<a class="dropdown-item" href="/page/단축키">단축키</a>
+							<a class="dropdown-item" href="/page/단축키">단축키 일람</a>
 							@endisset
 							<div class="dropdown-divider"></div>
+							<h6 class="dropdown-header">프로필 선택</h6>
+							<a class="dropdown-item" href="{{ route('archives.index',['profile'=>1])}}">개발 분류로 이동</a>
+							<a class="dropdown-item" href="{{ route('archives.index',['profile'=>2])}}">일반 분류로 이동</a>
+							<a class="dropdown-item" href="/">더보기</a>
+							<div class="dropdown-divider"></div>
+							<h6 class="dropdown-header">관리</h6>
 							<a class="dropdown-item" href="/admin">아카이브 관리</a>
-							<a class="dropdown-item" href="{{ config('app.c_site_url','') }}">사이트로 이동</a> 
+							<a class="dropdown-item" href="{{ config('app.c_site_url','') }}">개인사이트로 이동</a> 
 							<div class="dropdown-divider"></div>
 							<a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i
 								class="fa fa-sign-out" aria-hidden="true"></i>&nbsp;Logout</a>
