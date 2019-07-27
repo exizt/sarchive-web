@@ -1,6 +1,5 @@
 @extends('layouts.admin_layout') 
 @section('title',"아카이브 카테고리 관리")
-@section('title-layout',"아카이브 카테고리 관리")
 @section('content')
 <div class="my-3">
 	<h3>게시판 목록</h3>

@@ -15,8 +15,8 @@ Route::middleware(['auth'])->group(function () {
 });
 Route::middleware(['auth'])->name('admin.')->prefix('admin')->group(function(){
     Route::view('/','admin.index',['ROUTE_ID'=>'archives']);
-    Route::resource('archiveBoard', 'Admin\ArchiveBoardMgmt', ['except'=>['show']]);
-    Route::get('archiveBoard/index_ajax', 'Admin\ArchiveBoardMgmt@index_ajax');
-    Route::post('archiveBoard/updateList', 'Admin\ArchiveBoardMgmt@updateList');
+    Route::resource('archiveBoard', 'Admin\ArchiveBoardMgmt', ['except'=>['show','create','edit','store','update','destroy']]);
+    Route::get('archiveBoard/index_ajax', 'Admin\ArchiveBoardMgmt@index_ajax')->name('archiveBoard.indexAjax');
+    Route::post('archiveBoard/updateList', 'Admin\ArchiveBoardMgmt@updateList')->name('archiveBoard.updateList');
     Route::view('advanced','admin.advanced',['ROUTE_ID'=>'advanced']);
 });
