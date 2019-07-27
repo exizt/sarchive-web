@@ -1,17 +1,6 @@
-@extends('layouts.default_layout')
+@extends('layouts.login_layout')
 @section('title',"로그인")  
-@section('meta-custom')
-<meta name="robots" content="noindex, nofollow">
-@stop
-
 @section('content')
-<div style="background-color: #34b599; padding: 20px;">
-	<div class="container" style="padding-top: 2rem; padding-bottom: 1rem;">
-		<h1>Account</h1>
-		<p class="lead">로그인 을 하거나 계정관리 를 합니다.</p>
-	</div>
-</div>
-
 <div class="container py-5">
 	<div class="col-md-10 offset-md-1">
 		<div class="card">
