@@ -24,7 +24,9 @@ class Home extends Controller {
 
 			$masterList = Profile::select(['id','name','text','root_board_id','is_default','created_at'])
 			->where('user_id',$userId)
-			->orderBy('created_at','asc')->get();
+			->orderBy('index','asc')
+			->orderBy('id','asc')
+			->get();
 		
 			$dataSet = $this->createViewData ();
 			$dataSet['masterList'] = $masterList;

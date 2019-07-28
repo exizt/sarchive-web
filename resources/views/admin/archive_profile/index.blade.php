@@ -8,22 +8,112 @@
 			<small class="text-mute">Page {{ $masterList->currentPage() }} of {{ $masterList->lastPage() }}</small>
 		</div>
 	</div>
+	@if (session()->has('message'))
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+		<h4 class="alert-heading">알림</h4>
+		{{ session()->get('message') }}
+	</div>
+	@endif
 	<hr class="mt-1">
 	<div class="list-group">
-		@foreach ($masterList as $item) <a class="list-group-item list-group-item-action flex-column align-items-start" href="{{ route($ROUTE_ID.'.edit',$item->id) }}">
+		@foreach ($masterList as $item)
+		<a class="list-group-item list-group-item-action flex-column align-items-start shh-profile-list" href="{{ route($ROUTE_ID.'.edit',$item->id) }}"
+			 data-profile-id="{{$item->id}}" data-name="{{$item->name}}">
 			<div class="d-flex w-100 justify-content-between">
-				<h5 class="mb-1">{{ $item->name }}</h5>
-				<small>{{ $item->created_at->format('Y-m-d') }}</small>
+				<h5 class="">{{ $item->name }}@if ($item->is_default) &nbsp;&nbsp;&nbsp;<span class="badge badge-success pull-right">기본</span> @endif </h5>
+				<div>
+					<span class="shh-listmovemode-off">
+						<small>{{ $item->created_at->format('Y-m-d') }}</small>
+					</span>
+					<span class="shh-listmovemode-on" style="display:none">
+						<button type="button" class="btn btn-primary btn-sm shh-btn-mode-up">▲</button>
+						<button type="button" class="btn btn-primary btn-sm shh-btn-mode-down">▼</button>
+					</span>
+				</div>
 			</div>
 			<p class="mb-1 pl-md-3 cz-item-summary">
 				<small>{{ $item->text }}</small>
 			</p>
-		</a> @endforeach
+		</a>
+		@endforeach
 	</div>
+	<hr>
 	<div class="d-flex w-100 justify-content-between">
 		<a href="{{ route($ROUTE_ID.'.create') }}" class="btn btn-outline-success btn-sm">신규</a>
+		<span>
+			<a href="#" id="changeIndexModeToggle" class="btn btn-outline-success btn-sm shh-listmovemode-off">순서변경</a>
+			<a href="#" id="shh-movemode-cancel" class="btn btn-outline-success btn-sm shh-listmovemode-on" style="display:none">순서변경 취소</a>
+			<a href="#" id="shh-movemode-save" class="btn btn-outline-success btn-sm shh-listmovemode-on" style="display:none">순서변경 저장</a>
+		</span>
 	</div>
 	<hr>
 	<div class="text-xs-center">{{ $masterList->links() }}</div>
 </div>
+<script>
+$(function(){
+	$("#changeIndexModeToggle").on("click",function(){
+		changeIndexModeOn()
+	})
+	$("#shh-movemode-cancel").on("click",function(){location.reload();})
+	$("#shh-movemode-save").on("click",function(){
+		saveProfileSort()
+	})
+	$(".shh-btn-mode-up").on("click",onClickMoveUp);
+	$(".shh-btn-mode-down").on("click",onClickMoveDown);
+})
+
+function saveProfileSort(){
+	console.log("save");
+	var profileList = [];
+	$(".shh-profile-list").each(function(index){
+		var data = {
+			profileId : $(this).data("profileId"),
+			name : $(this).data("name"),
+			index : index
+		};
+		profileList.push(data)
+	})
+
+	console.log(profileList)
+	$.post("/admin/archiveProfile/updateSort",{
+			'listData': profileList
+		})
+		.done(function(data){
+			location.reload()
+		})
+}
+function changeIndexModeOn(){
+	$(".shh-listmovemode-off").hide()
+	$(".shh-listmovemode-on").show()
+	$(".shh-profile-list").attr("href","#");
+}
+
+function onClickMoveUp(){
+	moveUp($(this).closest(".shh-profile-list"),".shh-profile-list")
+}
+
+function onClickMoveDown(){
+	moveDown($(this).closest(".shh-profile-list"),".shh-profile-list")
+}
+
+function moveUp($current,sel){
+	var hook = $current.prev(sel)
+	if(hook.length){
+		var elementToMove = $current.detach();
+		hook.before(elementToMove);
+	}
+}
+
+function moveDown($current,sel){
+	var hook = $current.next(sel)
+	if(hook.length){
+		var elementToMove = $current.detach();
+		hook.after(elementToMove);
+	}
+}
+
+</script>
 @stop

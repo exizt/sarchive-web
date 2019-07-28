@@ -33,7 +33,8 @@ class ArchiveProfileMgmt extends Controller
 
         $masterList = Profile::select(['id','name','text','root_board_id','is_default','created_at'])
         ->where('user_id',$userId)
-        ->orderBy('created_at','asc')->paginate(20);
+        ->orderBy('index','asc')
+        ->orderBy('id','asc')->paginate(20);
 
 
         $dataSet = $this->createViewData ();
@@ -188,6 +189,26 @@ class ArchiveProfileMgmt extends Controller
         return redirect()->route(self::ROUTE_ID.'.index')->with('message','삭제를 완료하였습니다.');
     }
 
+    /**
+     * 
+     */
+    public function updateSort(Request $request){
+        $listData = $request->input('listData', array());
+
+        foreach($listData as $i => $item){
+            
+            $profile = Profile::findOrFail ( $item['profileId'] );
+            $profile->index = $item['index'];
+            $profile->save();
+        }
+
+        $dataSet = array();
+        $dataSet['success'] = '변경 완료되었습니다.';
+
+        $request->session()->flash('message', '변경 완료되었습니다.');
+
+        return response()->json($dataSet);
+    }
     /**
      *
      * @return string[]
