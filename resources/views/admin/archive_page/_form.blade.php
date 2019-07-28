@@ -37,35 +37,32 @@ tinymce.init({
 });
 </script>
 <div class="">
+	@if ($errors->any())
+	<div class="alert alert-danger alert-dismissible fade show"role="alert">
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+		<ul>
+			@foreach ($errors->all() as $error)
+				<li>{{ $error }}</li>
+			@endforeach
+		</ul>
+	</div>
+	@endif
+	@if (session()->has('message'))
+	<div class="alert alert-success alert-dismissible fade show" role="alert">
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+		{{ session()->get('message') }}
+	</div>
+	@endif
+
 	<div class="form-group">
-		<input name="title" class="form-control" type="text" autofocus id="title" value="{{ $article->title }}" placeholder="제목" aria-label="제목">
+		<input name="title" class="form-control" type="text" autofocus id="title" value="{{ $item->title }}" placeholder="제목" aria-label="제목">
 	</div>
 
 	<div class="form-group">
-		<textarea name="content" class="form-control" rows="14" id="content" placeholder="내용">{{ htmlentities($article->content) }}</textarea>
+		<textarea name="content" class="form-control" rows="14" id="content" placeholder="내용">{{ htmlentities($item->content) }}</textarea>
 	</div>
-
-	<div class="form-group">
-		<label for="articleCategorySelect">게시판 선택</label>
-    	<select name="board_id" class="form-control" title="게시판 선택" id="articleCategorySelect">
-    		@foreach ($categories as $cate)
-    			@if ($cate->id == $parameters['categoryId'])
-    			<option value="{{ $cate->id }}" selected>{{ $cate->name }}</option>
-    			@else 
-    			<option value="{{ $cate->id }}">{{ $cate->name }}</option>
-    			@endif
-    		@endforeach
-    	</select>
-	</div>
-
-	<div class="form-group">
-		<label for="">분류 (ex: [분류명])</label>
-		<input name="" type="text" id="" class="form-control" value="" placeholder="" aria-label="">
-	</div>	
-
-		
-	<div class="form-group">
-		<label for="articleReference">원문 출처</label>
-		<input name="reference" type="text" id="articleReference" class="form-control" value="{{ $article->reference }}" placeholder="" aria-label="">
-	</div>	
 </div>

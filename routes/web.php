@@ -20,5 +20,6 @@ Route::middleware(['auth'])->name('admin.')->prefix('admin')->group(function(){
     Route::post('archiveBoard/updateList', 'Admin\ArchiveBoardMgmt@updateList')->name('archiveBoard.updateList');
     Route::resource('archiveProfile', 'Admin\ArchiveProfileMgmt', ['except'=>['show']]);
     Route::post('archiveProfile/updateSort', 'Admin\ArchiveProfileMgmt@updateSort')->name('archiveProfile.updateSort');
+    Route::resource('archivePage', 'Admin\ArchivePageMgmt', ['except'=>['show']]);
     Route::view('advanced','admin.advanced',['ROUTE_ID'=>'advanced']);
 });

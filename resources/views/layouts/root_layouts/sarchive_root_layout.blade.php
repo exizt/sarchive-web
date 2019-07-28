@@ -89,7 +89,7 @@ document.onkeyup = shortcutKeyEvent;
 							<a class="dropdown-item site-shortcut-key-n site-shortcut-key-a" href="{{ route('archives.create',['profile'=>$parameters['profile']]) }}">글쓰기</a>
 							@endisset
 							@isset($parameters['profile']) 
-							<a class="dropdown-item" href="/page/단축키?profile={{$parameters['profile']}}">단축키</a>
+							<a class="dropdown-item" href="/page/단축키?profile={{$parameters['profile']}}">단축키 일람</a>
 							@else
 							<a class="dropdown-item" href="/page/단축키">단축키 일람</a>
 							@endisset
