@@ -37,11 +37,12 @@
 					</nav>
 					<h5>게시판</h5>
 					<div class="list-group" id="shh-nav-board-list"></div>
+					<div class="list-group pt-3" id="shh-nav-board-only"></div>
 				</div>
 			</div>
 		</div>
 		<hr>
-		<div class="text-xs-center">{{ $masterList->appends(['board' => $parameters['board']])->links() }}</div>
+		<div class="text-xs-center">{{ $masterList->appends($mPaginationParams)->links() }}</div>
 	</div>
 </div>
 <script>
@@ -84,6 +85,15 @@
 
 				$("#shh-nav-board-list").append(html)
 			})
+
+			var html = '<a href="/'
+				+ profileId + '/archives?board='
+				+ data.current.id
+				+ '&only=1" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">'
+				+ "&nbsp;"+data.current.name
+				+ ' (only)</a>'
+
+				$("#shh-nav-board-only").append(html)
 		})
 	}
 	</script>

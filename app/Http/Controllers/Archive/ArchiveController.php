@@ -15,7 +15,6 @@ class ArchiveController extends Controller {
 	protected const VIEW_PATH = 'app.archive';
 	protected const ROUTE_ID = 'archives';
 	protected $ArchiveProfile;
-	protected const CATEGORY_SEPERATE_CHAR = '―';
 
 	/**
 	 * 생성자
@@ -35,39 +34,52 @@ class ArchiveController extends Controller {
 		$this->getArchiveProfileFromID($profileId);
 
 	    $boardId = $request->input('board', $this->ArchiveProfile->root_board_id);
+		$is_only = (bool)$request->input( 'only' , false);
 
-		/*
-		|------------------------------------------------
-		| 게시판에 해당되는 게시글 목록을 위한 쿼리. 하위 게시판의 글까지 보여준다.
-		|------------------------------------------------
-		*/
-		/*
-		// 첫번째 쿼리. 
-	    $posts = Archive::select('sa_archives.*',DB::raw('(select name from sa_boards as s where s.id = board_id) as category_name'))
-	      ->whereRaw('board_id in 
-            (
-            SELECT node.board_id
-            FROM sa_board_tree AS node ,
-                 sa_board_tree AS parent
-            WHERE node.lft BETWEEN parent.lft AND parent.rgt
-            and parent.board_id = ?
-            )',[$categoryId])->orderBy ( 'created_at', 'desc' )->paginate(30);
-		*/
-	    // 속도를 조금 더 손본 쿼리. 전에는 where in 구문을 활용했는데, 속도가 너무 느려서 join 방식으로 변경.
-	    //DB::enableQueryLog();
-	    $masterList = Archive::select(['id', 'title','summary_var','reference','board_id','created_at','updated_at','category'
+		if($is_only){
+			///... board_id 에만 해당되는 게시물 목록
+			$masterList = Archive::select(['id', 'title','summary_var','reference','board_id','created_at','updated_at','category'
 			,DB::raw('(select name from sa_boards as s where s.id = board_id) as board')])
-	      	->join(DB::raw("(
-            select node.board_id as t_board_id, parent.board_id as t_parent_id
-            from sa_board_tree AS node ,
-				sa_board_tree AS parent
-            where node.lft between parent.lft and parent.rgt
-            ) as t"),'t.t_board_id','=','board_id')
-			->where ( 't.t_parent_id',$boardId )
+			->where ( 'board_id',$boardId )
 			->orderBy ( 'created_at', 'desc' )
 			->paginate(20);
-        //print_r(DB::getQueryLog());
-		
+
+		} else {
+			///... 하위 board 까지 포함되는 게시물 목록
+
+			/*
+			|------------------------------------------------
+			| 게시판에 해당되는 게시글 목록을 위한 쿼리. 하위 게시판의 글까지 보여준다.
+			|------------------------------------------------
+			*/
+			/*
+			// 첫번째 쿼리. 
+			$posts = Archive::select('sa_archives.*',DB::raw('(select name from sa_boards as s where s.id = board_id) as category_name'))
+			->whereRaw('board_id in 
+				(
+				SELECT node.board_id
+				FROM sa_board_tree AS node ,
+					sa_board_tree AS parent
+				WHERE node.lft BETWEEN parent.lft AND parent.rgt
+				and parent.board_id = ?
+				)',[$categoryId])->orderBy ( 'created_at', 'desc' )->paginate(30);
+			*/
+			// 속도를 조금 더 손본 쿼리. 전에는 where in 구문을 활용했는데, 속도가 너무 느려서 join 방식으로 변경.
+			//DB::enableQueryLog();
+			$masterList = Archive::select(['id', 'title','summary_var','reference','board_id','created_at','updated_at','category'
+				,DB::raw('(select name from sa_boards as s where s.id = board_id) as board')])
+				->join(DB::raw("(
+				select node.board_id as t_board_id, parent.board_id as t_parent_id
+				from sa_board_tree AS node ,
+					sa_board_tree AS parent
+				where node.lft between parent.lft and parent.rgt
+				) as t"),'t.t_board_id','=','board_id')
+				->where ( 't.t_parent_id',$boardId )
+				->orderBy ( 'created_at', 'desc' )
+				->paginate(20);
+				//print_r(DB::getQueryLog());
+		}
+
 		$archiveBoard = ArchiveBoard::select(['name', 'comment'])->where ( 'id', $boardId )->firstOrFail ();
 
         //$categoryName = ArchiveBoard::select('name')->where ( 'id', $boardId )->firstOrFail ()->name;
@@ -76,6 +88,8 @@ class ArchiveController extends Controller {
         $dataSet = $this->createViewData ();
         $dataSet ['masterList'] = $masterList;
 		$dataSet ['archiveBoard'] = $archiveBoard;
+		$dataSet ['mPaginationParams']['board'] = $boardId;
+		if($is_only) $dataSet ['mPaginationParams']['only'] = true;
 		$dataSet ['parameters']['board'] = $boardId;
 		$dataSet ['parameters']['profile'] = $profileId;
         return view ( self::VIEW_PATH . '.index', $dataSet );
@@ -481,79 +495,4 @@ class ArchiveController extends Controller {
 		return ($request->session()->get($session_previousName,'') != '') ?
 		$request->session()->get($session_previousName,'') : route ( self::ROUTE_ID . '.index', ['profile'=>1]);
 	}
-
-	/**
-	 * 개발 아카이브 의 목록 조회
-	 * 최상위 메뉴를 조회함.
-	 * @deprecated
-	 */
-	protected function getDevMenus($boardId='1'){
-	    $list = $this->getCategoryPath($boardId);
-	    $id = 1;
-	    if(count($list)>=1){
-	        $id = $list[0]->id;
-	    }
-	    return ArchiveBoard::where('parent_id',$id)->get();
-	}
-	
-	/**
-	 * @deprecated
-	 */
-	public function getCategoryPath($boardId = 0)
-	{
-	    $list = DB::select('select parent.board_id as id, cate.name as name
-            from sa_board_tree as node,
-			sa_board_tree as parent,
-                sa_boards as cate
-            where node.lft between parent.lft and parent.rgt
-              and parent.board_id = cate.id
-              and node.board_id = ?
-            order by parent.lft',[$boardId]);
-	    //Log::debug('ArchiveBoard::getCategoryPath');
-	    
-	    return $list;
-	}
-	
-	/**
-	 * boardId 를 기준으로 상위 노드를 탐색하고, 해당되는 분류의 카테고리들을 출력한다.
-	 * @param number $boardId
-	 * @return
-	 * @deprecated
-	 */
-	public function getCategories($boardId=1)
-	{
-	    $list = $this->getCategoryPath($boardId);
-	    $id = 1;
-	    if(count($list)>=1){
-	        $id = $list[0]->id;
-	    }
-	    return $this->getSubCategories($id);
-	}
-	
-	/**
-	 * 하위 카테고리 Tree 를 조회.
-	 * 최상위 depth 는 0 이라고 볼 때, 이 메서드는 depth 를 최소 1 이상 에서 사용하게 됨.
-	 * @param number $boardId
-	 * @param number $depth
-	 * @deprecated
-	 */
-	public function getSubCategories($boardId = 0, $depth = 1)
-	{
-	    $list = DB::select("select concat( repeat(?, count(parent.board_id) - 1 - ?), cate.name) as name,
-                node.board_id as id,
-                cate.count as count
-            from sa_board_tree as node,
-				sa_board_tree as parent,
-				sa_board_tree as sub_parent,
-                sa_boards as cate
-            where node.lft between parent.lft and parent.rgt
-                and node.lft between sub_parent.lft and sub_parent.rgt
-                and sub_parent.board_id = ?
-                and cate.id = node.board_id
-            group by node.board_id
-            order by node.lft",[self::CATEGORY_SEPERATE_CHAR, $depth, $boardId]);
-	    return $list;
-	}
-
-	    
 }

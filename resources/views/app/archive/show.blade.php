@@ -21,9 +21,10 @@
 		<div class="card-body">
 			* 최근 변경일시 : {{ $article->updated_at->format('Y-m-d g:ia') }}<br>
 			* 생성일시 : {{ $article->created_at->format('Y-m-d g:ia') }}<br>
-			* 분류 : 
-			@foreach ($article->category_array as $item)
-				<a href="/category/{{urlencode($item)}}">[{{$item}}]</a>&nbsp;
+			* 분류 :&nbsp;&nbsp;
+			@foreach ($article->category_array as $i => $item)
+				@if($i > 0) | @endif
+				<a href="/{{$parameters['profile']}}/category/{{urlencode($item)}}">{{$item}}</a>
 			@endforeach
 		</div>
 	</div>
