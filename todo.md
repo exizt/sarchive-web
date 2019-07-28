@@ -1,12 +1,11 @@
 # Todo
 * 글 작성/수정 시에 '글 출처' 에서 '펌글' or '내가 작성함' 을 선택해서 입력하게 하기.
 * 북마크 기능 : 북마크 Bookmark, Favorite
-* 분류 개선 : 아카이브 프로필 별로 다르게 되게.
-
+* 게시판 삭제 시에 기존 게시물이 어디로 이동할지... 
 
 # URLs
 * /[프로필ID]/archives/[게시물ID] : ArchiveController
-* /category/[카테고리명(한글가능)] : CategoryController
+* /[프로필ID]/category/[카테고리명(한글가능)] : CategoryController
 * /page/[페이지명(한글가능)] : PageController
 * (아카이브 목록 링크)?board=[게시판ID] : ArchiveController
 
@@ -98,10 +97,11 @@ Profiles | 프로필 테이블
   * user_id
   * name
   * text : 설명 텍스트 등.
-  * route : deprecated.
+  * root_board_id
+  * index : 정렬 순서
 * 인덱스
   * sa_profiles_user_index : (user_id, id) user_id 를 기준으로 profiles 를 조회하기 위함.
-  * sa_profiles_user_route_index : (user_id, route) route 를 기준으로 조회하기 위함. 안 쓸 듯...
+  * sa_profiles_user_index_id : (user_id, index, id)
 
 
 Archives | 아카이브 테이블
@@ -112,13 +112,13 @@ Archives | 아카이브 테이블
   * id : 아카이브 ID
   * title : 아카이브 제목
   * content : 아카이브 내용
-  * board_id : 게시판 id
-  * summary_var : 내용 요약글. (varchar 255)
   * reference : 출처. 링크 등.
+  * summary_var : 내용 요약글. (varchar 255)
+  * board_id : 게시판 id
   * category : [분류명][분류명2]
   * profile_id : 거의 사용되지 않는 값. 차후의 통계나 활용을 위해 넣어둔 컬럼. 값을 제대로 넣도록 함.
 * 인덱스
-  * sa_archives_latest_select_index : (board_id, created desc) 인덱스. 카테고리별로 정렬된 인덱스. 목록 불러올 때 이용되는 인덱스.
+  * sa_archives_latest_select_index : (board_id, created_at desc) 인덱스. 카테고리별로 정렬된 인덱스. 목록 불러올 때 이용되는 인덱스.
   * fulltext_index (title, content) 'Full Text' : 검색용 인덱스
 
 
@@ -129,9 +129,9 @@ Categories | 분류 테이블
   * id : 카테고리 ID
   * profile_id : 아카이브 구분값.
   * name : 외부에서 분류명을 중점적으로 탐색하게 됨. unique 를 하거나 pk 를 해야 함. 또는 indexing 을 하거나 해야 함.
+  * text : 분류에 대한 설명 txt 
   * parent : 상위 분류 설정 값. [분류1] [분류2] 와 같은 형태로..
   * redirect : 넘겨주기가 필요한 경우. 값이 입력되었으면 '넘겨주기 카테고리'로 감안함.
-  * text : 분류에 대한 설명 txt 
 * 인덱스 
   * sa_categories_profile_index : (profile_id, name) Normal BTREE, profile_id 과 name 로 접근하게 될 검색을 예견.
 
@@ -141,6 +141,7 @@ archive category relations 아카이브 카테고리 릴레이션 테이블 (아
 * 목적 : 분류에서 하위 문서를 탐색하기 위한 목적.
 * 설명 : 글 작성/변경 시기에 필요하면 갱신한다. archives.category 부분에 영향을 받는다. 
 * 컬럼
+  * profile_id : 프로필 ID
   * category (string) : 분류명 (한글 가능)
   * archive_id : 분류에 해당되는 아카이브의 id
 * 인덱스
@@ -152,7 +153,6 @@ category_parent (분류 x 상위 분류)
 * 설명 : 하위 분류를 탐색하기 위해 생성하는 부분. categories.parent_category 가 수정될 때에 같이 변경해준다. 하나의 값을 레코드로 분류해주어서 검색에 용이하도록 한다.
 * 목적 : 하위 분류를 탐색하기 위한 목적. Front 에서는 Ajax 로 호출하게 구성함.
 * 컬럼
-  * id : 크게 중요하지 않음. auto increment
   * profile_id : 아카이브 구분값.
   * parent (string): 분류명 (한글 가능)
   * child (string) : 하위 분류명 (한글 가능)
@@ -165,9 +165,9 @@ Boards | 게시판 테이블
 * 컬럼
   * id 
   * name : 명칭
+  * comment : 부가 설명
   * parent_id : 상위 게시판 id
   * profile_id : 아카이브 프로필 id
-  * comment : 부가 설명
   * count : 해당 게시판의 게시글 수
   * index : 정렬 순서
   * depth : 깊이

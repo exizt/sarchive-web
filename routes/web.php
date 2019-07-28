@@ -10,7 +10,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('archives/ajax_headerNav', 'Archive\ArchiveController@doAjax_getHeaderNav');
     Route::resource('{profile}/archives', 'Archive\ArchiveController');
     Route::resource('page', 'Archive\PageController');
-    Route::resource('{profile}/category', 'Archive\CategoryController');
+    Route::resource('{profile}/category', 'Archive\CategoryController', ['except'=>['create','store']]);
     //Route::get('category/{name?}', 'Archive\CategoryController@show')->where('category','(.*)');
 });
 Route::middleware(['auth'])->name('admin.')->prefix('admin')->group(function(){
