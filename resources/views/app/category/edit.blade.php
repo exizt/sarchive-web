@@ -14,7 +14,7 @@ $(function() {
 </script>
 
 <div class="container-fluid mt-4 mb-5">
-	<form class="form-horizontal" role="form" method="POST" action="{{ route($ROUTE_ID.'.update',urlencode($item->name)) }}">
+	<form class="form-horizontal" role="form" method="POST" action="{{ route($ROUTE_ID.'.update',['profile'=>$parameters['profile'],'category'=>urlencode($item->name)]) }}">
 		<input type="hidden" name="_token" value="{{ csrf_token() }}">
 		<input type="hidden" name="_method" value="PUT">
 
@@ -48,7 +48,7 @@ $(function() {
 				<p class="lead">정말 삭제하시겠습니까?</p>
 			</div>
 			<div class="modal-footer">
-				<form method="POST" action="{{ route($ROUTE_ID.'.destroy',$item->id) }}">
+				<form method="POST" action="{{ route($ROUTE_ID.'.destroy',['profile'=>$parameters['profile'],'category'=>$item->id]) }}">
 					<input type="hidden" name="_token" value="{{ csrf_token() }}"> <input type="hidden" name="_method" value="DELETE">
 					<button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
 					<button type="submit" class="btn btn-danger">예</button>
