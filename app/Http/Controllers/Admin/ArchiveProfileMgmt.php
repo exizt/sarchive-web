@@ -34,7 +34,8 @@ class ArchiveProfileMgmt extends Controller
         $masterList = Profile::select(['id','name','text','root_board_id','is_default','created_at'])
         ->where('user_id',$userId)
         ->orderBy('index','asc')
-        ->orderBy('id','asc')->paginate(20);
+        ->orderBy('id','asc')
+        ->paginate(20);
 
 
         $dataSet = $this->createViewData ();

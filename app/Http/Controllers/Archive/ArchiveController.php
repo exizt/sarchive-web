@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Services;
+namespace App\Http\Controllers\Archive;
 
 use App\Http\Controllers\Controller;
 use App\Models\Archive;

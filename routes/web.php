@@ -5,10 +5,10 @@ Auth::routes();
 Route::get ( '/', 'Home@index' );
 // SArchive ----------------------------
 Route::middleware(['auth'])->group(function () {
-    Route::get('archives/search', 'Services\ArchiveController@search')->name('archives.search');
-    Route::get('archives/ajax_boards', 'Services\ArchiveController@doAjax_getBoardList');
-    Route::get('archives/ajax_headerNav', 'Services\ArchiveController@doAjax_getHeaderNav');
-    Route::resource('{profile}/archives', 'Services\ArchiveController');
+    Route::get('archives/search', 'Archive\ArchiveController@search')->name('archives.search');
+    Route::get('archives/ajax_boards', 'Archive\ArchiveController@doAjax_getBoardList');
+    Route::get('archives/ajax_headerNav', 'Archive\ArchiveController@doAjax_getHeaderNav');
+    Route::resource('{profile}/archives', 'Archive\ArchiveController');
     Route::resource('page', 'Archive\PageController');
     Route::resource('category', 'Archive\CategoryController');
     //Route::get('category/{name?}', 'Archive\CategoryController@show')->where('category','(.*)');
