@@ -27,9 +27,9 @@
 				<a href="/{{$parameters['profile']}}/category/{{urlencode($item)}}">{{$item}}</a>
 			@endforeach
 			<br>
-			<a class="btn btn-sm shh-btn-bookmark {{($bookmark->is_favorite)? 'btn-info':'btn-secondary'}}" href="#" role="button" 
+			<a class="btn btn-sm shh-btn-bookmark active {{($bookmark->is_favorite)? 'btn-info':'btn-primary'}}" href="#" role="button" 
 				data-mode="favorite" data-archive="{{$article->id}}" data-value="{{$bookmark->is_favorite}}"><i class="fas fa-star"></i>&nbsp;즐겨찾기</a>
-			<a class="btn btn-sm shh-btn-bookmark {{($bookmark->is_bookmark)? 'btn-info':'btn-secondary'}}" href="#" role="button" 
+			<a class="btn btn-sm shh-btn-bookmark active {{($bookmark->is_bookmark)? 'btn-info':'btn-primary'}}" href="#" role="button" 
 				data-mode="bookmark" data-archive="{{$article->id}}" data-value="{{$bookmark->is_bookmark}}"><i class="fas fa-bookmark"></i>&nbsp;북마크</a>
 		</div>
 	</div>
@@ -68,7 +68,7 @@ function doAjax_Bookmarking_event(e){
 function doAjax_Bookmarking(mode,id){
 	var conf = {
 		true_class : "btn-info",
-		false_class : "btn-secondary"
+		false_class : "btn-primary"
 	}
 	$.post({
 		url: '/archives/ajax_mark',
