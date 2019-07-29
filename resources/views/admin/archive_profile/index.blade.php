@@ -78,12 +78,15 @@ function saveProfileSort(){
 	})
 
 	console.log(profileList)
-	$.post("/admin/archiveProfile/updateSort",{
+	$.post({
+		url: '/admin/archiveProfile/updateSort',
+		data: {
 			'listData': profileList
-		})
-		.done(function(data){
-			location.reload()
-		})
+		}
+	})
+	.done(function(data){
+		location.reload()
+	})
 }
 function changeIndexModeOn(){
 	$(".shh-listmovemode-off").hide()

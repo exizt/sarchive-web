@@ -66,6 +66,19 @@ tinymce.init({
 		
 	<div class="form-group">
 		<label for="articleReference">원문 출처</label>
+		&nbsp;<span class="badge badge-secondary shh-evt-append-ref" data-value="나">내가 작성함</span>
+		&nbsp;<span class="badge badge-secondary shh-evt-append-ref" data-value="펌">펌글</span>
+		&nbsp;<span class="badge badge-secondary shh-evt-append-ref" data-value="">비우기</span>
 		<input name="reference" type="text" id="articleReference" class="form-control" value="{{ $article->reference }}" placeholder="" aria-label="">
 	</div>	
 </div>
+<script>
+$(function(){
+	$(".shh-evt-append-ref").on("click",function(){
+		if(typeof $(this).data("value") !== "undefined"){
+			$("#articleReference").val($(this).data("value"))
+		}
+	});
+});
+
+</script>

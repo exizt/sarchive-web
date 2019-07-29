@@ -1,7 +1,7 @@
 @extends('layouts.archive_layout') 
 @section('title',"검색 결과") 
 @section('content')
-<div id="curBoardId" data-current-board="{{ $parameters['boardId']}}">
+<div id="curBoardId" data-current-board="{{ $parameters['board']}}">
 	<div class="mt-4 mb-5">
 		<div class="container-fluid">
 			<div class="row">
@@ -14,7 +14,9 @@
 					</div>
 					<hr>
 					<div class="list-group">
-						@foreach ($articles as $article) <a class="list-group-item list-group-item-action flex-column align-items-start" href="{{ route($ROUTE_ID.'.show',$article->id) }}">
+						@foreach ($articles as $article)
+						<a class="list-group-item list-group-item-action flex-column align-items-start" 
+							href="{{ route('archives.show',['profile_id'=>$article->profile_id,'archive_id'=>$article->id]) }}">
 							<div class="d-flex w-100 justify-content-between">
 								<h5 class="mb-1">{{ $article->title }}</h5>
 								<small>{{ $article->created_at->format('Y-m-d') }}<br>카테고리 : {{ $article->category_name }}
@@ -36,7 +38,7 @@
 			</div>
 		</div>
 		<hr>
-		<div class="text-xs-center">{{ $articles->appends(['q' => $parameters['q'],'profile'=> $parameters['profile']])->links() }}</div>
+		<div class="text-xs-center">{{ $articles->appends($pagParameters)->links() }}</div>
 	</div>
 </div>
 <script>
