@@ -205,6 +205,7 @@ class ArchiveController extends Controller {
 				$item->is_favorite = true;
 			}
 		}
+		$item->profile_id = $profileId;
 		$item->save();
 
 		

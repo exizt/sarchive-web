@@ -15,7 +15,10 @@
 <link rel="shortcut icon" href="/assets/images/shortcut.ico" />
 <!-- ## styles ## -->
 <link rel="stylesheet" href="/assets/lib/bootstrap/4.3.1-dark-theme/css/bootstrap.css">
-<link rel="stylesheet" href="/assets/lib/font-awesome-4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/fontawesome.min.css">
+<link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/brands.min.css">
+<link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/solid.min.css">
+<!--<link rel="stylesheet" href="/assets/lib/font-awesome-4.7.0/css/font-awesome.min.css">-->
 <link rel="stylesheet" href="/assets/lib/google-material-icons/iconfont/material-icons.css">
 <link rel="stylesheet" href="/assets/lib/google-material-icons/after-material-icons.css">
 <link rel="stylesheet" href="/assets/css/bs-callout.css">
@@ -64,9 +67,9 @@ document.onkeyup = shortcutKeyEvent;
 	<header>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 			@isset($parameters['profile']) 
-			<a class="navbar-brand" href="/{{$parameters['profile']}}/archives"><i class="fa fa-superpowers fa-spin" aria-hidden="true"></i>&nbsp;&nbsp;S아카이브</a>
+			<a class="navbar-brand" href="/{{$parameters['profile']}}/archives"><i class="fab fa-superpowers fa-spin" aria-hidden="true"></i>&nbsp;&nbsp;S아카이브</a>
 			@else
-			<a class="navbar-brand" href="/"><i class="fa fa-superpowers fa-spin" aria-hidden="true"></i>&nbsp;&nbsp;S아카이브</a>
+			<a class="navbar-brand" href="/"><i class="fab fa-superpowers fa-spin" aria-hidden="true"></i>&nbsp;&nbsp;S아카이브</a>
 			@endisset
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
@@ -104,7 +107,7 @@ document.onkeyup = shortcutKeyEvent;
 							<a class="dropdown-item" href="{{ config('app.c_site_url','') }}">개인사이트로 이동</a> 
 							<div class="dropdown-divider"></div>
 							<a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i
-								class="fa fa-sign-out" aria-hidden="true"></i>&nbsp;Logout</a>
+								class="fas fa-sign-out-alt" aria-hidden="true"></i>&nbsp;Logout</a>
 							<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">{{ csrf_field() }}</form>
 						</div>
 					</li>

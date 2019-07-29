@@ -1,6 +1,6 @@
 # Todo
-* 북마크 기능 : 북마크 Bookmark, Favorite
 * 게시판 삭제 시에 기존 게시물이 어디로 이동할지... 
+
 
 # URLs
 * /[프로필ID]/archives/[게시물ID] : ArchiveController

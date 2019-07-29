@@ -15,10 +15,10 @@
 <link rel="shortcut icon" href="/assets/images/shortcut.ico" />
 <!-- ## styles ## -->
 <link rel="stylesheet" href="/assets/lib/bootstrap/4.3.1-dark-theme/css/bootstrap.css">
-<link rel="stylesheet" href="/assets/lib/font-awesome-4.7.0/css/font-awesome.min.css">
-<link rel="stylesheet" href="/assets/lib/google-material-icons/iconfont/material-icons.css">
-<link rel="stylesheet" href="/assets/lib/google-material-icons/after-material-icons.css">
-<link rel="stylesheet" href="/assets/css/bs-callout.css">
+<link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/fontawesome.min.css">
+<link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/brands.min.css">
+<link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/solid.min.css">
+<!--<link rel="stylesheet" href="/assets/lib/font-awesome-4.7.0/css/font-awesome.min.css">-->
 <link rel="stylesheet" href="/assets/css/site-base.css">
 <link rel="stylesheet" href="/assets/css/site-layouts.css">
 <!-- ## scripts ## -->
@@ -27,10 +27,6 @@
 <script src="/assets/lib/bootstrap/required/4.3.1/popper/1.14.3/popper.min.js"></script>
 <script src="/assets/lib/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script src="/assets/js/site-base.js"></script>
-<!-- ## semi modules ## -->
-<link rel="stylesheet" href="/assets/modules/scrolltop/scrolltop.css">
-<script src="/assets/modules/scrolltop/scrolltop.js"></script>
-<link rel="stylesheet" href="/assets/modules/sh-sidenav/sh-sidenav.css">
 @stack('style-head') 
 @stack('script-head')
 <!--<script src="/assets/js/site-shortcut.js"></script>-->
@@ -41,7 +37,7 @@
 <body>
 	<header>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-			<a class="navbar-brand" href="/"><i class="fa fa-superpowers fa-spin" aria-hidden="true"></i>&nbsp;&nbsp;S아카이브</a>
+			<a class="navbar-brand" href="/"><i class="fab fa-superpowers fa-spin" aria-hidden="true"></i>&nbsp;&nbsp;S아카이브</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>

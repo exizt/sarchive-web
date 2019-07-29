@@ -3,13 +3,12 @@
 @section('content')
 <div class="container py-5">
 	<div class="col-md-10 offset-md-1">
+		<h3>로그인</h3>
 		<div class="card">
 			<div class="card-body">
 				<form class="form-horizontal {{ $errors->has('email') ? 'was-validated' : 'is-valid' }}" role="form" method="POST"
 					action="{{ route('login') }}">
 					{{ csrf_field() }}
-					<h1>로그인</h1>
-					<h5 class="text-muted pb-4"></h5>
 					<div class="form-group row">
 						<label for="email" class="col-form-label col-md-3 text-right">이메일</label>
 						<div class="col-md-9">
