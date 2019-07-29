@@ -44,6 +44,10 @@
 		<div class="col-md-10 col-md-offset-2">
 			<a class="btn btn-primary btn-sm site-shortcut-key-c" href="{{ $previousList }}" role="button">목록</a>
 			<a class="btn btn-outline-info btn-sm site-shortcut-key-e" href="{{ route($ROUTE_ID.'.edit',['profile'=>$parameters['profile'],'archive'=>$article->id]) }}" role="button">편집</a>
+			<a class="btn btn-outline-primary btn-sm shh-btn-bookmark" href="#" role="button" 
+				data-mode="bookmark" data-archive="{{$article->id}}" data-value="{{$bookmark->is_bookmark}}">북마크</a>
+			<a class="btn btn-outline-primary btn-sm shh-btn-bookmark" href="#" role="button" 
+				data-mode="favorite" data-archive="{{$article->id}}" data-value="{{$bookmark->is_favorite}}">즐겨찾기</a>
 		</div>
 	</div>
 </div>
@@ -73,4 +77,36 @@
 		</div>
 	</div>
 </div>
+<script>
+$(function(){
+	$(".shh-btn-bookmark").on("click",doAjax_Bookmarking_event)
+})
+
+function doAjax_Bookmarking_event(e){
+	e.preventDefault()
+	var id = $(this).data("archive")
+	var mode = $(this).data("mode")
+	doAjax_Bookmarking(mode,id)
+}
+
+function doAjax_Bookmarking(mode,id){
+	$.post({
+		url: '/archives/ajax_mark',
+		dataType: 'json',
+		data: {
+			mode: mode,
+			archive: id
+		}
+	}).done(function(json){
+		$(".shh-btn-bookmark").each(function(index){
+			if($(this).data("mode") == "favorite"){
+				$(this).attr("data-value",json.data.is_favorite)
+			} else if($(this).data("mode") == "bookmark"){
+				$(this).attr("data-value",json.data.is_bookmark)
+			}
+			console.log("dd"+index+$(this).data("mode"));
+		})
+	})
+}
+</script>
 @stop

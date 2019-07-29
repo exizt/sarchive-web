@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers\Archive;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Archive;
 use App\Models\ArchiveBoard;
 use App\Models\ArchiveCategoryRel;
 use App\Models\Profile;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
+use App\Models\ArchiveBookmark;
 
 class ArchiveController extends Controller {
 	protected const VIEW_PATH = 'app.archive';
@@ -110,7 +111,7 @@ class ArchiveController extends Controller {
 	    if(mb_strlen($word) < 2){
 	        echo '검색어가 너무 짧음.';
 	    } else {
-			$masterList = Archive::select(['id', 'title','summary_var','reference','board_id','created_at','updated_at','category'
+			$masterList = Archive::select(['id', 'title','summary_var','reference','board_id','created_at','updated_at','category','profile_id'
 				,DB::raw('(select name from sa_boards as s where s.id = board_id) as category_name')])
 				->join(DB::raw("(
 				select node.board_id as t_board_id, parent.board_id as t_parent_id
@@ -126,8 +127,12 @@ class ArchiveController extends Controller {
     	    // dataSet 생성
     	    $dataSet = $this->createViewData ();
     	    $dataSet ['articles'] = $masterList;
-    	    $dataSet ['parameters']['board'] = $boardId;
-    	    $dataSet ['parameters']['q'] = $word;
+			$dataSet ['parameters']['board'] = $boardId;
+			$dataSet ['parameters']['profile'] = $this->ArchiveProfile->id;
+			$dataSet ['parameters']['q'] = $word;
+			$dataSet ['pagParameters']['board'] = $boardId;
+			$dataSet ['pagParameters']['profile'] = $this->ArchiveProfile->id;
+			$dataSet ['pagParameters']['q'] = $word;
     	    return view ( self::VIEW_PATH . '.search', $dataSet );
 	        
 	    }
@@ -172,6 +177,50 @@ class ArchiveController extends Controller {
 	}
 
 	/**
+	 * bookmark, favorite 기능 구현
+	 */
+	public function doAjax_mark(Request $request){
+
+		$archiveId = $request->input('archive');
+		//$profileId = $request->input('profile_id');
+		$mode = $request->input('mode');
+
+		$archive = Archive::findOrFail($archiveId);
+		$profileId = $archive->profile_id;
+
+		$item = ArchiveBookmark::firstOrNew(
+			['archive_id' => $archiveId]
+		);
+
+		if($mode == 'bookmark'){
+			if($item->is_bookmark){
+				$item->is_bookmark = false;
+			} else {
+				$item->is_bookmark = true;
+			}
+		} else if($mode == 'favorite'){
+			if($item->is_favorite){
+				$item->is_favorite = false;
+			} else {
+				$item->is_favorite = true;
+			}
+		}
+		$item->save();
+
+		
+		$dataSet = array();
+		$dataSet ['data'] = [
+			'archive' => $archiveId,
+			'is_bookmark' => ($item->is_bookmark)? 1: 0,
+			'is_favorite' => ($item->is_favorite)? 1:0
+		];
+        $dataSet['success'] = '변경 완료되었습니다.';
+
+        $request->session()->flash('message', '변경 완료되었습니다.');
+
+        return response()->json($dataSet);
+	}
+	/**
 	 * 글 본문 읽기
 	 *
 	 * @param int $id
@@ -179,20 +228,24 @@ class ArchiveController extends Controller {
 	 */
 	public function show(Request $request, $profileId, $archiveId) {
 		$this->getArchiveProfileFromID($profileId);
-	    $article = Archive::where ( 'id', $archiveId )->firstOrFail ();
-		$archiveBoard = ArchiveBoard::find($article->board_id);
+	    $archive = Archive::where ( 'id', $archiveId )->firstOrFail ();
 		
-		if($article->profile_id != $profileId){
+		// profile 값이 제대로 넘어왔는지 확인.
+		if($archive->profile_id != $profileId){
 			// fail 처리 하기. (사실 안 해도 되지만..)
 			abort(404);
 		}
+		
+		$archiveBoard = ArchiveBoard::find($archive->board_id);
+		$archiveBookmark = ArchiveBookmark::firstOrNew(['archive_id'=>$archiveId]);
 
 	    // create dataSet
 	    $dataSet = $this->createViewData ();
-		$dataSet ['article'] = $article;
+		$dataSet ['article'] = $archive;
 		$dataSet ['boardPath'] = json_decode($archiveBoard->path);
-	    $dataSet ['previousList'] = $this->makePreviousListLink($request, $profileId);
-		//$dataSet ['parameters']['board'] = $article->board_id;
+		$dataSet ['previousList'] = $this->makePreviousListLink($request, $profileId);
+		$dataSet ['bookmark'] = $archiveBookmark;
+		//$dataSet ['parameters']['board'] = $archive->board_id;
 		$dataSet ['parameters']['profile'] = $profileId;
 	    return view ( self::VIEW_PATH . '.show', $dataSet );
 	}
@@ -264,7 +317,7 @@ class ArchiveController extends Controller {
 		$this->getArchiveProfileFromID($profileId);
 		//
 		$title = $request->input ( 'title' );
-		$content = $request->input ( 'content' );
+		$content = $request->input ( 'content', ' ' );
 		$board_id = $request->input ( 'board_id' , '1');
 		$reference = $request->input ('reference');
 		$category = $request->input ('category');
@@ -282,7 +335,7 @@ class ArchiveController extends Controller {
 		$this->updateBoardCount();
 		
 		foreach($article->category_array as $item){
-			ArchiveCategoryRel::create(['profile_id'=>$profileId,'archive_id'=>$archiveId,'category'=>$item]);
+			ArchiveCategoryRel::create(['profile_id'=>$profileId,'archive_id'=>$article->id,'category'=>$item]);
 		}
 
 		// result processing
@@ -303,7 +356,7 @@ class ArchiveController extends Controller {
 		
 		
 		$title = $request->input ( 'title' );
-		$content = $request->input ( 'content' );
+		$content = $request->input ( 'content',' ' );
 		$board_id = $request->input ( 'board_id' , '1');
 		$reference = $request->input ('reference');
 		$category = $request->input ('category');
@@ -326,7 +379,7 @@ class ArchiveController extends Controller {
 			ArchiveCategoryRel::where('archive_id',$archiveId)->delete();
 
 			foreach($article->category_array as $item){
-				ArchiveCategoryRel::create(['profile_id'=>$profileId,'archive_id'=>$archiveId,'category'=>$item]);
+				ArchiveCategoryRel::create(['profile_id'=>$profileId,'archive_id'=>$article->id,'category'=>$item]);
 			}
 		}
 

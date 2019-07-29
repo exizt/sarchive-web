@@ -8,6 +8,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('archives/search', 'Archive\ArchiveController@search')->name('archives.search');
     Route::get('archives/ajax_boards', 'Archive\ArchiveController@doAjax_getBoardList');
     Route::get('archives/ajax_headerNav', 'Archive\ArchiveController@doAjax_getHeaderNav');
+    Route::post('archives/ajax_mark', 'Archive\ArchiveController@doAjax_mark');
     Route::resource('{profile}/archives', 'Archive\ArchiveController');
     Route::resource('{profile}/category', 'Archive\CategoryController', ['except'=>['create','store']]);
     Route::resource('page', 'Archive\PageController');
