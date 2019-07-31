@@ -45,6 +45,20 @@
 		<div class="text-xs-center">{{ $masterList->appends($mPaginationParams)->links() }}</div>
 	</div>
 </div>
+<style>
+.shh-navboardlist-depth-1{
+	padding-left: 1.75rem;
+}
+.shh-navboardlist-depth-2{
+	padding-left: 3.5rem;
+}
+.shh-navboardlist-depth-3{
+	padding-left: 6.0em;
+}
+.shh-navboardlist-depth-4{
+	padding-left: 8.5rem;
+}
+</style>
 <script>
 	$(function(){
 		ajaxBoardList()
@@ -75,14 +89,15 @@
 			})
 			$.each(data.list, function(i,item){
 				var depth = item.depth - current.depth
+				var t_depth = (depth - 1 < 0) ? 0 : depth - 1
 				if(depth >3) return
 				var html = '<a href="/'
 				+ profileId + '/archives?board='
 				+ item.id
-				+ '" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">'
-				+ ">".repeat(depth)+"&nbsp;"+item.name
+				+ '" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center shh-navboardlist-depth-'+depth+'">'
+				+ "❯".repeat(depth) + "&nbsp;&nbsp;" + item.name
 				+ ' <span class="badge badge-secondary badge-pill">'+item.count+'</span></a>'
-
+				//🢒 
 				$("#shh-nav-board-list").append(html)
 			})
 
@@ -90,7 +105,7 @@
 				+ profileId + '/archives?board='
 				+ data.current.id
 				+ '&only=1" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">'
-				+ "&nbsp;"+data.current.name
+				+ data.current.name
 				+ ' (only)</a>'
 
 				$("#shh-nav-board-only").append(html)

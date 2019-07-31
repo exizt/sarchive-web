@@ -49,11 +49,8 @@ tinymce.init({
 		<label for="boardSelectInput">게시판 선택</label>
     	<select name="board_id" class="form-control" title="게시판 선택" id="boardSelectInput">
     		@foreach ($boardList as $cate)
-				@isset($selectedBoard)
-				<option value="{{ $cate->id }}" @if ($cate->id == $selectedBoard) selected @endif>{{ str_repeat('🢒',$cate->depth).' '.$cate->name }}</option>
-				@else
-				<option value="{{ $cate->id }}">{{ str_repeat('🢒',$cate->depth).' '.$cate->name }}</option>
-				@endisset
+				<option value="{{ $cate->id }}" @isset($selectedBoard) @if ($cate->id == $selectedBoard) selected @endif @endif>{{ 
+				str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',$cate->depth).str_repeat('❯',$cate->depth).' '.$cate->name }}</option>
     		@endforeach
     	</select>
 	</div>
