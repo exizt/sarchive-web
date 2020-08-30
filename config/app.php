@@ -70,7 +70,6 @@ return [
     |
     */
 
-    //'timezone' => 'UTC',
 	'timezone' => 'Asia/Seoul',
 
     /*
@@ -97,7 +96,7 @@ return [
     |
     */
 
-    'fallback_locale' => 'ko',
+    'fallback_locale' => 'en',
 
     /*
     |--------------------------------------------------------------------------
