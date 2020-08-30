@@ -103,7 +103,7 @@ document.onkeyup = shortcutKeyEvent;
 							<a class="dropdown-item" href="/">더보기</a>
 							<div class="dropdown-divider"></div>
 							<h6 class="dropdown-header">관리</h6>
-							<a class="dropdown-item" href="/admin">아카이브 관리</a>
+							<a class="dropdown-item" href="/admin">설정</a>
 							<a class="dropdown-item" href="{{ config('app.c_site_url','') }}">개인사이트로 이동</a> 
 							<div class="dropdown-divider"></div>
 							<a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i
