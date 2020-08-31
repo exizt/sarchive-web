@@ -30,4 +30,4 @@ $(function() {
 	</form>
 </div>
 
-@stop
+@endsection

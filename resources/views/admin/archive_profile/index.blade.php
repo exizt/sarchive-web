@@ -119,4 +119,4 @@ function moveDown($current,sel){
 }
 
 </script>
-@stop
+@endsection

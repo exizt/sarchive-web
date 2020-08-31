@@ -1,49 +1,28 @@
-# -------------------------
-# Default
-
-# trash files by os
-.DS_Store
-Thumbs.db
-
-# Java - class files
-*.class
-
-# vendor files
-/vendor/
-
-
-# -------------------------
-# IDE files
-# -------------------------
-/nbproject/
-.idea/*
-
-
-# eclipse files
-/.externalToolBuilders/
-/.settings/
-.buildpath
-.project
-
-
-# -------------------------
-# laravel source
-# -------------------------
 /node_modules
 /public/hot
 /public/storage
 /storage/*.key
 /vendor
-/.idea
-/.vscode
-/.vagrant
+.env
+.env.backup
+.phpunit.result.cache
 Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
-.env
+# -------------------------
+# Custom
 
+# trash files by os
+.DS_Store
+Thumbs.db
+
+# vendor files
+/vendor/
+
+# IDE files
+/nbproject/
+.idea/*
 
 # Local Folders
-# -------------------------
 /public/files/

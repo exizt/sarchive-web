@@ -57,4 +57,4 @@ $(function() {
 		</div>
 	</div>
 </div>
-@stop
+@endsection
