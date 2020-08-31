@@ -11,4 +11,4 @@
 <ul class="list-group">
 	<li class="list-group-item">게시물ID 와 프로필ID 의 오차가 생긴 게시물 조회</li>
 </ul>
-@stop
+@endsection

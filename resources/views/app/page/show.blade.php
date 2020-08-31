@@ -6,4 +6,4 @@
 		<div class="card-body">{!! $page->content !!}</div>
 	</div>
 </div>
-@stop
+@endsection

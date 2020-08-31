@@ -55,10 +55,8 @@
 			</div>
 		</nav>
 	</header>
-	<div id="layoutBody">
-		@yield('layout_header')
+	<div id="layoutBody" class="py-5">
 		@yield('content')
-		@yield('layout_footer')
 	</div>
 	<!-- .site-layout-page -->
 	<footer>

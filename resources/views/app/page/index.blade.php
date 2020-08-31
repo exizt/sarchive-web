@@ -20,4 +20,4 @@
 	<hr>
 	<div class="text-xs-center">{{ $masterListSet->links() }}</div>
 </div>
-@stop
+@endsection

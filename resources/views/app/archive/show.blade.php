@@ -123,4 +123,4 @@ function doAjax_Bookmarking(mode,id){
 	})
 }
 </script>
-@stop
+@endsection
