@@ -8,4 +8,4 @@
 		스킨
 	</div>
 </div>
-@stop
+@endsection

@@ -212,5 +212,4 @@ function redrawJSTree(dataJson){
 }
 
 </script>
-
 @endsection
