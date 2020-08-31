@@ -81,7 +81,7 @@ document.onkeyup = shortcutKeyEvent;
 					@isset($parameters['profile'])
 						<input type="hidden" name="profile" value="{{ $parameters['profile']}}">
 					@endisset
-					<input class="form-control mr-sm-2 site-shortcut-key-f" type="search" placeholder="Search" aria-label="Search" name="q" value="{{ $parameters['q'] or ''}}">
+					<input class="form-control mr-sm-2 site-shortcut-key-f" type="search" placeholder="Search" aria-label="Search" name="q" value="{{ $parameters['q'] ?? ''}}">
 					<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 				</form>
 				<ul class="navbar-nav">
