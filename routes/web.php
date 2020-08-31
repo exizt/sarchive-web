@@ -27,3 +27,4 @@ Route::middleware(['auth'])->name('admin.')->prefix('admin')->group(function(){
     Route::resource('archivePage', 'Admin\ArchivePageMgmt', ['except'=>['show']]);
     Route::view('advanced','admin.advanced',['ROUTE_ID'=>'advanced']);
 });
+Auth::routes();
