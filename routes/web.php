@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 // Auth
-Auth::routes();
+Auth::routes(['register' => false, 'verify'=> true]);
 // index
 Route::get ( '/', 'Home@index' );
 // SArchive ----------------------------
@@ -27,4 +27,3 @@ Route::middleware(['auth'])->name('admin.')->prefix('admin')->group(function(){
     Route::resource('archivePage', 'Admin\ArchivePageMgmt', ['except'=>['show']]);
     Route::view('advanced','admin.advanced',['ROUTE_ID'=>'advanced']);
 });
-Auth::routes();
