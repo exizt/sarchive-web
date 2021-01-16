@@ -1,24 +1,32 @@
 <?php
-
-namespace App\Models;
+namespace App\Models\SArchive;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Archive extends Model
+/**
+ * [아카이브의 문서 테이블](Document)
+ * 아카이브 내에 위치하는 문서와 문서 내용에 대한 테이블이다.
+ */
+class SADocument extends Model
 {
+    // FullTextSearch 기능을 이용
     use FullTextSearch;
-    protected $table = 'sa_archives';
     
-    protected $fillable = ['title', 'content','board_id','reference','category','profile_id'];
-    protected $attributes = ['title'=>'',
-     'content'=>'',
-     'board_id'=>'',
-     'reference'=>'',
-     'category'=>''];
+    // 테이블명
+    protected $table = 'sa_documents';
+    
+    //protected $fillable = ['title', 'content','reference','category','archive_id_weak'];
+    // 데이터 기본값
+    protected $attributes = [
+        'title'=>'',
+        'content'=>'',
+        'reference'=>'',
+        'category'=>''];
     protected $appends = array (
         'category_array' 
     );
     protected $perPage = 15;
+
     /**
      * The columns of the full text index
      */
@@ -55,5 +63,12 @@ class Archive extends Model
             return $matches[1];
         }
         return array();
+    }
+
+    /**
+     * meta 테이블과의 조인
+     */
+    public function meta(){
+        return $this->hasOne('App\Models\SADocumentMeta', 'id');
     }
 }

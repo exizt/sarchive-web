@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Archive;
 
 use App\Http\Controllers\Controller;
-use App\Models\Archive;
+use App\Models\SArchive\SADocument;
 use App\Models\ArchiveCategory;
 use App\Models\ArchiveCategoryRel;
 use App\Models\ArchiveCategoryParentRel;
@@ -49,7 +49,7 @@ class CategoryController extends Controller {
 		$archiveCategory = ArchiveCategory::firstOrNew (['profile_id'=>$profileId,'name'=>$name]);
 
 		// 이 분류에 속하는 문서 목록을 출력해준다
-		$masterList = Archive::select(['sa_archives.id', 'sa_archives.title','sa_archives.summary_var','sa_archives.reference','sa_archives.board_id','sa_archives.created_at','sa_archives.updated_at'])
+		$masterList = SADocument::select(['sa_archives.id', 'sa_archives.title','sa_archives.summary_var','sa_archives.reference','sa_archives.board_id','sa_archives.created_at','sa_archives.updated_at'])
 	      	->join("sa_category_archive_rel as rel",'rel.archive_id','=','id')
 			->where ( 'rel.category',$name )
 			->orderBy ( 'sa_archives.created_at', 'desc' )

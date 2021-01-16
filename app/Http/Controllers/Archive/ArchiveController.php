@@ -6,13 +6,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
-use App\Models\Archive;
-use App\Models\ArchiveBoard;
+use App\Models\SArchive\SAArchive;
+use App\Models\SArchive\SAFolder;
+use App\Models\SArchive\SADocument;
 use App\Models\ArchiveCategoryRel;
-use App\Models\Profile;
 use App\Models\ArchiveBookmark;
 
-class ArchiveController extends Controller {
+class DocumentController extends Controller {
 	protected const VIEW_PATH = 'app.archive';
 	protected const ROUTE_ID = 'archives';
 	protected $ArchiveProfile;
@@ -31,15 +31,16 @@ class ArchiveController extends Controller {
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function index(Request $request, $profileId) {
-		$this->getArchiveProfileFromID($profileId);
+	public function index(Request $request, $archiveId) {
+		$this->setArchiveFromId($archiveId);
 
 	    $boardId = $request->input('board', $this->ArchiveProfile->root_board_id);
 		$is_only = (bool)$request->input( 'only' , false);
 
+
 		if($is_only){
 			///... board_id 에만 해당되는 게시물 목록
-			$masterList = Archive::select(['id', 'title','summary_var','reference','board_id','created_at','updated_at','category'
+			$masterList = SADocument::select(['id', 'title','summary_var','reference','board_id','created_at','updated_at','category'
 			,DB::raw('(select name from sa_boards as s where s.id = board_id) as board')])
 			->where ( 'board_id',$boardId )
 			->orderBy ( 'created_at', 'desc' )
@@ -55,7 +56,7 @@ class ArchiveController extends Controller {
 			*/
 			/*
 			// 첫번째 쿼리. 
-			$posts = Archive::select('sa_archives.*',DB::raw('(select name from sa_boards as s where s.id = board_id) as category_name'))
+			$posts = SADocument::select('sa_archives.*',DB::raw('(select name from sa_boards as s where s.id = board_id) as category_name'))
 			->whereRaw('board_id in 
 				(
 				SELECT node.board_id
@@ -67,7 +68,7 @@ class ArchiveController extends Controller {
 			*/
 			// 속도를 조금 더 손본 쿼리. 전에는 where in 구문을 활용했는데, 속도가 너무 느려서 join 방식으로 변경.
 			//DB::enableQueryLog();
-			$masterList = Archive::select(['id', 'title','summary_var','reference','board_id','created_at','updated_at','category'
+			$masterList = SADocument::select(['id', 'title','summary_var','reference','board_id','created_at','updated_at','category'
 				,DB::raw('(select name from sa_boards as s where s.id = board_id) as board')])
 				->join(DB::raw("(
 				select node.board_id as t_board_id, parent.board_id as t_parent_id
@@ -81,9 +82,9 @@ class ArchiveController extends Controller {
 				//print_r(DB::getQueryLog());
 		}
 
-		$archiveBoard = ArchiveBoard::select(['name', 'comment'])->where ( 'id', $boardId )->firstOrFail ();
+		$archiveBoard = SAFolder::select(['name', 'comment'])->where ( 'id', $boardId )->firstOrFail ();
 
-        //$categoryName = ArchiveBoard::select('name')->where ( 'id', $boardId )->firstOrFail ()->name;
+        //$categoryName = SAFolder::select('name')->where ( 'id', $boardId )->firstOrFail ()->name;
 		
 		// dataSet 생성
         $dataSet = $this->createViewData ();
@@ -92,7 +93,7 @@ class ArchiveController extends Controller {
 		$dataSet ['mPaginationParams']['board'] = $boardId;
 		if($is_only) $dataSet ['mPaginationParams']['only'] = true;
 		$dataSet ['parameters']['board'] = $boardId;
-		$dataSet ['parameters']['profile'] = $profileId;
+		$dataSet ['parameters']['profile'] = $archiveId;
         return view ( self::VIEW_PATH . '.index', $dataSet );
 
 	}
@@ -111,7 +112,7 @@ class ArchiveController extends Controller {
 	    if(mb_strlen($word) < 2){
 	        echo '검색어가 너무 짧음.';
 	    } else {
-			$masterList = Archive::select(['id', 'title','summary_var','reference','board_id','created_at','updated_at','category','profile_id'
+			$masterList = SADocument::select(['id', 'title','summary_var','reference','board_id','created_at','updated_at','category','profile_id'
 				,DB::raw('(select name from sa_boards as s where s.id = board_id) as category_name')])
 				->join(DB::raw("(
 				select node.board_id as t_board_id, parent.board_id as t_parent_id
@@ -147,7 +148,7 @@ class ArchiveController extends Controller {
 
 		$boardId = $request->input('board_id',1);
 
-		$currentNode = ArchiveBoard::select(['id','name','parent_id','path','depth'])->where ( 'id', $boardId )->firstOrFail ();
+		$currentNode = SAFolder::select(['id','name','parent_id','path','depth'])->where ( 'id', $boardId )->firstOrFail ();
 
 		$masterList = DB::select("select id, name, parent_id, count, depth
 		from `sa_boards`
@@ -167,8 +168,8 @@ class ArchiveController extends Controller {
 
 	public function doAjax_getHeaderNav(Request $request){
 		$this->getArchiveProfile($request);
-		//$archiveBoardList = ArchiveBoard::find($article->board_id);
-		$masterList = $archiveBoardList = ArchiveBoard::select(['id','name','parent_id','depth'])
+		//$archiveBoardList = SAFolder::find($article->board_id);
+		$masterList = $archiveBoardList = SAFolder::select(['id','name','parent_id','depth'])
 		->where([['profile_id',$this->ArchiveProfile->id],['depth','2']])
 		->orderBy('index','asc')->get();
 
@@ -185,7 +186,7 @@ class ArchiveController extends Controller {
 		//$profileId = $request->input('profile_id');
 		$mode = $request->input('mode');
 
-		$archive = Archive::findOrFail($archiveId);
+		$archive = SADocument::findOrFail($archiveId);
 		$profileId = $archive->profile_id;
 
 		$item = ArchiveBookmark::firstOrNew(
@@ -228,8 +229,8 @@ class ArchiveController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function show(Request $request, $profileId, $archiveId) {
-		$this->getArchiveProfileFromID($profileId);
-	    $archive = Archive::where ( 'id', $archiveId )->firstOrFail ();
+		$this->setArchiveFromId($profileId);
+	    $archive = SADocument::where ( 'id', $archiveId )->firstOrFail ();
 		
 		// profile 값이 제대로 넘어왔는지 확인.
 		if($archive->profile_id != $profileId){
@@ -237,7 +238,7 @@ class ArchiveController extends Controller {
 			abort(404);
 		}
 		
-		$archiveBoard = ArchiveBoard::find($archive->board_id);
+		$archiveBoard = SAFolder::find($archive->board_id);
 		$archiveBookmark = ArchiveBookmark::firstOrNew(['archive_id'=>$archiveId]);
 
 	    // create dataSet
@@ -258,11 +259,11 @@ class ArchiveController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function create(Request $request, $profileId) {
-		$this->getArchiveProfileFromID($profileId);
+		$this->setArchiveFromId($profileId);
 	    $boardId = $request->input('board', $this->ArchiveProfile->root_board_id);
 
-		$article = new Archive;
-		$archiveBoardList = ArchiveBoard::select(['id','name','parent_id','depth'])
+		$article = new Document;
+		$archiveBoardList = SAFolder::select(['id','name','parent_id','depth'])
 		->where ( 'profile_id', $profileId )
 		->orderBy('index','asc')->get();
 
@@ -284,16 +285,16 @@ class ArchiveController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function edit(Request $request, $profileId, $archiveId) {
-		$this->getArchiveProfileFromID($profileId);
+		$this->setArchiveFromId($profileId);
 	    $request->session()->reflash();
 	    $request->session()->keep(['devscrap-previousList']);
 		
 	    //
-	    $article = Archive::where ( 'id', $archiveId )->firstOrFail ();
+	    $article = SADocument::where ( 'id', $archiveId )->firstOrFail ();
 	    $boardId = $article->board_id;
 
 		// 게시판 목록을 조회. 셀렉트박스 를 만들기 위함.
-		$archiveBoardList = ArchiveBoard::select(['id','name','parent_id','depth'])
+		$archiveBoardList = SAFolder::select(['id','name','parent_id','depth'])
 		->where ( 'profile_id', $profileId )
 		->orderBy('index','asc')->get();
 
@@ -315,7 +316,7 @@ class ArchiveController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function store(Request $request, $profileId) {
-		$this->getArchiveProfileFromID($profileId);
+		$this->setArchiveFromId($profileId);
 		//
 		$title = $request->input ( 'title' );
 		$content = $request->input ( 'content', ' ' );
@@ -324,7 +325,7 @@ class ArchiveController extends Controller {
 		$category = $request->input ('category');
 
 		// insert row		
-		$article = new Archive;
+		$article = new Document;
 		$article->title = $title;
 		$article->content = $content;
 		$article->board_id = $board_id;
@@ -364,7 +365,7 @@ class ArchiveController extends Controller {
 
 		// saving
 		// 있는 값인지 id 체크
-		$article = Archive::findOrFail ( $archiveId );
+		$article = SADocument::findOrFail ( $archiveId );
 		$beforeCategory = $article->category;
 		$article->title = $title;
 		$article->content = $content;
@@ -398,9 +399,9 @@ class ArchiveController extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function destroy($profileId, $archiveId) {
-		$this->getArchiveProfileFromID($profileId);
+		$this->setArchiveFromId($profileId);
 
-	    $item = Archive::findOrFail($archiveId);
+	    $item = SADocument::findOrFail($archiveId);
 	    $item->delete();
 		
 	    $this->updateBoardCount();
@@ -434,15 +435,15 @@ class ArchiveController extends Controller {
 		if($request->has('profile')){
 			$profileId = $request->input('profile');
 			// routeId 를 이용한 접근
-			//$this->ArchiveProfile = Profile::select(['name','root_board_id','route'])->where ( [['user_id', $userId ],['route',$ArchiveRouteId]])->firstOrFail ();
+			//$this->ArchiveProfile = SAArchive::select(['name','root_board_id','route'])->where ( [['user_id', $userId ],['route',$ArchiveRouteId]])->firstOrFail ();
 	
 			// profileId 를 이용한 접근
-			$this->ArchiveProfile = Profile::select(['id','name','root_board_id','route'])
+			$this->ArchiveProfile = SAArchive::select(['id','name','root_board_id','route'])
 				->where ( [['user_id', $userId ],['id',$profileId]])
 				->firstOrFail ();
 			
 		} else {
-			$this->ArchiveProfile = Profile::select(['id','name','root_board_id','route'])
+			$this->ArchiveProfile = SAArchive::select(['id','name','root_board_id','route'])
 			->where ( [['user_id', $userId ],['is_default','1']])
 			->firstOrFail ();
 		}
@@ -455,11 +456,11 @@ class ArchiveController extends Controller {
 	 * profileId 를 인수로 받고, userID 를 통하여 일차적으로 인증을 한다.
 	 * 해당 profile Id 에 접근 권한이 있는지 체크하게 됨. 권한이 없으면 Fail
 	 */
-	private function getArchiveProfileFromID($profileId)
+	private function setArchiveFromId($profileId)
 	{
 		$userId = Auth::id();
 		// profileId 를 이용한 접근
-		$this->ArchiveProfile = Profile::select(['id','name','root_board_id','route'])
+		$this->ArchiveProfile = SAArchive::select(['id','name','root_board_id','route'])
 			->where ( [['user_id', Auth::id() ],['id',$profileId]])
 			->firstOrFail ();
 	}

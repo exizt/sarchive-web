@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use App\Models\ArchiveBoard;
-use App\Models\Profile;
+use App\Models\SAArchive;
+use App\Models\SAFolder;
 
 class ArchiveBoardMgmt extends Controller
 {
@@ -36,7 +36,7 @@ class ArchiveBoardMgmt extends Controller
         
         // 아카이브 프로필을 조회
         $userId = Auth::id();
-        $archiveProfiles = Profile::select(['id','name','text','root_board_id','is_default','created_at'])
+        $archiveProfiles = SAArchive::select(['id','name','text','root_board_id','is_default','created_at'])
         ->where('user_id',$userId)
         ->orderBy('created_at','asc')->get();
         
@@ -69,7 +69,7 @@ class ArchiveBoardMgmt extends Controller
             group by node.board_id
             order by node.lft",[$this->ArchiveProfile->root_board_id]);
         */
-        $dataSet['boards'] = ArchiveBoard::select(['id','profile_id','name','parent_id as parent'])
+        $dataSet['boards'] = SAFolder::select(['id','profile_id','name','parent_id as parent'])
         ->where('profile_id',$this->ArchiveProfile->id)
         ->orderBy('index','asc')->get();
 
@@ -134,7 +134,7 @@ class ArchiveBoardMgmt extends Controller
 
 
             if($item['id'][0] == 'j'){
-                $archiveBoard = ArchiveBoard::create([
+                $archiveBoard = SAFolder::create([
                     'parent_id'=>$item['parent'],
                     'index' => $i,
                     'name' => $item['text'],
@@ -150,7 +150,7 @@ class ArchiveBoardMgmt extends Controller
                     'path' => $item['path']
                 ];
             } else {
-                $archiveBoard = ArchiveBoard::updateOrInsert(['id'=>$item['id']],
+                $archiveBoard = SAFolder::updateOrInsert(['id'=>$item['id']],
                     [
                         'parent_id'=>$item['parent'],
                         'index' => $i,
@@ -174,7 +174,7 @@ class ArchiveBoardMgmt extends Controller
                 if($deletedId[0]=='j'){
                     continue;
                 }
-                $archiveBoard = ArchiveBoard::find($deletedId);
+                $archiveBoard = SAFolder::find($deletedId);
                 $archiveBoard->delete();
             }
         }
@@ -216,15 +216,15 @@ class ArchiveBoardMgmt extends Controller
 		if($request->has('profile')){
 			$profileId = $request->input('profile');
 			// routeId 를 이용한 접근
-			//$this->ArchiveProfile = Profile::select(['name','root_board_id','route'])->where ( [['user_id', $userId ],['route',$ArchiveRouteId]])->firstOrFail ();
+			//$this->ArchiveProfile = SAArchive::select(['name','root_board_id','route'])->where ( [['user_id', $userId ],['route',$ArchiveRouteId]])->firstOrFail ();
 	
 			// profileId 를 이용한 접근
-			$this->ArchiveProfile = Profile::select(['id','name','root_board_id','route'])
+			$this->ArchiveProfile = SAArchive::select(['id','name','root_board_id','route'])
 				->where ( [['user_id', $userId ],['id',$profileId]])
 				->firstOrFail ();
 			
 		} else {
-			$this->ArchiveProfile = Profile::select(['id','name','root_board_id','route'])
+			$this->ArchiveProfile = SAArchive::select(['id','name','root_board_id','route'])
 			->where ( [['user_id', $userId ],['is_default','1']])
 			->firstOrFail ();
 		}

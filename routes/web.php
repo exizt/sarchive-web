@@ -6,13 +6,16 @@ use Illuminate\Support\Facades\Route;
 Auth::routes(['register' => false, 'verify'=> true]);
 // index
 Route::get ( '/', 'Home@index' );
+
 // SArchive ----------------------------
 Route::middleware(['auth'])->group(function () {
-    Route::get('archives/search', 'Archive\ArchiveController@search')->name('archives.search');
-    Route::get('archives/ajax_boards', 'Archive\ArchiveController@doAjax_getBoardList');
-    Route::get('archives/ajax_headerNav', 'Archive\ArchiveController@doAjax_getHeaderNav');
-    Route::post('archives/ajax_mark', 'Archive\ArchiveController@doAjax_mark');
-    Route::resource('{profile}/archives', 'Archive\ArchiveController');
+    //Route::get('archives/{id}', 'Archive\ArchiveController@index');
+    
+    Route::get('archives/search', 'Archive\DocumentController@search')->name('archives.search');
+    Route::get('archives/ajax_boards', 'Archive\DocumentController@doAjax_getBoardList');
+    Route::get('archives/ajax_headerNav', 'Archive\DocumentController@doAjax_getHeaderNav');
+    Route::post('archives/ajax_mark', 'Archive\DocumentController@doAjax_mark');
+    Route::resource('{profile}/archives', 'Archive\DocumentController');
     Route::resource('{profile}/category', 'Archive\CategoryController', ['except'=>['create','store']]);
     Route::resource('page', 'Archive\PageController');
     //Route::get('category/{name?}', 'Archive\CategoryController@show')->where('category','(.*)');

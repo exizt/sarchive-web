@@ -6,9 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use App\Models\ArchiveBoard;
-use App\Models\Archive;
-use App\Models\Profile;
+use App\Models\SAArchive;
+use App\Models\SAFolder;
+use App\Models\SADocument;
 
 class ArchiveProfileMgmt extends Controller
 {
@@ -31,7 +31,7 @@ class ArchiveProfileMgmt extends Controller
 
         $userId = Auth::id();
 
-        $masterList = Profile::select(['id','name','text','root_board_id','is_default','created_at'])
+        $masterList = SAArchive::select(['id','name','text','root_board_id','is_default','created_at'])
         ->where('user_id',$userId)
         ->orderBy('index','asc')
         ->orderBy('id','asc')
@@ -51,7 +51,7 @@ class ArchiveProfileMgmt extends Controller
      */
     public function create(Request $request)
     {
-        $item = new Profile;
+        $item = new SAArchive;
         $dataSet = $this->createViewData ();
         $dataSet ['item'] = $item;
         return view ( self::VIEW_PATH . '.create', $dataSet );
@@ -68,9 +68,9 @@ class ArchiveProfileMgmt extends Controller
     {
         $userId = Auth::id();
 
-        $item = Profile::where ( 'id', $id )->firstOrFail ();
+        $item = SAArchive::where ( 'id', $id )->firstOrFail ();
 
-        $ArchiveProfileList = Profile::select(['id','name','is_default','created_at'])
+        $ArchiveProfileList = SAArchive::select(['id','name','is_default','created_at'])
         ->where('user_id',$userId)
         ->orderBy('created_at','asc')->get();
 
@@ -97,18 +97,18 @@ class ArchiveProfileMgmt extends Controller
         $text = $request->input ( 'text' , '');
         $is_default = (bool)$request->input( 'is_default' , false);
     	
-        $item = new Profile;
+        $item = new SAArchive;
         $item->name = $name;
         $item->text = $text;
         if($is_default){
-            Profile::where('is_default',1)->update(['is_default'=>0]);
+            SAArchive::where('is_default',1)->update(['is_default'=>0]);
             $item->is_default = true;
         }
         $item->user_id = Auth::id();
         $item->save();
 
         // 최상단 카테고리를 생성해야함.
-        $archiveBoard = ArchiveBoard::create([
+        $archiveBoard = SAFolder::create([
             'profile_id' => $item->id,
             'parent_id'=> '0',
             'name' => $item->name,
@@ -138,14 +138,14 @@ class ArchiveProfileMgmt extends Controller
         $is_default = (bool)$request->input( 'is_default' , false);
 
     	// 있는 값인지 id 체크
-        $item = Profile::findOrFail ( $id );
+        $item = SAArchive::findOrFail ( $id );
     	
     	// saving
         $item->name = $request->input ( 'name' );
         $item->text = $request->input ( 'text' );
         if($item->is_default == false && $is_default == true){
             //... 새롭게 기본 아카이브로 지정된 경우. 다른 아카이브는 is_default 값을 false 로 변경한다.
-            Profile::where('is_default',1)->update(['is_default'=>0]);
+            SAArchive::where('is_default',1)->update(['is_default'=>0]);
         }
         $item->is_default = $is_default;
     	$item->save ();
@@ -154,7 +154,9 @@ class ArchiveProfileMgmt extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * 아카이브 삭제
+     * 
+     * @todo 개선이 필요함.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -162,26 +164,39 @@ class ArchiveProfileMgmt extends Controller
     public function destroy(Request $request, $id)
     {
         // 확인하고 없으면 Fail
-        $item = Profile::findOrFail($id);
+        $item = SAArchive::findOrFail($id);
 
+
+        // 1. 해당하는 문서를 삭제할지 옮길지 분기점.
+
+        // 1-1. 삭제
+
+        // 1-2. 이동.
+        // 1-2-1. 폴더 이동.
+        // 'depth가 2' 이면서 'parent_id가 해당 아카이브의 최상위 폴더인 것'을 '옮길 아카이브의 최상위 폴더'로 parend_id 를 변경해주면 된다.
+        // archive_id 를 변경해줌.
+
+        // 1-2-2. 문서 정보 변경
+        // 최상위 폴더에 해당하는 문서들은 folder_id 를 변경해준다.
+        // archive_id 를 변경해준다.
         // 해당되는 게시물이 있을 때에는, 옮길 아카이브를 선택하는 화면으로 이동시킨다. 
         // 아카이브에 해당되는 게시물은 다른 아카이브로 이동시킨다. 
         // 해당되는 게시물이 없을 때에 삭제를 진행한다.
         // 해당되는 카테고리 는 삭제하도록 한다.
         $willMoveProfileId = $request->input ( 'will_move_profile' );
-        $willMoveBoardId = Profile::where('id',$willMoveProfileId)->value('root_board_id');
+        $willMoveBoardId = SAArchive::where('id',$willMoveProfileId)->value('root_board_id');
 
-        $applicableBoardIds = ArchiveBoard::where('profile_id',$id)->pluck('id');
+        $applicableBoardIds = SAFolder::where('profile_id',$id)->pluck('id');
 
-        if(ArchiveBoard::select(['id'])->where('profile_id',$id)->exists()){
+        if(SAFolder::select(['id'])->where('profile_id',$id)->exists()){
             // 해당하는 Archive 를 이동시키기. (profile_id 와 board_id 를 변경.)
-            Archive::whereIn('board_id',$applicableBoardIds)->update([
-                'board_id'=>$willMoveBoardId,
-                'profile_id'=>$willMoveProfileId
+            SADocument::whereIn('board_id',$applicableBoardIds)->update([
+                'profile_id'=>$willMoveProfileId,
+                'board_id'=>$willMoveBoardId
             ]);
 
             // 해당하는 Board 는 삭제하기.
-            ArchiveBoard::where('profile_id',$id)->delete();
+            SAFolder::where('profile_id',$id)->delete();
         }
 
         // 삭제 실행
@@ -198,7 +213,7 @@ class ArchiveProfileMgmt extends Controller
 
         foreach($listData as $i => $item){
             
-            $profile = Profile::findOrFail ( $item['profileId'] );
+            $profile = SAArchive::findOrFail ( $item['profileId'] );
             $profile->index = $item['index'];
             $profile->save();
         }
