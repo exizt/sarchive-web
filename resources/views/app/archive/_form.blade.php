@@ -42,15 +42,15 @@ tinymce.init({
 	</div>
 
 	<div class="form-group">
-		<textarea name="content" class="form-control" rows="14" id="content" placeholder="내용">{{ htmlentities($article->content) }}</textarea>
+		<textarea name="content" class="form-control" rows="14" id="content" placeholder="내용">{!! $article->content !!}</textarea>
 	</div>
 
 	<div class="form-group">
 		<label for="boardSelectInput">게시판 선택</label>
     	<select name="board_id" class="form-control" title="게시판 선택" id="boardSelectInput">
     		@foreach ($boardList as $cate)
-				<option value="{{ $cate->id }}" @isset($selectedBoard) @if ($cate->id == $selectedBoard) selected @endif @endif>{{ 
-				str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',$cate->depth).str_repeat('❯',$cate->depth).' '.$cate->name }}</option>
+				<option value="{{ $cate->id }}" @isset($selectedBoard) @if ($cate->id == $selectedBoard) selected @endif @endif>{!! 
+				str_repeat("&nbsp;",($cate->depth-1)*7).' '.$cate->name !!}</option>
     		@endforeach
     	</select>
 	</div>

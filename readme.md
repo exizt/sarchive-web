@@ -14,17 +14,6 @@
 
 
 
-# URL & Class 명 룰
-Case 1) 데이터를 조회하고, 데이터베이스와 직연결된 서비스의 경우 
-예시)
-* 컨트롤러 : Controllers.Services.ArchiveController
-* 모델 : Models.Archive
-* 뷰 : services.archive.index, services.archive.show, service.archive.edit, service.archive.create
-* 테이블 : Archives
-* URL : /archive, /archive/{number}, /archive/{number}/edit, /archive/create
-
-
-
 # php 에서 필요한 것
 * extension=openssl : 뭐였는지 기억 안 나지만 필요함
 * extension=pdo_mysql : DB 연결을 위해 필요

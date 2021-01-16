@@ -148,7 +148,7 @@ class ArchiveBoardMgmt extends Controller
                 $depthPathList[$archiveBoard->id] = [
                     'depth' => $item['depth'],
                     'path' => $item['path']
-                ];                
+                ];
             } else {
                 $archiveBoard = ArchiveBoard::updateOrInsert(['id'=>$item['id']],
                     [

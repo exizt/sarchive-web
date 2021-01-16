@@ -5,14 +5,14 @@
 @if (!App::environment('local'))
 <title>@yield('title') :: S아카이브</title>
 @else 
-<title>(local) @yield('title') :: S아카이브</title>
+<title>(local) S아카이브</title>
 @endif
 <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
 <meta name="robots" content="noindex, nofollow">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-title" content="S아카이브">
-<link rel="shortcut icon" href="/assets/images/shortcut.ico" />
+<link rel="shortcut icon" href="/assets/brand/favicon/favicon-2021.ico" />
 <!-- ## styles ## -->
 <link rel="stylesheet" href="/assets/lib/bootstrap/4.3.1-dark-theme/css/bootstrap.css">
 <link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/fontawesome.min.css">

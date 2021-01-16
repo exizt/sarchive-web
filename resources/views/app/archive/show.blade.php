@@ -39,7 +39,7 @@
 				data-mode="bookmark" data-archive="{{$article->id}}" data-value="{{$bookmark->is_bookmark}}"><i class="fas fa-bookmark"></i>&nbsp;북마크</a>
 		</div>
 	</div>
-	<div class="card">
+	<div class="card sa-content-text">
 		<div class="card-body">
 			<h5 class="card-title">{{ $article->title }}</h5>
 			<p class="text-right">
@@ -59,6 +59,11 @@
 	</div>
 </div>
 <style>
+.sa-content-text {
+	font-family: 나눔고딕,'맑은 고딕','NanumGothic','Malgun Gothic';
+	font-size: 1.375rem;
+	font-weight: normal;
+}
 .shh-cat-list{
 
 }

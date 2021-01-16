@@ -5,14 +5,14 @@
 @if (!App::environment('local'))
 <title>@yield('title') :: S아카이브</title>
 @else 
-<title>(local) @yield('title') :: S아카이브</title>
+<title>(local) S아카이브</title>
 @endif
 <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
 <meta name="robots" content="noindex, nofollow">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-title" content="S아카이브">
-<link rel="shortcut icon" href="/assets/images/shortcut.ico" />
+<link rel="shortcut icon" href="/assets/brand/favicon/favicon-2021.ico" />
 <!-- ## styles ## -->
 <link rel="stylesheet" href="/assets/lib/bootstrap/4.3.1-dark-theme/css/bootstrap.css">
 <link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/fontawesome.min.css">
@@ -20,7 +20,6 @@
 <link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/solid.min.css">
 <!--<link rel="stylesheet" href="/assets/lib/font-awesome-4.7.0/css/font-awesome.min.css">-->
 <link rel="stylesheet" href="/assets/lib/google-material-icons/after-material-icons.css">
-<link rel="stylesheet" href="/assets/css/bs-callout.css">
 <link rel="stylesheet" href="/assets/css/site-base.css">
 <link rel="stylesheet" href="/assets/css/site-layouts.css">
 <!-- ## scripts ## -->
@@ -30,20 +29,11 @@
 <script src="/assets/lib/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script src="/assets/js/site-base.js"></script>
 <!-- ## semi modules ## -->
-<link rel="stylesheet" href="/assets/modules/scrolltop/scrolltop.css">
-<script src="/assets/modules/scrolltop/scrolltop.js"></script>
 <link rel="stylesheet" href="/assets/modules/sh-sidenav/sh-sidenav.css">
-@stack('style-head') 
-@stack('script-head')
-<!--<script src="/assets/js/site-shortcut.js"></script>-->
 <link rel="stylesheet" href="/assets/site/archive/archive.css">
 <script src="/assets/js/core-func.js"></script>
 <script src="/assets/site/archive/archive.js"></script>
 </head>
-<script>
-const SERVICE_URI = "/{{Request::path()}}";
-document.onkeyup = shortcutKeyEvent;
-</script>
 <body @isset($parameters) @foreach ($parameters as $k => $v) data-{{$k}}="{{$v}}" @endforeach @endisset >
 	<header>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -94,8 +84,8 @@ document.onkeyup = shortcutKeyEvent;
             <div class="row">
                 <div class="col-md-2">
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><a href="/admin/archiveBoard">게시판 설정</a></li>
                         <li class="list-group-item"><a href="/admin/archiveProfile">아카이브 프로필</a></li>
+                        <li class="list-group-item"><a href="/admin/archiveBoard">게시판 설정</a></li>
                         <li class="list-group-item"><a href="/admin/archivePage">페이지 설정</a></li>
                         <li class="list-group-item"><a href="/admin/advanced">고급 기능</a></li>
                         <li class="list-group-item">&nbsp;</li>
@@ -111,9 +101,6 @@ document.onkeyup = shortcutKeyEvent;
 	<footer>
 		<div class="container-fluid text-right">
         	<p class="text-muted pt-5">© SH Hong. All rights reserved.</p>
-        </div>
-        <div class="scrolltop">
-        	<div class="scrolltop-arrow"></div>
         </div>
 	</footer>
 </body>

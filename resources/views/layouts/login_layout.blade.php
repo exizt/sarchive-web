@@ -12,7 +12,7 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-title" content="S아카이브">
-<link rel="shortcut icon" href="/assets/images/shortcut.ico" />
+<link rel="shortcut icon" href="/assets/brand/favicon/favicon-2021.ico" />
 <!-- ## styles ## -->
 <link rel="stylesheet" href="/assets/lib/bootstrap/4.3.1-dark-theme/css/bootstrap.css">
 <link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/fontawesome.min.css">
