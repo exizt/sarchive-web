@@ -48,7 +48,7 @@ $(function() {
 			<div class="modal-body">
 				<p class="lead">정말 삭제하시겠습니까?</p>
 				해당되는 게시물을 이동하게 될 아카이브 선택하기.
-				<select name="will_move_profile" class="form-control" title="아카이브 프로필 선택">
+				<select name="will_move" class="form-control" title="아카이브 프로필 선택">
 				@foreach ($ArchiveProfileList as $item)
 				<option value="{{ $item->id }}">{{ $item->name }}</option>
 				@endforeach

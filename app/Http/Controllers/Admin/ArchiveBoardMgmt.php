@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use App\Models\SAArchive;
-use App\Models\SAFolder;
+use App\Models\SArchive\SAArchive;
+use App\Models\SArchive\SAFolder;
 
 class ArchiveBoardMgmt extends Controller
 {
@@ -33,10 +33,9 @@ class ArchiveBoardMgmt extends Controller
      */
     public function index(Request $request)
     {
-        
         // 아카이브 프로필을 조회
         $userId = Auth::id();
-        $archiveProfiles = SAArchive::select(['id','name','text','root_board_id','is_default','created_at'])
+        $archiveProfiles = SAArchive::select(['id','name','comments','root_folder_id','is_default','created_at'])
         ->where('user_id',$userId)
         ->orderBy('created_at','asc')->get();
         
@@ -51,8 +50,18 @@ class ArchiveBoardMgmt extends Controller
      */
     public function index_ajax(Request $request)
     {
-        $this->getArchiveProfile($request);
+        // 파라미터
+        $archiveId = $request->input('archive_id');
+        $userId = Auth::id();
         
+        // routeId 를 이용한 접근
+        //$this->ArchiveProfile = SAArchive::select(['name','root_board_id','route'])->where ( [['user_id', $userId ],['route',$ArchiveRouteId]])->firstOrFail ();
+	
+        // Archive 정보 조회 및 권한 체크
+        $archive = SAArchive::select(['id','name'])
+            ->where ( [['user_id', $userId ],['id',$archiveId]])
+            ->firstOrFail ();
+                
         /*
         $dataSet ['boards'] = DB::select("select cate.name as name,
                 node.board_id as id,
@@ -69,8 +78,9 @@ class ArchiveBoardMgmt extends Controller
             group by node.board_id
             order by node.lft",[$this->ArchiveProfile->root_board_id]);
         */
-        $dataSet['boards'] = SAFolder::select(['id','profile_id','name','parent_id as parent'])
-        ->where('profile_id',$this->ArchiveProfile->id)
+        // 폴더 목록 조회
+        $dataSet['folders'] = SAFolder::select(['id','archive_id','name','parent_id as parent', 'depth'])
+        ->where('archive_id',$archiveId)
         ->orderBy('index','asc')->get();
 
         return response()->json($dataSet);
@@ -87,12 +97,15 @@ class ArchiveBoardMgmt extends Controller
     {
         
         //print_r($_POST);
-        $profileId = $request->input('profileId');
-        $listData = $request->input('listData');
-        $deletedList = $request->input('deletedList', array());
+        $archiveId = $request->input('archive_id');
+        $listData = $request->input('list_data');
+        $deletedList = $request->input('deleted_list', array());
 
+        //신규 노드들의 목록. (key='임시id(j로시작)', value=새로사용될id)
         $changedIdList = array();
-        $depthPathList = array();//depth 와 path 를 다루기 위한 배열
+        
+        //depth 와 path 를 다루기 위한 배열
+        $depthPathList = array();
 
         // 트리에서 변경된 내용을 적용함
         // 새로운 항목에서는 id 가 'j1_1' 과 같은 형태이므로, 이 경우에는 insert_id 로 변경해주는 로직 추가함.
@@ -101,8 +114,11 @@ class ArchiveBoardMgmt extends Controller
             //$text = $item['text'];
             //$parent = $item['parent'];
 
-            // parent_id 값이 j 로 시작되는 경우, changedIdList 에 있는 값으로 변경.
+            // parent_id 값이 j 로 시작되는 경우. (즉, 부모값이 새로운 노드인 경우)
             if($item['parent'][0] == 'j'){
+                // changedIdList 에 있는 키 값으로 parentId 를 교체한다.
+                // array_key_exists($item['parent'],$changedIdList) 는 만약을 대비한 체크이며,
+                // 체크를 하지 않아도 로직 상 이상이 없어야 함.
                 if(array_key_exists($item['parent'],$changedIdList)){
                     $item['parent'] = $changedIdList[$item['parent']];
                 }
@@ -110,8 +126,9 @@ class ArchiveBoardMgmt extends Controller
 
             // depth 를 생성하기 위한 구문.
             {
-                if($item['parent']=='0'||$item['parent']==0){
+                if($item['parent']=='0'||$item['parent']==0||$item['parent']=='#'){
                     ///... 최상위 루트의 경우
+                    $item['parent'] = '0';
                     $item['depth'] = 1;
                     $item['path'][] = ['text'=>$item['text'],'id'=>$item['id']];
                 
@@ -133,38 +150,53 @@ class ArchiveBoardMgmt extends Controller
             }
 
 
+            /**
+             * insert 또는 update 하는 부분
+             */
+            $folderId = null;
             if($item['id'][0] == 'j'){
-                $archiveBoard = SAFolder::create([
+                /**
+                 * 신규 노드의 경우.
+                 * 
+                 * insert 구문을 실행한다 (laravel의 create메서드)
+                 */
+                $archiveFolder = SAFolder::create([
                     'parent_id'=>$item['parent'],
                     'index' => $i,
                     'name' => $item['text'],
                     'depth' => $item['depth'],
                     'path' => json_encode($item['path']),
-                    'profile_id' => $profileId
+                    'archive_id' => $archiveId
                 ]);
 
                 // 신규 생성된 id 를 changedIdList 에 추가함.
-                $changedIdList[$item['id']] = $archiveBoard->id;
-                $depthPathList[$archiveBoard->id] = [
-                    'depth' => $item['depth'],
-                    'path' => $item['path']
-                ];
+                $folderId = $archiveFolder->id;
+                $changedIdList[$item['id']] = $folderId;
+               
             } else {
-                $archiveBoard = SAFolder::updateOrInsert(['id'=>$item['id']],
-                    [
-                        'parent_id'=>$item['parent'],
-                        'index' => $i,
-                        'name' => $item['text'],
-                        'depth' => $item['depth'],
-                        'path' => json_encode($item['path']),
-                        'profile_id' => $profileId
-                    ]);
-                    $depthPathList[$item['id']] = [
-                        'depth' => $item['depth'],
-                        'path' => $item['path']
-                    ];
+                /**
+                 * 신규 노드가 아닌 경우
+                 */
+                // 변경된 정보를 update
+                $archiveFolder = SAFolder::updateOrInsert(['id'=>$item['id']],
+                [
+                    'parent_id'=>$item['parent'],
+                    'index' => $i,
+                    'name' => $item['text'],
+                    'depth' => $item['depth'],
+                    'path' => json_encode($item['path']),
+                    'archive_id' => $archiveId
+                ]);
+
+                $folderId = $item['id'];
+
             }
 
+            // paths 를 저장.
+            $depthPathList[$folderId] = [
+                'depth' => $item['depth'],
+                'path' => $item['path']
+            ];
             //print_r($sql);
         }
 
@@ -180,7 +212,7 @@ class ArchiveBoardMgmt extends Controller
         }
 
         // tree table 작성. (프로시저 호출)
-        $this->updateListTreeTable();
+        //$this->updateListTreeTable();
 
         $dataSet = array();
         $dataSet['success'] = '변경 완료되었습니다.';
@@ -219,7 +251,7 @@ class ArchiveBoardMgmt extends Controller
 			//$this->ArchiveProfile = SAArchive::select(['name','root_board_id','route'])->where ( [['user_id', $userId ],['route',$ArchiveRouteId]])->firstOrFail ();
 	
 			// profileId 를 이용한 접근
-			$this->ArchiveProfile = SAArchive::select(['id','name','root_board_id','route'])
+			$this->ArchiveProfile = SAArchive::select(['id','name','root_folder_id','route'])
 				->where ( [['user_id', $userId ],['id',$profileId]])
 				->firstOrFail ();
 			
@@ -232,6 +264,7 @@ class ArchiveBoardMgmt extends Controller
 
     /**
      * 프로시저 실행
+     * @deprecated left, right 로 트리형태를 구현하는 방식인데 이제는 사용 안 하기로 함.
      */
     private function updateListTreeTable(){
         DB::statement('call procedure_insert_menus()');

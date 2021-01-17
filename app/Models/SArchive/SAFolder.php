@@ -12,10 +12,6 @@ class SAFolder extends Model
     protected $fillable = ['archive_id','name','comments', 'parent_id',
         'index','depth','path'];
 
-    public function getSubBoardList($boardId=0, $depth = 1){
-
-    }
-
     /**
      * Archive 조회
      */

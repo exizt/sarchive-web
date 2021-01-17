@@ -62,8 +62,8 @@
 							@endisset
 							<div class="dropdown-divider"></div>
 							<h6 class="dropdown-header">프로필 선택</h6>
-							<a class="dropdown-item" href="{{ route('archives.index',['profile'=>1])}}">개발 분류로 이동</a>
-							<a class="dropdown-item" href="{{ route('archives.index',['profile'=>2])}}">일반 분류로 이동</a>
+							<a class="dropdown-item" href="{{ route('archive.retrieve',['id'=>1])}}">개발 분류로 이동</a>
+							<a class="dropdown-item" href="{{ route('archive.retrieve',['id'=>2])}}">일반 분류로 이동</a>
 							<a class="dropdown-item" href="/">더보기</a>
 							<div class="dropdown-divider"></div>
 							<h6 class="dropdown-header">관리</h6>
@@ -84,7 +84,7 @@
             <div class="row">
                 <div class="col-md-2">
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><a href="/admin/archiveProfile">아카이브 프로필</a></li>
+                        <li class="list-group-item"><a href="/admin/archiveProfile">아카이브 설정</a></li>
                         <li class="list-group-item"><a href="/admin/archiveBoard">게시판 설정</a></li>
                         <li class="list-group-item"><a href="/admin/archivePage">페이지 설정</a></li>
                         <li class="list-group-item"><a href="/admin/advanced">고급 기능</a></li>

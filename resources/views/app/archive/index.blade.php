@@ -51,7 +51,7 @@
 </div>
 <style>
 .shh-navboardlist-depth-1{
-	padding-left: 1.75rem;
+	/*padding-left: 1.75rem;*/
 }
 .shh-navboardlist-depth-2{
 	padding-left: 3.5rem;

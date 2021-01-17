@@ -157,7 +157,7 @@ class ArchiveController extends BaseController {
         //$archiveBoardList = SAFolder::find($article->board_id);
         $masterList = $archiveBoardList = SAFolder::select(['id','name','parent_id','depth'])
         //->where([['profile_id',$this->ArchiveProfile->id],['depth','2']])
-        ->where('depth','2')
+        ->where('depth','1')
         ->where('archive_id', $archiveId)
         ->orderBy('index','asc')->get();
 

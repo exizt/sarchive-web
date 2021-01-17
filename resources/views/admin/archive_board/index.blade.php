@@ -27,22 +27,22 @@
 <script src="/assets/lib/jstree/jstree.min.js"></script>
 <link rel="stylesheet" href="/assets/lib/jstree/themes/default/style.min.css" />
 <script>
-var _selectedProfileId = "";
+var _selectedArchiveId = "";
 var _jstreeSelector = "#tree-container";
-var _deletedBoardIds = new Array()
+var _deletedIds = new Array()
 $(function () {
 	$("#navTab a").first().addClass("active");
-	_selectedProfileId = $("#navTab a").first().data("profile")
+	_selectedArchiveId = $("#navTab a").first().data("profile")
 	
 	createJSTree();
 	$('#navTab a').on('click', function (e) {
 		e.preventDefault()
 		$(this).tab('show')
-		_selectedProfileId = $(this).data("profile")
-		ajaxJSTree(_selectedProfileId)
+		_selectedArchiveId = $(this).data("profile")
+		ajaxJSTree(_selectedArchiveId)
 	})
 
-    ajaxJSTree(_selectedProfileId);
+    ajaxJSTree(_selectedArchiveId);
 
     $("#shh-btn-save").on("click",function(){
         saveJSTree(true)
@@ -57,6 +57,38 @@ $(function () {
 
 });
 
+/**
+ * 해당 아카이브의 폴더 목록 조회
+ */
+ function ajaxJSTree(archiveId){
+    $.ajax({
+        method : 'GET',
+        url: '/admin/archiveBoard/index_ajax',
+        dataType: 'json',
+        data: { archive_id : archiveId }, //json 타입
+        success: function(json){
+            var data = [];
+            $.each(json.folders,function(i,item){
+                var locData = {};
+                locData.id = item.id;
+                locData.text = item.name;
+                if(item.depth == '1'){
+					locData.parent = '#';
+					locData.state = {opened:true};
+                } else {
+                    locData.parent = item.parent;
+                }
+                data[i] = locData;
+            });
+            redrawJSTree(data)
+        },
+    });
+}
+
+/**
+ * 저장 시 이벤트
+ * @param {bool} executeFlag (true) 실행, (false) 디버그만 함
+ */
 function saveJSTree(executeFlag){
 
 	var jsonNodes = $(_jstreeSelector).jstree(true).get_json('#', { 
@@ -65,7 +97,7 @@ function saveJSTree(executeFlag){
 	//var jsonData = JSON.stringify(jsonNodes)
 	var dataSet = {};
 	dataSet.jsonNodes = jsonNodes
-	dataSet.deleted = _deletedBoardIds
+	dataSet.deleted = _deletedIds
 	if(executeFlag){
 		doSave(dataSet);
 	} else {
@@ -110,15 +142,15 @@ function doSave(dataSet){
 			s = showAlertMessage("waiting...",'warning');
 		},
 		data: { 
-			profileId : _selectedProfileId,
-			deletedList : dataSet.deleted,
-			listData: dataSet.jsonNodes
+			archive_id : _selectedArchiveId,
+			deleted_list : dataSet.deleted,
+			list_data: dataSet.jsonNodes
 		},
     }).done(function(json){
 		showAlertMessage("저장되었습니다.")
     }).always(function(){
 		s.alert("close")
-		ajaxJSTree(_selectedProfileId)
+		ajaxJSTree(_selectedArchiveId)
 	});
 }
 
@@ -143,30 +175,41 @@ function showAlertMessage(msg, alert){
 }
 
 
-function ajaxJSTree(profileId){
-    $.ajax({
-        method : 'GET',
-        url: '/admin/archiveBoard/index_ajax',
-        dataType: 'json',
-        data: {profile:profileId}, //json 타입
-        success: function(json){
-            var data = [];
-            $.each(json.boards,function(i,item){
-                var locData = {};
-                locData.id = item.id;
-                locData.text = item.name;
-                if(item.parent == '0'){
-					locData.parent = '#';
-					locData.state = {opened:true};
-                } else {
-                    locData.parent = item.parent;
-                }
-                data[i] = locData;
-            });
-            redrawJSTree(data)
-        },
-    });
+
+
+
+/**
+ * 트리에서 바인딩할 이벤트
+ */
+function jstree_check_callback( op, node, parent, pos, more){
+	// 루트 노드는 건들지 않도록 함.
+	if(op === "delete_node"|| op === "copy_node" || op === "move_node"){
+		/*
+		if(parent.id === "#"){
+			console.log("루트 노드는 이동,삭제,복사를 불허합니다.");
+			return false;
+		}
+		*/
+	}
+	if(op === "delete_node"){
+		// 신규가 아닌 경우에 한해서 삭제된 목록에 추가
+		if(node.id.charAt(0)!=="j"){
+			_deletedIds.push(node.id)
+		}
+		// 하위 노드 중에서 신규가 아닌 경우에 한해서 삭제된 목록에 추가
+		$.each(node.children_d,function(k,v){
+			if(v.charAt(0)!=="j"){
+				_deletedIds.push(v)
+			}
+		})
+	}
+	return true;
 }
+
+
+/**
+ * tree 를 생성
+ */
 function createJSTree(){
     //console.log(dataSet);
     $(_jstreeSelector).jstree({
@@ -184,31 +227,15 @@ function createJSTree(){
     }); 
 }
 
-function jstree_check_callback( op, node, parent, pos, more){
-	// 루트 노드는 건들지 않도록 함.
-	if(op === "delete_node"|| op === "copy_node" || op === "move_node"){
-		if(parent.id === "#"){
-			console.log("루트 노드는 이동,삭제,복사를 불허합니다.");
-			return false;
-		}
-	}
-	if(op === "delete_node"){
-		if(node.id.charAt(0)!=="j"){
-			_deletedBoardIds.push(node.id)
-		}
-		$.each(node.children_d,function(k,v){
-			if(v.charAt(0)!=="j"){
-				_deletedBoardIds.push(v)
-			}
-		})
-	}
-	return true;
-}
+
+/**
+ * 트리를 새로 그림
+ */
 function redrawJSTree(dataJson){
 	var $jstree = $(_jstreeSelector)
 	$jstree.jstree(true).settings.core.data = dataJson
 	$jstree.jstree(true).refresh()
-	_deletedBoardIds = new Array();
+	_deletedIds = new Array();
 }
 
 </script>

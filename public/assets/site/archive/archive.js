@@ -133,14 +133,14 @@ function doAjaxFolderList(){
      * @param object data 
      */
     function buildFolderListItem(mode, data){
-        var currentDepth = (mode == "folder") ? data.currentFolder.depth : 1
+        var currentDepth = (mode == "folder") ? data.currentFolder.depth : 0
         var html = "";
         $.each(data.list, function(i,item){
             var depth = item.depth - currentDepth
             //var t_depth = (depth - 1 < 0) ? 0 : depth - 1
 
             if(depth >3) return
-            var repeatString = "❯".repeat(depth)
+            var repeatString = "❯".repeat(depth-1)
             var label = `${repeatString}&nbsp;&nbsp;${item.name}`
             html += buildHtml(`/folders/${item.id}`,label, item.doc_count, depth)
             buildFolderListItem(item, currentDepth)

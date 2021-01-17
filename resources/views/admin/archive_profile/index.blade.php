@@ -35,7 +35,7 @@
 				</div>
 			</div>
 			<p class="mb-1 pl-md-3 cz-item-summary">
-				<small>{{ $item->text }}</small>
+				<small>{{ $item->comments }}</small>
 			</p>
 		</a>
 		@endforeach
