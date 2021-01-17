@@ -13,7 +13,7 @@ use App\Models\ArchiveCategoryRel;
 use App\Models\ArchiveBookmark;
 
 class DocumentController extends Controller {
-	protected const VIEW_PATH = 'app.archive';
+	protected const VIEW_PATH = 'app.archive.document';
 	protected const ROUTE_ID = 'archives';
 	protected $ArchiveProfile;
 
@@ -140,44 +140,6 @@ class DocumentController extends Controller {
 	}
 	
 	/**
-	 * 아카이브 화면에서 nav 메뉴를 가져오는 Ajax 부분.
-	 */
-	public function doAjax_getBoardList(Request $request){
-		// 프로필 아이디 도 확인해봐야 함...
-		// user_id 로 profile id 와 같이 조회해서 있는지를 체크하면 됨.
-
-		$boardId = $request->input('board_id',1);
-
-		$currentNode = SAFolder::select(['id','name','parent_id','path','depth'])->where ( 'id', $boardId )->firstOrFail ();
-
-		$masterList = DB::select("select id, name, parent_id, count, depth
-		from `sa_boards`
-		inner join (
-		 select node.board_id as node_id, parent.board_id as parent_node_id
-		 from sa_board_tree as node, sa_board_tree as parent 
-		 where node.lft between parent.lft and parent.rgt 
-		   and parent.board_id = ?
-		   ) as tree 
-	   on `tree`.`node_id` = `sa_boards`.`id` 
-	   order by `index` asc",[$boardId]);
-
-		$dataSet['list'] = $masterList;
-		$dataSet['current'] = $currentNode;
-		return response()->json($dataSet);
-	}
-
-	public function doAjax_getHeaderNav(Request $request){
-		$this->getArchiveProfile($request);
-		//$archiveBoardList = SAFolder::find($article->board_id);
-		$masterList = $archiveBoardList = SAFolder::select(['id','name','parent_id','depth'])
-		->where([['profile_id',$this->ArchiveProfile->id],['depth','2']])
-		->orderBy('index','asc')->get();
-
-		$dataSet['list'] = $masterList;
-		return response()->json($dataSet);
-	}
-
-	/**
 	 * bookmark, favorite 기능 구현
 	 */
 	public function doAjax_mark(Request $request){
@@ -228,27 +190,29 @@ class DocumentController extends Controller {
 	 * @param int $id
 	 * @return \Illuminate\Http\Response
 	 */
-	public function show(Request $request, $profileId, $archiveId) {
-		$this->setArchiveFromId($profileId);
-	    $archive = SADocument::where ( 'id', $archiveId )->firstOrFail ();
+	public function show(Request $request, $documentId) {
+		//$this->setArchiveFromId($profileId);
+	    $document = SADocument::where ( 'id', $documentId )->firstOrFail ();
 		
+		/*
 		// profile 값이 제대로 넘어왔는지 확인.
 		if($archive->profile_id != $profileId){
 			// fail 처리 하기. (사실 안 해도 되지만..)
 			abort(404);
 		}
+		*/
 		
-		$archiveBoard = SAFolder::find($archive->board_id);
-		$archiveBookmark = ArchiveBookmark::firstOrNew(['archive_id'=>$archiveId]);
+		$folder = SAFolder::find($document->folder_id);
+		//$archiveBookmark = ArchiveBookmark::firstOrNew(['archive_id'=>$archiveId]);
 
 	    // create dataSet
 	    $dataSet = $this->createViewData ();
-		$dataSet ['article'] = $archive;
-		$dataSet ['boardPath'] = json_decode($archiveBoard->path);
-		$dataSet ['previousList'] = $this->makePreviousListLink($request, $profileId);
-		$dataSet ['bookmark'] = $archiveBookmark;
+		$dataSet ['article'] = $document;
+		$dataSet ['article_meta']['paths'] = json_decode($folder->path);
+		//$dataSet ['previousList'] = $this->makePreviousListLink($request, $profileId);
+		//$dataSet ['bookmark'] = $archiveBookmark;
 		//$dataSet ['parameters']['board'] = $archive->board_id;
-		$dataSet ['parameters']['profile'] = $profileId;
+		//$dataSet ['parameters']['profile'] = $profileId;
 	    return view ( self::VIEW_PATH . '.show', $dataSet );
 	}
 	

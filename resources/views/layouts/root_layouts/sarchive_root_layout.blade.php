@@ -34,36 +34,22 @@
 <link rel="stylesheet" href="/assets/modules/scrolltop/scrolltop.css">
 <script src="/assets/modules/scrolltop/scrolltop.js"></script>
 <link rel="stylesheet" href="/assets/modules/sh-sidenav/sh-sidenav.css">
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 @stack('style-head') 
 @stack('script-head')
 <!--<script src="/assets/js/site-shortcut.js"></script>-->
 <link rel="stylesheet" href="/assets/site/archive/archive.css">
 <script src="/assets/js/core-func.js"></script>
 <script src="/assets/js/shortcut-key-event.js"></script>
-<script src="/assets/site/archive/archive.js"></script>
+<script src="/assets/site/archive/archive.js?v={{ time() }}"></script>
 <script>
 $(function(){
 	ajaxHeaderNav()
 })
-function ajaxHeaderNav(){
-	var profileId = wrapData($("body").data("profile"),1)
-	$.getJSON("/archives/ajax_headerNav",{
-		profile : profileId
-	},function(data){
-		$.each(data.list, function(i,item){
-			var html = '<li class="nav-item"><a class="nav-link" href="/'
-			+ profileId + '/archives?board='+item.id+'">'+item.name+'</a></li>'
-			$("#shh-header-navbar").append(html)
-		})
-	})
-}
-</script>
-</head>
-<script>
-const SERVICE_URI = "/{{Request::path()}}";
 document.onkeyup = shortcutKeyEvent;
 </script>
-<body @isset($parameters) @foreach ($parameters as $k => $v) data-{{$k}}="{{$v}}" @endforeach @endisset >
+</head>
+<body @isset($bodyParams) @foreach ($bodyParams as $k => $v) data-{{$k}}="{{$v}}" @endforeach @endisset >
 	<header>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 			@isset($parameters['profile']) 
@@ -89,7 +75,7 @@ document.onkeyup = shortcutKeyEvent;
 						<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink_My">
 							<h6 class="dropdown-header">기능</h6>
 							@isset($parameters['profile'])
-							<a class="dropdown-item site-shortcut-key-n site-shortcut-key-a" href="{{ route('archives.create',['profile'=>$parameters['profile']]) }}">글쓰기</a>
+							<a class="dropdown-item site-shortcut-key-n site-shortcut-key-a" href="{{ route('doc.create',['profile'=>$parameters['profile']]) }}">글쓰기</a>
 							@endisset
 							@isset($parameters['profile']) 
 							<a class="dropdown-item" href="/page/단축키?profile={{$parameters['profile']}}">단축키 일람</a>
@@ -98,8 +84,8 @@ document.onkeyup = shortcutKeyEvent;
 							@endisset
 							<div class="dropdown-divider"></div>
 							<h6 class="dropdown-header">프로필 선택</h6>
-							<a class="dropdown-item" href="{{ route('archives.index',['profile'=>1])}}">개발 분류로 이동</a>
-							<a class="dropdown-item" href="{{ route('archives.index',['profile'=>2])}}">일반 분류로 이동</a>
+							<a class="dropdown-item" href="{{ route('archive.retrieve',['id'=>1])}}">개발 분류로 이동</a>
+							<a class="dropdown-item" href="{{ route('archive.retrieve',['id'=>2])}}">일반 분류로 이동</a>
 							<a class="dropdown-item" href="/">더보기</a>
 							<div class="dropdown-divider"></div>
 							<h6 class="dropdown-header">관리</h6>

@@ -2,6 +2,7 @@
 namespace App\Models\SArchive;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\FullTextSearch;
 
 /**
  * [아카이브의 문서 테이블](Document)
@@ -69,6 +70,6 @@ class SADocument extends Model
      * meta 테이블과의 조인
      */
     public function meta(){
-        return $this->hasOne('App\Models\SADocumentMeta', 'id');
+        return $this->hasOne('App\Models\SArchive\SADocumentMeta', 'id');
     }
 }

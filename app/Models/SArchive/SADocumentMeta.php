@@ -30,6 +30,6 @@ class SADocumentMeta extends Model
     }
 
     public function document(){
-        return $this->hasOne('App\Models\SADocument', 'id');
+        return $this->hasOne('App\Models\SArchive\SADocument', 'id');
     }
 }

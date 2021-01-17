@@ -15,4 +15,11 @@ class SAFolder extends Model
     public function getSubBoardList($boardId=0, $depth = 1){
 
     }
+
+    /**
+     * Archive 조회
+     */
+    public function archive(){
+        return $this->belongsTo('App\Models\SArchive\SAArchive', 'archive_id');
+    }
 }

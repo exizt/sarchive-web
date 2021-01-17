@@ -7,15 +7,24 @@ Auth::routes(['register' => false, 'verify'=> true]);
 // index
 Route::get ( '/', 'Home@index' );
 
+// ajax
+Route::get('ajax/header_nav', 'Archive\ArchiveController@doAjax_getHeaderNav');
+Route::get('ajax/folder_nav', 'Archive\ArchiveController@doAjax_getFolderNav');
+
+Route::get('ajax/sampleHtml', function(){
+    return '<html>TEST</html>';
+});
+
 // SArchive ----------------------------
 Route::middleware(['auth'])->group(function () {
-    //Route::get('archives/{id}', 'Archive\ArchiveController@index');
+    Route::get('archives/{id}', 'Archive\ArchiveController@retrieveDocsByArchive')->name('archive.retrieve');
+    Route::get('folders/{id}', 'Archive\ArchiveController@retrieveDocsByFolder')->name('folder.show');
+
     
     Route::get('archives/search', 'Archive\DocumentController@search')->name('archives.search');
-    Route::get('archives/ajax_boards', 'Archive\DocumentController@doAjax_getBoardList');
-    Route::get('archives/ajax_headerNav', 'Archive\DocumentController@doAjax_getHeaderNav');
+
     Route::post('archives/ajax_mark', 'Archive\DocumentController@doAjax_mark');
-    Route::resource('{profile}/archives', 'Archive\DocumentController');
+    Route::resource('doc', 'Archive\DocumentController', ['except'=>['index']]);
     Route::resource('{profile}/category', 'Archive\CategoryController', ['except'=>['create','store']]);
     Route::resource('page', 'Archive\PageController');
     //Route::get('category/{name?}', 'Archive\CategoryController@show')->where('category','(.*)');
