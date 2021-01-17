@@ -22,7 +22,7 @@ class Home extends Controller {
 
 			$userId = Auth::id();
 
-			$masterList = SAArchive::select(['id','name','comments','root_folder_id','is_default','created_at'])
+			$masterList = SAArchive::select(['id','name','comments','is_default','created_at'])
 			->where('user_id',$userId)
 			->orderBy('index','asc')
 			->orderBy('id','asc')

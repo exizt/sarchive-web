@@ -26,9 +26,9 @@
 							<p class="mb-1 pl-md-3 cz-item-summary">
 								<small>{{ $item->summary_var }}</small>
 							</p>
-							<div class="d-flex justify-content-between">
-								<small>게시판 : {{ $item->board }}</small>
-								<small>분류 : {{ $item->category }}</small>
+							<div class="text-right">
+								<small>@if(isset($item->folder)) 폴더 : {{ $item->folder->name }} @endif</small>
+								<!--<small>분류 : {{ $item->category }}</small>-->
 							</div>
 						</a>
 						@endforeach

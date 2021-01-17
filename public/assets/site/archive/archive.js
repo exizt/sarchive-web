@@ -99,25 +99,26 @@ function doAjaxFolderList(){
     */
 
     /**
-     * 현재 위치 생성
-     * @param string mode 
-     * @param object data 
+     * 현재 위치 breadcrumb 생성
+     * @param {string} mode folder/archive 구분값
+     * @param {object} data json 데이터
      */
     function buildCurrentPaths(mode, data){
-        var html = "";
 
         // 맨 앞 '아카이브' 생성
-        html += buildHtml(`/archives/${data.archive.id}`, data.archive.name)
+        var html = buildHtml(`/archives/${data.archive.id}`, data.archive.name)
 
         // 후위 폴더 경로 생성
         if(mode == "folder"){
-            $.each(JSON.parse(data.currentFolder.path),function(i,item){
-                //console.log(item)
-                html += buildHtml(`/folders/${item.id}`, item.text)
-            })
+            if(typeof data.currentPaths !== "undefined"){
+                $.each(data.currentPaths,function(i,item){
+                    //console.log(item)
+                    html += buildHtml(`/folders/${item.id}`, item.name)
+                })
+            }
         }
-        $("#shh-nav-board-path").append(html)
-
+        //$("#shh-nav-board-path").append(html)
+        document.getElementById("shh-nav-board-path").innerHTML = html
 
         function buildHtml(link, label){
             var html = `<li class="breadcrumb-item">
@@ -145,7 +146,8 @@ function doAjaxFolderList(){
             html += buildHtml(`/folders/${item.id}`,label, item.doc_count, depth)
             buildFolderListItem(item, currentDepth)
         })
-        $("#shh-nav-board-list").append(html)
+        //$("#shh-nav-board-list").append(html)
+        document.getElementById("shh-nav-board-list").innerHTML = html
 
         function buildHtml(link, label, count, depth){
             var html = `<a href="${link}" 

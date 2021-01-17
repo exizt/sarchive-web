@@ -9,9 +9,10 @@
 	<h5>게시판 경로</h5>
 	<nav aria-label="breadcrumb">
 		<ol class="breadcrumb">
-			@isset ($folder->paths_decode)
-			@foreach ($folder->paths_decode as $item)
-			<li class="breadcrumb-item"><a href="{{$item->id}}">{{ $item->text }}</a></li> 
+			<li class="breadcrumb-item"><a href="/archives/{{$archive->id}}">{{ $archive->name }}</a></li> 
+			@isset ($folder->paths)
+			@foreach ($folder->paths as $item)
+			<li class="breadcrumb-item"><a href="{{$item->id}}">{{ $item->name }}</a></li> 
 			@endforeach
 			@endisset
 		</ol>

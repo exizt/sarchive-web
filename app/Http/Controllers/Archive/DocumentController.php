@@ -41,7 +41,7 @@ class DocumentController extends Controller {
         $archiveId = $document->archive_id;
         
         // 권한 체크
-        SAArchive::select(['id'])
+        $archive = SAArchive::select(['id', 'name'])
             ->where ( [['user_id', Auth::id() ],['id',$archiveId]])
             ->firstOrFail ();
             
@@ -51,9 +51,11 @@ class DocumentController extends Controller {
 
         // create dataSet
         $dataSet = $this->createViewData ();
-        $dataSet ['article'] = $document;
+        $dataSet ['archive'] = $archive;
         $dataSet ['folder'] = $folder;
-        $dataSet ['folder']->paths_decode = json_decode($folder->path);
+        //$dataSet ['folder']->paths_decode = json_decode($folder->path);
+        $dataSet ['folder']->paths = $folder->paths();
+        $dataSet ['article'] = $document;
         //$dataSet ['previousList'] = $this->makePreviousListLink($request, $archiveId);
         $dataSet ['previousList'] = url()->previous();
         $dataSet ['bookmark'] = $bookmark;

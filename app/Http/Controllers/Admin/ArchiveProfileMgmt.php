@@ -31,7 +31,7 @@ class ArchiveProfileMgmt extends Controller
 
         $userId = Auth::id();
 
-        $masterList = SAArchive::select(['id','name','comments','root_folder_id','is_default','created_at'])
+        $masterList = SAArchive::select(['id','name','comments','is_default','created_at'])
         ->where('user_id',$userId)
         ->orderBy('index','asc')
         ->orderBy('id','asc')
@@ -184,7 +184,7 @@ class ArchiveProfileMgmt extends Controller
     public function destroy(Request $request, $id)
     {
         // 확인하고 없으면 Fail
-        $item = SAArchive::findOrFail($id);
+        $archive = SAArchive::findOrFail($id);
 
         // 파라미터
         $willMoveArchiveId = $request->input ( 'will_move' );
@@ -222,7 +222,7 @@ class ArchiveProfileMgmt extends Controller
 
 
 
-
+        /*
         $applicableBoardIds = SAFolder::where('profile_id',$id)->pluck('id');
 
         if(SAFolder::select(['id'])->where('profile_id',$id)->exists()){
@@ -235,31 +235,32 @@ class ArchiveProfileMgmt extends Controller
             // 해당하는 Board 는 삭제하기.
             SAFolder::where('profile_id',$id)->delete();
         }
+        */
 
         // 삭제 실행
-        $item->delete();
+        $archive->delete();
         
         return redirect()->route(self::ROUTE_ID.'.index')->with('message','삭제를 완료하였습니다.');
     }
 
     /**
-     * 순서 변경 처리
+     * 아카이브의 순서 변경 처리
      */
     public function updateSort(Request $request){
-        $listData = $request->input('listData', array());
+        $dataList = $request->input('dataList', array());
 
-        foreach($listData as $i => $item){
+        foreach($dataList as $i => $item){
             
-            $profile = SAArchive::findOrFail ( $item['profileId'] );
-            $profile->index = $item['index'];
-            $profile->save();
+            $archive = SAArchive::findOrFail ( $item['id'] );
+            $archive->index = $item['index'];
+            $archive->save();
         }
-
-        $dataSet = array();
-        $dataSet['success'] = '변경 완료되었습니다.';
 
         $request->session()->flash('message', '변경 완료되었습니다.');
 
+        // 결과값
+        $dataSet = array();
+        $dataSet['success'] = '변경 완료되었습니다.';
         return response()->json($dataSet);
     }
     /**

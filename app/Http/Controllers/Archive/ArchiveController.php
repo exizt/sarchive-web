@@ -17,12 +17,14 @@ class ArchiveController extends BaseController {
     protected $ArchiveProfile;
     protected $docColumns = ['sa_documents.id', 'title','summary_var','reference','folder_id','sa_documents.created_at','sa_documents.updated_at','category'];
 
+
     /**
      * 생성자
      */
     public function __construct() {
         $this->middleware ( 'auth' )->except(['doAjax_getBoardList','doAjax_getHeaderNav']);
     }
+
 
     /**
      * 'archive_id' 기준으로 문서 조회
@@ -34,6 +36,7 @@ class ArchiveController extends BaseController {
         // 아카이브의 문서 조회
         $masterList = SADocument::select($this->docColumns)
             ->where ( 'archive_id',$archiveId )
+            ->with ('folder')
             ->orderBy ( 'created_at', 'desc' )
             ->paginate(20);
 
@@ -44,6 +47,7 @@ class ArchiveController extends BaseController {
         $dataSet ['bodyParams']['archive'] = $archiveId;
         return view ( self::VIEW_PATH . '.index', $dataSet );
     }
+
 
     /**
      * 'folder_id'기준으로 문서 조회
@@ -68,7 +72,8 @@ class ArchiveController extends BaseController {
 
             $masterList = SADocument::select($this->docColumns)
                 ->join('sa_folders','sa_documents.folder_id','=','sa_folders.id')
-                ->whereRaw ( 'left(system_path, length(?)) = ?', [$folder_path.'/', $folder_path.'/'] )
+                ->whereRaw ( 'left(system_path, length(?)) = ?', [$folder_path, $folder_path] )
+                ->with ('folder')
                 ->orderBy ( 'created_at', 'desc' )
                 ->paginate(20);
                 //print_r(DB::getQueryLog());
@@ -78,6 +83,7 @@ class ArchiveController extends BaseController {
              */
             $masterList = SADocument::select($this->docColumns)
             ->where ( 'folder_id',$folder->id )
+            ->with ('folder')
             ->orderBy ( 'created_at', 'desc' )
             ->paginate(20);
         }
@@ -95,6 +101,7 @@ class ArchiveController extends BaseController {
 
     }
     
+
     /**
      * 
      * @param Request $request
@@ -136,6 +143,7 @@ class ArchiveController extends BaseController {
         }
     }
     
+
     /**
      * 상단 네비게이션 아이템 조회
      */
@@ -202,9 +210,13 @@ class ArchiveController extends BaseController {
 
         if($mode == 'folder'){
             // 현재의 폴더 정보
-            $currentFolder = SAFolder::select(['id','name','parent_id','path','depth'])
+            $currentFolder = SAFolder::select(['id','name','parent_id','depth', 'system_path'])
                 ->where ( 'id', $folderId )
                 ->firstOrFail ();
+            //$currentPath = $currentFolder->system_path;
+            //$currentPaths = $this->getPathsFromIds($currentFolder->system_path);
+            $currentPaths = $currentFolder->paths();
+
 
             // 하위 폴더 목록
             $masterList = DB::select("select      p6.parent_id as parent6_id,
@@ -235,9 +247,6 @@ class ArchiveController extends BaseController {
             
 
         } else {
-            $currentDepth = 1;
-            $currentPaths = '';
-
             // 하위 폴더 목록
             $masterList = DB::select("select      p6.parent_id as parent6_id,
                     p5.parent_id as parent5_id,
@@ -263,12 +272,12 @@ class ArchiveController extends BaseController {
         $dataSet = array();
         if(isset($currentFolder)){
             $dataSet['currentFolder'] = $currentFolder;
+            $dataSet['currentPaths'] = $currentPaths;
         }
         $dataSet['archive'] = $archive;
         $dataSet['list'] = $masterList;
         return response()->json($dataSet);
     }
-
 
 
     /**
@@ -317,6 +326,7 @@ class ArchiveController extends BaseController {
         return response()->json($dataSet);
     }
 
+
     /**
      * 
      * @return string[]
@@ -329,6 +339,7 @@ class ArchiveController extends BaseController {
         $data ['paginationParams'] = array();
         return $data;
     }
+
 
     /**
      * 분기에 따른 처리.
@@ -366,7 +377,7 @@ class ArchiveController extends BaseController {
     {
         $userId = Auth::id();
         // profileId 를 이용한 접근
-        $this->ArchiveProfile = SAArchive::select(['id','name','root_folder_id','route'])
+        $this->ArchiveProfile = SAArchive::select(['id','name','route'])
             ->where ( [['user_id', Auth::id() ],['id',$profileId]])
             ->firstOrFail ();
     }
@@ -401,6 +412,7 @@ class ArchiveController extends BaseController {
         
     }
     
+
     /**
      * 이전 링크 주소.
      * 바로 이전 주소를 가지고 셋팅을 하는데, '새로고침' 을 하는 경우도 있기 때문에, 세션에 넣어두고 활용한다.
@@ -417,6 +429,7 @@ class ArchiveController extends BaseController {
         return (strtok($previous,'?') == $routeLink) ? $previous : $routeLink;
     }
 
+
     /**
      * '취소 링크' 생성.
      */
@@ -428,6 +441,7 @@ class ArchiveController extends BaseController {
 
         return (strtok($previous,'?') == $routeLink) ? $previous : $routeLink;
     }
+
 
     /**
      * 이전 링크 주소.

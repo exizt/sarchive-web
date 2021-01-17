@@ -35,7 +35,7 @@ class ArchiveBoardMgmt extends Controller
     {
         // 아카이브 프로필을 조회
         $userId = Auth::id();
-        $archiveProfiles = SAArchive::select(['id','name','comments','root_folder_id','is_default','created_at'])
+        $archiveProfiles = SAArchive::select(['id','name','comments','is_default','created_at'])
         ->where('user_id',$userId)
         ->orderBy('created_at','asc')->get();
         
@@ -251,12 +251,12 @@ class ArchiveBoardMgmt extends Controller
 			//$this->ArchiveProfile = SAArchive::select(['name','root_board_id','route'])->where ( [['user_id', $userId ],['route',$ArchiveRouteId]])->firstOrFail ();
 	
 			// profileId 를 이용한 접근
-			$this->ArchiveProfile = SAArchive::select(['id','name','root_folder_id','route'])
+			$this->ArchiveProfile = SAArchive::select(['id','name','route'])
 				->where ( [['user_id', $userId ],['id',$profileId]])
 				->firstOrFail ();
 			
 		} else {
-			$this->ArchiveProfile = SAArchive::select(['id','name','root_board_id','route'])
+			$this->ArchiveProfile = SAArchive::select(['id','name','route'])
 			->where ( [['user_id', $userId ],['is_default','1']])
 			->firstOrFail ();
 		}

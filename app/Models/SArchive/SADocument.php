@@ -79,4 +79,8 @@ class SADocument extends Model
     public function archive(){
         return $this->belongsTo('App\Models\SArchive\SAArchive', 'archive_id');
     }
+
+    public function folder(){
+        return $this->belongsTo('App\Models\SArchive\SAFolder', 'folder_id');
+    }
 }
