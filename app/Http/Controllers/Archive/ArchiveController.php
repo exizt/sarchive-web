@@ -5,15 +5,26 @@ namespace App\Http\Controllers\Archive;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use App\Models\SArchive\SAArchive;
 use App\Models\SArchive\SAFolder;
 use App\Models\SArchive\SADocument;
 use App\Models\ArchiveCategoryRel;
 use App\Models\ArchiveBookmark;
 
+
 class ArchiveController extends BaseController {
     protected const VIEW_PATH = 'app.archive';
     protected const ROUTE_ID = 'archives';
+
+    /**
+     * 현재 보고 있는 Archive 개체
+     */
+    protected $archive = null;
+
+    /**
+     * @deprecated
+     */
     protected $ArchiveProfile;
     protected $docColumns = ['sa_documents.id', 'title','summary_var','reference','folder_id','sa_documents.created_at','sa_documents.updated_at','category'];
 
@@ -31,7 +42,9 @@ class ArchiveController extends BaseController {
      * 
      */
     public function retrieveDocsByArchive(Request $request, $archiveId){
-        $this->setArchiveFromId($archiveId);
+
+        // archiveId 권한 체크 및 조회
+        $archive = $this->retrieveAuthArchive($archiveId);
 
         // 아카이브의 문서 조회
         $masterList = SADocument::select($this->docColumns)
@@ -44,7 +57,8 @@ class ArchiveController extends BaseController {
         // dataSet 생성
         $dataSet = $this->createViewData ();
         $dataSet ['masterList'] = $masterList;
-        $dataSet ['bodyParams']['archive'] = $archiveId;
+        //$dataSet ['bodyParams']['archive'] = $archiveId;
+        $dataSet ['parameters']['archiveId'] = $archiveId;
         return view ( self::VIEW_PATH . '.index', $dataSet );
     }
 
@@ -54,15 +68,16 @@ class ArchiveController extends BaseController {
      * 
      */
     public function retrieveDocsByFolder(Request $request, $folderId) {
-        //$this->setArchiveFromId($archiveId);
 
         $folder = SAFolder::findOrFail($folderId);
-        $archive = $folder->archive;
+        $archiveId = $folder->archive_id;
+        //$archive = $folder->archive;
+
+        // archiveId 권한 체크 및 조회
+        $archive = $this->retrieveAuthArchive($archiveId);
 
         // 해당 폴더에 해당하는 것만 조회하는 옵션. false 일 때에는 하위 폴더까지 조회.
         $is_only = (bool)$request->input( 'only' , false);
-
-
         if(! $is_only){
             /**
              * 하위 폴더까지 게시물 목록 조회
@@ -94,9 +109,9 @@ class ArchiveController extends BaseController {
         // dataSet 생성
         $dataSet = $this->createViewData ();
         $dataSet ['masterList'] = $masterList;
-        $dataSet ['bodyParams']['archive'] = $archive->id;
+        //$dataSet ['bodyParams']['archive'] = $archive->id;
         $dataSet ['bodyParams']['folder'] = $folderId;
-        if($is_only) $dataSet ['mPaginationParams']['only'] = true;
+        if($is_only) $dataSet ['paginationParams']['only'] = true;
         return view ( self::VIEW_PATH . '.index', $dataSet );
 
     }
@@ -107,39 +122,43 @@ class ArchiveController extends BaseController {
      * @param Request $request
      * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
      */
-    public function search(Request $request) {
-        $this->getArchiveProfile($request);
+    public function search(Request $request, $archiveId) {
 
-        $boardId = $request->input('board', $this->ArchiveProfile->root_board_id);
+        // 유효성 검증
+        /*
+        $validatedData = $request->validate([
+            'archive_id' => 'required|integer'
+        ]);
+        */
+
+        // 파라미터
+        //$archiveId = $request->input('archiveId');
         $word = $request->input('q','');
+
+        
+        // archiveId 권한 체크 및 조회
+        $archive = $this->retrieveAuthArchive($archiveId);
+
         
         if(mb_strlen($word) < 2){
             echo '검색어가 너무 짧음.';
         } else {
-            $masterList = SADocument::select(['id', 'title','summary_var','reference','board_id','created_at','updated_at','category','profile_id'
-                ,DB::raw('(select name from sa_boards as s where s.id = board_id) as category_name')])
-                ->join(DB::raw("(
-                select node.board_id as t_board_id, parent.board_id as t_parent_id
-                from sa_board_tree AS node ,
-                    sa_board_tree AS parent
-                where node.lft between parent.lft and parent.rgt
-                ) as t"),'t.t_board_id','=','board_id')
-                ->where ( 't.t_parent_id',$boardId )
+            $masterList = SADocument::select($this->docColumns)
+                ->where ( 'archive_id',$archiveId )
                 ->orderBy ( 'created_at', 'desc' )
                 ->search($word)
                 ->paginate(30);
 
             // dataSet 생성
             $dataSet = $this->createViewData ();
-            $dataSet ['articles'] = $masterList;
-            $dataSet ['parameters']['board'] = $boardId;
-            $dataSet ['parameters']['profile'] = $this->ArchiveProfile->id;
+            $dataSet ['masterList'] = $masterList;
+            //$dataSet ['parameters']['board'] = $boardId;
+            //$dataSet ['parameters']['profile'] = $archiveId;
             $dataSet ['parameters']['q'] = $word;
-            $dataSet ['pagParameters']['board'] = $boardId;
-            $dataSet ['pagParameters']['profile'] = $this->ArchiveProfile->id;
-            $dataSet ['pagParameters']['q'] = $word;
+            //$dataSet ['paginationParams']['board'] = $boardId;
+            $dataSet ['paginationParams']['archive_id'] = $archiveId;
+            $dataSet ['paginationParams']['q'] = $word;
             return view ( self::VIEW_PATH . '.search', $dataSet );
-            
         }
     }
     
@@ -326,6 +345,16 @@ class ArchiveController extends BaseController {
         return response()->json($dataSet);
     }
 
+    /**
+     * id를 통한 archive 조회 및 권한 체크
+     */
+    private function retrieveAuthArchive($id){
+        
+        $this->archive = SAArchive::select(['id','name','route'])
+            ->where ( [['user_id', Auth::id() ],['id',$id]])
+            ->firstOrFail ();
+        return $this->archive;
+    }
 
     /**
      * 
@@ -337,81 +366,19 @@ class ArchiveController extends BaseController {
         $data ['VIEW_PATH'] = self::VIEW_PATH;
         $data ['parameters'] = array();
         $data ['paginationParams'] = array();
+
+        $layoutParams = array();
+        $bodyParams = array();
+        if($this->archive){
+            $layoutParams['archiveId'] = $this->archive->id;
+            $layoutParams['archiveName'] = $this->archive->name;
+            $bodyParams['archive'] = $this->archive->id;
+        }
+        $data ['layoutParams'] = $layoutParams;
+        $data ['bodyParams'] = $bodyParams;
         return $data;
     }
 
-
-    /**
-     * 분기에 따른 처리.
-     * '개발 전용' 과 '일반 전용' 으로 구분. 향후에 더 나뉘어질 수 있음. 귀찮으니 하드코딩한다. 
-     */
-    private function getArchiveProfile(Request $request)
-    {
-        $userId = Auth::id();
-
-        if($request->has('profile')){
-            $profileId = $request->input('profile');
-            // routeId 를 이용한 접근
-            //$this->ArchiveProfile = SAArchive::select(['name','root_board_id','route'])->where ( [['user_id', $userId ],['route',$ArchiveRouteId]])->firstOrFail ();
-    
-            // profileId 를 이용한 접근
-            $this->ArchiveProfile = SAArchive::select(['id','name','root_board_id','route'])
-                ->where ( [['user_id', $userId ],['id',$profileId]])
-                ->firstOrFail ();
-            
-        } else {
-            $this->ArchiveProfile = SAArchive::select(['id','name','root_board_id','route'])
-            ->where ( [['user_id', $userId ],['is_default','1']])
-            ->firstOrFail ();
-        }
-    }
-
-        
-    /**
-     * Archive Profile 의 정보를 조회. 
-     * this->ArchiveProfile 에 내용이 담긴다.
-     * profileId 를 인수로 받고, userID 를 통하여 일차적으로 인증을 한다.
-     * 해당 profile Id 에 접근 권한이 있는지 체크하게 됨. 권한이 없으면 Fail
-     */
-    private function setArchiveFromId($profileId)
-    {
-        $userId = Auth::id();
-        // profileId 를 이용한 접근
-        $this->ArchiveProfile = SAArchive::select(['id','name','route'])
-            ->where ( [['user_id', Auth::id() ],['id',$profileId]])
-            ->firstOrFail ();
-    }
-
-    
-    /**
-     * boardList 테이블의 count 값을 갱신
-     */
-    private function updateBoardCount()
-    {
-        /*
-        $affected = DB::update('update sa_boards 
-            set count = (select count(id) from archives
-            where archives.board_id = sa_boards.id
-            group by board_id)');
-        */
-        
-        // 좀 더 세밀화 된 쿼리
-        DB::update('update sa_boards
-            set count = (select count(sa_archives.id)
-                from 
-                sa_archives,
-                (SELECT node.board_id, parent.board_id as parent_id
-                    FROM sa_board_tree AS node ,
-                             sa_board_tree AS parent
-                    WHERE node.lft BETWEEN parent.lft AND parent.rgt
-                ) as cate
-                WHERE 
-                cate.board_id = sa_archives.board_id
-                and cate.parent_id = sa_boards.id
-                group by cate.parent_id)');
-        
-    }
-    
 
     /**
      * 이전 링크 주소.
@@ -419,6 +386,7 @@ class ArchiveController extends BaseController {
      * 뭔가 동작이 원하는 느낌이 아니다...살펴봐야 할 듯...
      * @param Request $rqeust
      * @return string
+     * @deprecated
      */
     protected function makePreviousListLink(Request $request, $profileId)
     {
@@ -432,6 +400,7 @@ class ArchiveController extends BaseController {
 
     /**
      * '취소 링크' 생성.
+     * @deprecated
      */
     protected function makePreviousShowLink(Request $request, $profileId, $archiveId)
     {
@@ -449,6 +418,7 @@ class ArchiveController extends BaseController {
      * 뭔가 동작이 원하는 느낌이 아니다...살펴봐야 할 듯...
      * @param Request $rqeust
      * @return string
+     * @deprecated
      */
     protected function getPreviousLink(Request $request)
     {

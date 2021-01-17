@@ -24,6 +24,7 @@ class BaseController extends Controller {
         $data ['parameters'] = array();
         $data ['paginationParams'] = array();
         $data ['bodyParams'] = array();
+        $data ['layoutParams'] = array();
         return $data;
     }
 }

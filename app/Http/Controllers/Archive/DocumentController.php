@@ -29,15 +29,10 @@ class DocumentController extends Controller {
      *
      */
     public function show(Request $request, $documentId) {
+
+        // 문서 조회
         $document = SADocument::findOrFail($documentId);
-        
-        /*
-        // profile 값이 제대로 넘어왔는지 확인.
-        if($archive->profile_id != $profileId){
-            // fail 처리 하기. (사실 안 해도 되지만..)
-            abort(404);
-        }
-        */
+       
         $archiveId = $document->archive_id;
         
         // 권한 체크
@@ -59,8 +54,10 @@ class DocumentController extends Controller {
         //$dataSet ['previousList'] = $this->makePreviousListLink($request, $archiveId);
         $dataSet ['previousList'] = url()->previous();
         $dataSet ['bookmark'] = $bookmark;
+
+        // 공용 파라미터 처리
+        $dataSet ['parameters']['archiveId'] = $archiveId;
         //$dataSet ['parameters']['board'] = $archive->board_id;
-        //$dataSet ['parameters']['profile'] = $profileId;
         return view ( self::VIEW_PATH . '.show', $dataSet );
     }
 
@@ -389,6 +386,7 @@ class DocumentController extends Controller {
         
     /**
      * boardList 테이블의 count 값을 갱신
+     * @deprecated 코드 개선이 필요함.
      */
     private function updateBoardCount()
     {
@@ -455,7 +453,7 @@ class DocumentController extends Controller {
      * 뭔가 동작이 원하는 느낌이 아니다...살펴봐야 할 듯...
      * @param Request $rqeust
      * @return string
-     * @deprecated
+     * @deprecated 사용하지 않음.
      */
     protected function getPreviousLink(Request $request)
     {
