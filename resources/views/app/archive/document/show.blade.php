@@ -9,9 +9,9 @@
 	<h5>게시판 경로</h5>
 	<nav aria-label="breadcrumb">
 		<ol class="breadcrumb">
-			@isset ($boardPath)
-			@foreach ($boardPath as $item)
-			<li class="breadcrumb-item"><a href="{{ route($ROUTE_ID.'.index',['profile'=>$parameters['profile']])}}?board={{$item->id}}">{{ $item->text }}</a></li> 
+			@isset ($folder->paths_decode)
+			@foreach ($folder->paths_decode as $item)
+			<li class="breadcrumb-item"><a href="{{$item->id}}">{{ $item->text }}</a></li> 
 			@endforeach
 			@endisset
 		</ol>
@@ -53,7 +53,8 @@
 	<div class="form-group row">
 		<div class="col-md-10 col-md-offset-2">
 			<a class="btn btn-primary btn-sm site-shortcut-key-c" href="{{ $previousList }}" role="button">목록</a>
-			<a class="btn btn-outline-info btn-sm site-shortcut-key-e" href="{{ route($ROUTE_ID.'.edit',['profile'=>$parameters['profile'],'archive'=>$article->id]) }}" role="button">편집</a>
+			<a class="btn btn-outline-info btn-sm site-shortcut-key-e" 
+				href="{{ route($ROUTE_ID.'.edit',['doc'=>$article->id]) }}" role="button">편집</a>
 			
 		</div>
 	</div>
