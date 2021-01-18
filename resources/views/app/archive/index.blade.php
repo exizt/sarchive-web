@@ -19,6 +19,10 @@
                         <p class="lead">{{ $archiveBoard->comment }}</p>
                         @endif
                     </div>
+                    <div class="text-right">
+                        <a href="" class="btn btn-outline-primary">새 폴더</a>
+                        <a href="" class="btn btn-outline-primary">새 문서</a>
+                    </div>
                     <hr class="mt-1">
                     <div class="list-group">
                         @foreach ($masterList as $item)
@@ -39,7 +43,7 @@
                         @endforeach
                     </div>
                 </div>
-                <div class="col-md-3" id="nav-folders" data-current-folder-id="">
+                <div class="col-md-3">
                     <h4 class="px-2">현재 위치</h4>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb" id="shh-nav-board-path"></ol>

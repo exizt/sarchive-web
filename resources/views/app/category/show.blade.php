@@ -62,7 +62,7 @@
 					</div>
 					@endif
 				</div>
-				<div class="col-md-3" id="nav-folders" data-current-folder-id="">
+				<div class="col-md-3">
                     <h4 class="px-2">현재 위치</h4>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb" id="shh-nav-board-path"></ol>

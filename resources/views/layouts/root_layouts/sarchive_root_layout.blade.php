@@ -52,12 +52,19 @@ document.onkeyup = shortcutKeyEvent;
 <body @isset($bodyParams) @foreach ($bodyParams as $k => $v) data-{{$k}}="{{$v}}" @endforeach @endisset >
 	<header>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+			<a class="navbar-brand mr-2" href="/" style="font-size:1.5rem;">
+				<i class="fab fa-superpowers fa-spin" aria-hidden="true"></i>
+			</a>
 			@isset($layoutParams['archiveId']) 
 			<a class="navbar-brand" href="/archives/{{$layoutParams['archiveId']}}">
-				<i class="fab fa-superpowers fa-spin" aria-hidden="true"></i>&nbsp;&nbsp;S아카이브
+				@isset($layoutParams['archiveName']) 
+				{{$layoutParams['archiveName']}}
+				@else
+				S아카이브
+				@endif
 			</a>
 			@else
-			<a class="navbar-brand" href="/"><i class="fab fa-superpowers fa-spin" aria-hidden="true"></i>&nbsp;&nbsp;S아카이브</a>
+			<a class="navbar-brand" href="/">S아카이브</a>
 			@endisset
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>

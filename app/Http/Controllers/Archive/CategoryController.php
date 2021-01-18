@@ -34,6 +34,10 @@ class CategoryController extends Controller {
      * 카테고리 목록
      */
     public function index(Request $request, $archiveId) {
+        // archiveId 권한 체크 및 조회
+        $archive = $this->retrieveAuthArchive($archiveId);
+
+        // 카테고리 목록 조회
         $masterList = SACategory::where('archive_id', $archiveId)
         ->paginate(20);
 
@@ -54,7 +58,8 @@ class CategoryController extends Controller {
         // 카테고리명
         $categoryName = urldecode($encodedName);
         
-        $archive = SAArchive::find($archiveId);
+        // archiveId 권한 체크 및 조회
+        $archive = $this->retrieveAuthArchive($archiveId);
 
         // 아카이브 카테고리 (조회하고 없으면 새로 insert함)
         $category = SACategory::firstOrCreate(['archive_id'=>$archiveId, 'name'=>$categoryName]);
@@ -93,9 +98,9 @@ class CategoryController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function edit(Request $request, $archiveId, $categoryId) {
-        //$categoryName = urldecode($encodedName);
 
-        $archive = SAArchive::find($archiveId);
+        // archiveId 권한 체크 및 조회
+        $archive = $this->retrieveAuthArchive($archiveId);
 
         //
         //$category = SACategory::firstOrNew (['profile_id'=>$archiveId,'name'=>$categoryName]);
@@ -163,13 +168,21 @@ class CategoryController extends Controller {
      */
     public function destroy($archiveId, $id) {
 
+        // 데이터 유무 확인 및 조회
         $item = SACategory::findOrFail($id);
+
+        // archiveId 권한 체크 및 조회
+        $archive = $this->retrieveAuthArchive($item->archive_id);
+
+        // 삭제 진행
         $item->delete();
         
+        // 카테고리 릴레이션 정보 삭제
         SACategoryRel::where('archive_id',$archiveId)
             ->where('child_category_name',$item->name)
             ->delete();
 
+        // 결과 처리
         return redirect()
         ->route(self::ROUTE_ID.'.show', ['archiveId'=>$archiveId, 'category'=>urlencode($item->name)])
         ->with('message', '삭제되었습니다.' );
@@ -229,11 +242,21 @@ class CategoryController extends Controller {
      * @return string[]
      */
     protected function createViewData() {
-        $dataSet = array ();
-        $dataSet ['ROUTE_ID'] = self::ROUTE_ID;
-        $dataSet ['VIEW_PATH'] = self::VIEW_PATH;
-        $dataSet ['parameters'] = array();
-        return $dataSet;
+        $data = array ();
+        $data ['ROUTE_ID'] = self::ROUTE_ID;
+        $data ['VIEW_PATH'] = self::VIEW_PATH;
+        $data ['parameters'] = array();
+
+        $layoutParams = array();
+        $bodyParams = array();
+        if(isset($this->archive) && $this->archive != null){
+            $layoutParams['archiveId'] = $this->archive->id;
+            $layoutParams['archiveName'] = $this->archive->name;
+            $bodyParams['archive'] = $this->archive->id;
+        }
+        $data ['layoutParams'] = $layoutParams;
+        $data ['bodyParams'] = $bodyParams;
+        return $data;
     }
         
 }
