@@ -21,7 +21,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('static/{uri}', 'Archive\PageController@staticPage');
 
     Route::post('archives/ajax_mark', 'Archive\DocumentController@doAjax_mark');
-    Route::resource('{profile}/category', 'Archive\CategoryController', ['except'=>['create','store']]);
+    Route::resource('archives/{archiveId}/category', 'Archive\CategoryController', ['except'=>['create','store']]);
 
     Route::resource('page', 'Archive\PageController');
     //Route::get('category/{name?}', 'Archive\CategoryController@show')->where('category','(.*)');

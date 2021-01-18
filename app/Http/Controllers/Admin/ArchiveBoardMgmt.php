@@ -54,9 +54,6 @@ class ArchiveBoardMgmt extends Controller
         $archiveId = $request->input('archive_id');
         $userId = Auth::id();
         
-        // routeId 를 이용한 접근
-        //$this->ArchiveProfile = SAArchive::select(['name','root_board_id','route'])->where ( [['user_id', $userId ],['route',$ArchiveRouteId]])->firstOrFail ();
-	
         // Archive 정보 조회 및 권한 체크
         $archive = SAArchive::select(['id','name'])
             ->where ( [['user_id', $userId ],['id',$archiveId]])
@@ -247,8 +244,6 @@ class ArchiveBoardMgmt extends Controller
 
 		if($request->has('profile')){
 			$profileId = $request->input('profile');
-			// routeId 를 이용한 접근
-			//$this->ArchiveProfile = SAArchive::select(['name','root_board_id','route'])->where ( [['user_id', $userId ],['route',$ArchiveRouteId]])->firstOrFail ();
 	
 			// profileId 를 이용한 접근
 			$this->ArchiveProfile = SAArchive::select(['id','name','route'])

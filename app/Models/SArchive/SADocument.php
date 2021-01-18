@@ -2,6 +2,7 @@
 namespace App\Models\SArchive;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\FullTextSearch;
 
 /**
@@ -10,6 +11,7 @@ use App\Models\FullTextSearch;
  */
 class SADocument extends Model
 {
+    use SoftDeletes;
     // FullTextSearch 기능을 이용
     use FullTextSearch;
     
@@ -29,15 +31,21 @@ class SADocument extends Model
     protected $perPage = 15;
 
     /**
-     * The columns of the full text index
+     * FullText 검색에 해당하는 컬럼 지정
      */
     protected $searchable = ['title','content'];
     
+    /**
+     * content 변경이 일어날 때 summary_var 컬럼도 같이 생성 변경함
+     */
     public function setContentAttribute($value){
         $this->attributes['content'] = $value;
         $this->attributes['summary_var'] = $this->generateSummary($value,255);
     }
     
+    /**
+     * summary 생성
+     */
     private function generateSummary($content, $char_length=255){
         // 길이가 너무 길 경우에 대비.
         if(mb_strlen($content) > 5000){
@@ -57,6 +65,9 @@ class SADocument extends Model
         return mb_substr($text, 0, $char_length);
     }
 
+    /**
+     * category 값을 배열로 전환해서 반환
+     */
     public function getCategoryArrayAttribute(){
         preg_match_all("/\[(.*?)\]/",$this->attributes['category'],$matches);
 

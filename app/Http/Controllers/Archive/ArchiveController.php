@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\SArchive\SAArchive;
 use App\Models\SArchive\SAFolder;
 use App\Models\SArchive\SADocument;
-use App\Models\ArchiveCategoryRel;
 use App\Models\ArchiveBookmark;
 
 
@@ -22,7 +21,9 @@ class ArchiveController extends BaseController {
      */
     protected $archive = null;
 
-    protected $docColumns = ['sa_documents.id', 'title','summary_var','reference','folder_id','sa_documents.created_at','sa_documents.updated_at','category'];
+    protected $docColumns = ['sa_documents.id', 'title','summary_var',
+    'reference','folder_id','category',
+    'sa_documents.created_at','sa_documents.updated_at'];
 
 
     /**
@@ -344,7 +345,7 @@ class ArchiveController extends BaseController {
         return $this->archive;
     }
 
-    
+
     /**
      * 
      * @return string[]

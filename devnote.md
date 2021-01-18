@@ -100,64 +100,89 @@
 # 코드, 백 엔드
 
 ## 데이터베이스
-Profiles | 프로필 테이블
+Archives | 아카이브 목록 테이블
 * 프로필 테이블
-* 테이블명 : sa_profiles
+* 테이블명 : sa_archives (이전 sa_profiles)
 * 설명 : 유저에 대응되어서 생성된 아카이브의 구분값. 아카이브를 여러개 생성할 수 있게 해주는 것.
 * 컬럼 
   * id
   * user_id
   * name
   * text : 설명 텍스트 등.
-  * root_board_id
-  * index : 정렬 순서
+  * index : 정렬 순서  
+  * (deprecated) root_board_id
 * 인덱스
   * sa_profiles_user_index : (user_id, id) user_id 를 기준으로 profiles 를 조회하기 위함.
   * sa_profiles_user_index_id : (user_id, index, id)
 
 
-Archives | 아카이브 테이블
-* 테이블명 : sa_archives
+Documents | 문서 테이블
+* 테이블명 : sa_documents (이전 sa_archives)
 * 설명 : 글 내용. 
 * 참고) 차후에 다중 구성을 할 수 있음. (탭 구성으로 해서 엑셀 문서 처럼...)
 * 컬럼
-  * id : 아카이브 ID
-  * title : 아카이브 제목
-  * content : 아카이브 내용
+  * id : 문서 ID
+  * title : 문서 제목
+  * content : 문서 본문
   * reference : 출처. 링크 등.
   * summary_var : 내용 요약글. (varchar 255)
-  * board_id : 게시판 id
-  * category : [분류명][분류명2]
-  * profile_id : 거의 사용되지 않는 값. 차후의 통계나 활용을 위해 넣어둔 컬럼. 값을 제대로 넣도록 함.
+  * 분류 관련
+    * archive_id : 아카이브 id  
+    * folder_id : 폴더 id
+    * category : `[분류명][분류명2]` 형태로 입력되는 컬럼.
 * 인덱스
   * sa_archives_latest_select_index : (board_id, created_at desc) 인덱스. 카테고리별로 정렬된 인덱스. 목록 불러올 때 이용되는 인덱스.
   * fulltext_index (title, content) 'Full Text' : 검색용 인덱스
+
+
+Folders | 폴더 테이블
+* 테이블명 : sa_folders (이전 sa_boards)
+* 컬럼
+  * id : 폴더 시스템 id
+  * archive_id : 아카이브 id
+  * name : 폴더 이름
+  * comments : 부가 설명
+  * parent_id : 상위 폴더 시스템 id
+  * doc_count : 해당 폴더의 문서 수
+  * index : 정렬 순서
+  * depth : 깊이
+  * system_path (string) : 경로 `2/33/44/` 형태로 입력되는 컬럼
+
+* 인덱스
+  * sa_boards_profile_index : (profile_id, index) Normal BTREE : where (profile_id) order by(index) 를 위함. 일반적인 조회.
+  * sa_board_parent_index : (parent_id) Normal BTREE : parent_id 로 역탐색 할 때를 위함. 자식노드 탐색할 때 위함.
+
 
 
 Categories | 분류 테이블
 * 테이블명 : sa_categories
 * 설명 : 분류 에 대한 정보 테이블. 분류명에 1:1 매칭이 되도록 함. 
 * 컬럼
-  * id : 카테고리 ID
-  * profile_id : 아카이브 구분값.
+  * id : 카테고리 id
+  * archive_id : 아카이브 id
   * name : 외부에서 분류명을 중점적으로 탐색하게 됨. unique 를 하거나 pk 를 해야 함. 또는 indexing 을 하거나 해야 함.
-  * text : 분류에 대한 설명 txt 
-  * parent : 상위 분류 설정 값. [분류1] [분류2] 와 같은 형태로..
+  * comments : 부가 설명
+  * category (string) : 상위 카테고리. `[분류명][분류명2]` 형태로 입력되는 컬럼.
   * redirect : 넘겨주기가 필요한 경우. 값이 입력되었으면 '넘겨주기 카테고리'로 감안함.
 * 인덱스 
-  * sa_categories_profile_index : (profile_id, name) Normal BTREE, profile_id 과 name 로 접근하게 될 검색을 예견.
+  * idx_sa_categories_name : (archive_id, name) Normal BTREE
+    * name 으로 탐색시 archive_id도 포함해서 해당 카테고리를 찾기에. 속도 향상을 위한 인덱스.
+  
 
 
-archive category relations 아카이브 카테고리 릴레이션 테이블 (아카이브 X 카테고리)
-* 테이블명 : sa_category_archive_rel
-* 목적 : 분류에서 하위 문서를 탐색하기 위한 목적.
-* 설명 : 글 작성/변경 시기에 필요하면 갱신한다. archives.category 부분에 영향을 받는다. 
+Category x Document | 카테고리 x 문서 릴레이션 테이블
+* 테이블명 : sa_category_document_rel
+* 목적 : 카테고리에서 하위 문서 탐색을 도와주는 테이블. (문서 테이블에서는 `[분류1][분류2]` 형태로 되어있으므로 이것을 별도의 row로 구성해주고 인덱싱을 해줌)
+* 변경 시기 : 문서 작성/문서 변경/문서 삭제에 영향을 받음.
 * 컬럼
-  * profile_id : 프로필 ID
-  * category (string) : 분류명 (한글 가능)
-  * archive_id : 분류에 해당되는 아카이브의 id
+  * archive_id : 아카이브 id
+  * category_name (string) : 카테고리명 (한글 가능)
+  * document_id : 문서 id
 * 인덱스
-  * sa_category_archive_rel_arindex : (archive_id) Normal BTREE, 삭제시 archive id 로 찾는 것이 너무 느리지는 않게 하기 위함.
+  * pk 인덱스 : archive_id, category_name, document_id 순으로 pk 인덱스가 걸려 있음. 
+    * archive_id, category_name 으로 document_id 탐색이 잦을 것이므로 이것을 향상시키기 위한 목적.
+  * idx_sa_category_document_rel_document : (document_id) Normal BTREE
+    * 문서 변경(작성/변경/삭제)시 속도를 향상하기 위한 목적.
 
 
 category_parent (분류 x 상위 분류)
@@ -172,34 +197,6 @@ category_parent (분류 x 상위 분류)
   * sa_category_parent_index : (profile_id,parent,child) Normal BTREE
 
 
-Boards | 게시판 테이블
-* 테이블명 : sa_boards
-* 컬럼
-  * id 
-  * name : 명칭
-  * comment : 부가 설명
-  * parent_id : 상위 게시판 id
-  * profile_id : 아카이브 프로필 id
-  * count : 해당 게시판의 게시글 수
-  * index : 정렬 순서
-  * depth : 깊이
-  * path : 경로
-* 인덱스
-  * sa_boards_profile_index : (profile_id, index) Normal BTREE : where (profile_id) order by(index) 를 위함. 일반적인 조회.
-  * sa_board_parent_index : (parent_id) Normal BTREE : parent_id 로 역탐색 할 때를 위함. 자식노드 탐색할 때 위함.
-
-
-Board Tree | 게시판 트리
-* 테이블명 : sa_board_tree
-* 목적 : 선택한 항목의 하위 게시판 까지 같이 검색할 수 있게 하는 용도.
-* 컬럼
-  * lft : 좌 범위 포지션
-  * rgt : 우 범위 포지션
-  * board_id : 게시판 id
-* 인덱스
-  * sa_board_tree_boardid_index (board_id) Unique BTREE : board_id 로 탐색할 경우에 대한 인덱스.
-  * lft 는 pk 인덱스
-
 
 Bookmark | 북마크 테이블
 * 테이블명 : sa_bookmarks
@@ -211,6 +208,19 @@ Bookmark | 북마크 테이블
 * 인덱스
   * (profile_id) : 목록을 조회할 때 이용.
   * (archive_id) : 해당 게시물의 북마크 상태를 조회할 때 이용
+
+
+
+(Deprecated) Board Tree | 게시판 트리
+* 테이블명 : sa_board_tree
+* 목적 : 선택한 항목의 하위 게시판 까지 같이 검색할 수 있게 하는 용도.
+* 컬럼
+  * lft : 좌 범위 포지션
+  * rgt : 우 범위 포지션
+  * board_id : 게시판 id
+* 인덱스
+  * sa_board_tree_boardid_index (board_id) Unique BTREE : board_id 로 탐색할 경우에 대한 인덱스.
+  * lft 는 pk 인덱스
 
 
 # 네이밍 룰

@@ -85,8 +85,8 @@
                 <div class="col-md-2">
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item"><a href="/admin/archiveProfile">아카이브 설정</a></li>
-                        <li class="list-group-item"><a href="/admin/archiveBoard">게시판 설정</a></li>
-                        <li class="list-group-item"><a href="/admin/archivePage">페이지 설정</a></li>
+                        <li class="list-group-item"><a href="/admin/archiveBoard">폴더 설정</a></li>
+                        <!--<li class="list-group-item"><a href="/admin/archivePage">페이지 설정</a></li>-->
                         <li class="list-group-item"><a href="/admin/advanced">고급 기능</a></li>
                         <li class="list-group-item">&nbsp;</li>
                     </ul>

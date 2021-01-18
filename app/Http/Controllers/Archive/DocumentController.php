@@ -9,26 +9,20 @@ use App\Http\Controllers\Controller;
 use App\Models\SArchive\SAArchive;
 use App\Models\SArchive\SAFolder;
 use App\Models\SArchive\SADocument;
-use App\Models\ArchiveCategoryRel;
+use App\Models\SArchive\SACategoryDocumentRel;
 use App\Models\ArchiveBookmark;
+use Carbon\Carbon;
 
 class DocumentController extends Controller {
     protected const VIEW_PATH = 'app.archive.document';
     protected const ROUTE_ID = 'doc';
-
 
     /**
      * 현재 보고 있는 Archive 개체
      */
     protected $archive = null;
 
-
-    /**
-     * @deprecated
-     */
-    protected $ArchiveProfile;
-
-
+    
     /**
      * 생성자
      */
@@ -190,9 +184,10 @@ class DocumentController extends Controller {
         //$this->updateBoardCount();
         /*
         foreach($article->category_array as $item){
-            ArchiveCategoryRel::create(['profile_id'=>$profileId,'archive_id'=>$article->id,'category'=>$item]);
+            SACategoryDocumentRel::create(['profile_id'=>$profileId,'archive_id'=>$article->id,'category'=>$item]);
         }
         */
+        $this->updateCategoryDocumentRel($archiveId, $documentId, $article->category_array);
 
         // 결과 처리
         if ($submitAction === 'continue') {
@@ -227,32 +222,37 @@ class DocumentController extends Controller {
         $submitAction = $request->input ('action');
 
         // 있는 값인지 id 체크
-        $article = SADocument::findOrFail ( $id );
+        $document = SADocument::findOrFail ( $id );
 
         // archiveId 권한 체크 및 조회
-        $archive = $this->retrieveAuthArchive($article->archive_id);
+        $archive = $this->retrieveAuthArchive($document->archive_id);
 
         // 데이터 update
-        $beforeCategory = $article->category;
-        $article->title = $title;
-        $article->content = $content;
-        $article->folder_id = $folderId;
-        $article->reference = $reference;
-        $article->category = $category;
-        $article->save ();
-
+        $beforeCategory = $document->category;
+        $document->title = $title;
+        $document->content = $content;
+        $document->folder_id = $folderId;
+        $document->reference = $reference;
+        $document->category = $category;
+        
         //$this->updateBoardCount();
 
         /*
         // category 관련 처리
         if($beforeCategory != $category){
-            ArchiveCategoryRel::where('archive_id',$archiveId)->delete();
+            SACategoryDocumentRel::where('archive_id',$archiveId)->delete();
 
-            foreach($article->category_array as $item){
-                ArchiveCategoryRel::create(['profile_id'=>$profileId,'archive_id'=>$article->id,'category'=>$item]);
+            foreach($document->category_array as $item){
+                SACategoryDocumentRel::create(['profile_id'=>$profileId,'archive_id'=>$document->id,'category'=>$item]);
             }
         }
         */
+        // Category 와 Document 의 릴레이션 갱신
+        if($beforeCategory != $category){
+            $this->updateCategoryDocumentRel($document->archive_id, $document->id, $document->category_array);
+        }
+
+        $document->save();
 
         // 결과 처리
         if ($submitAction === 'continue') {
@@ -262,9 +262,38 @@ class DocumentController extends Controller {
         ->with('message', '저장되었습니다.' );
     }
 
-    
     /**
-     * Remove the specified resource from storage.
+     * Category 와 Document 의 릴레이션 갱신
+     */
+    private function updateCategoryDocumentRel($archiveId, $documentId, $categoryNames){
+        //if(!is_array($categoryNames)) return;
+
+        // 기존의 해당하는 것 제거
+        SACategoryDocumentRel::where('document_id',$documentId)->delete();
+
+        if(count($categoryNames) > 0){
+            // insert 할 데이터 생성
+            $datas = array();
+            foreach($categoryNames as $k => $categoryName){
+                if(strlen(trim($categoryName))>0){
+                    $datas[$k] = [
+                        'archive_id' => $archiveId,
+                        'category_name' => trim($categoryName),
+                        'document_id' => $documentId,
+                        'created_at' => Carbon::now()
+                    ];
+                }
+            }
+    
+            // 대량 할당
+            if(count($datas)>0){
+                SACategoryDocumentRel::insert($datas);
+            }
+        }
+    }
+
+    /**
+     * 문서 삭제.
      *
      * @param int $id        	
      * @return \Illuminate\Http\Response
@@ -278,6 +307,9 @@ class DocumentController extends Controller {
 
         // delete 실행
         $article->delete();
+        
+        // Category x Document 릴레이션에서 기존의 해당하는 것 제거
+        SACategoryDocumentRel::where('document_id',$id)->delete();
         
         //$this->updateBoardCount();
         

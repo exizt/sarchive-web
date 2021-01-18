@@ -128,9 +128,6 @@ class ArchiveProfileMgmt extends Controller
         ]);
         */
 
-        //$item->root_board_id = $archiveBoard->id;
-        //$item->save();
-
     	return redirect ()->route ( self::ROUTE_ID . '.edit', ['id'=>$item->id] )->with('message', '카테고리를 생성하였습니다.');
     }
 
@@ -188,7 +185,6 @@ class ArchiveProfileMgmt extends Controller
 
         // 파라미터
         $willMoveArchiveId = $request->input ( 'will_move' );
-        //$willMoveBoardId = SAArchive::where('id',$willMoveProfileId)->value('root_board_id');
 
         // 권한 체크 필요.
         // 해당 아카이브에 대한 권한이 있는지 확인.

@@ -16,7 +16,11 @@ function getFolderId(){
  * 상단 header nav를 그리는 함수
  */
 function ajaxHeaderNav(){
-    var archiveId = wrapData(getArchiveId(), 1)
+
+    var archiveId = getArchiveId()
+    if(typeof archiveId === 'undefined'){
+        return;
+    }
 
     /*
     $.getJSON("/ajax/header_nav",{
@@ -63,7 +67,11 @@ function doAjaxFolderList(){
     var folderId = getFolderId()
     var mode = "folder"
     var params = {}
+
     if(typeof folderId === "undefined" || folderId == null){
+        if(typeof archiveId === "undefined" || archiveId == null){
+            return
+        }
         mode = "archive"
         params = {archive_id : archiveId}
     } else {

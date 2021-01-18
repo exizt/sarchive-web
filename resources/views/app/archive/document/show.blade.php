@@ -45,7 +45,7 @@
 			<div>
 				분류 : <ul class="list-inline shh-cat-list" style="display:inline">
 					@foreach ($article->category_array as $i => $item)
-						<li class="list-inline-item px-1 mx-0"><a href="/{{$parameters['profile']}}/category/{{urlencode($item)}}">{{$item}}</a></li>
+						<li class="list-inline-item px-1 mx-0"><a href="/archives/{{$archive->id}}/category/{{urlencode($item)}}">{{$item}}</a></li>
 					@endforeach
 				</ul>
 			</div>
