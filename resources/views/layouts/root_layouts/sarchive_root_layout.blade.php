@@ -76,7 +76,7 @@ document.onkeyup = shortcutKeyEvent;
 						<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink_My">
 							<h6 class="dropdown-header">기능</h6>
 							@isset($layoutParams['archiveId'])
-							<a class="dropdown-item site-shortcut-key-n site-shortcut-key-a" href="{{ route('doc.create',['archiveId'=>$layoutParams['archiveId']]) }}">글쓰기</a>
+							<a class="dropdown-item site-shortcut-key-n site-shortcut-key-a" href="{{ route('doc.create',['archive'=>$layoutParams['archiveId']]) }}">글쓰기</a>
 							@endisset
 							<a class="dropdown-item" href="/static/shortcut">단축키 일람</a>
 							<div class="dropdown-divider"></div>

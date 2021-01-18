@@ -22,10 +22,6 @@ class ArchiveController extends BaseController {
      */
     protected $archive = null;
 
-    /**
-     * @deprecated
-     */
-    protected $ArchiveProfile;
     protected $docColumns = ['sa_documents.id', 'title','summary_var','reference','folder_id','sa_documents.created_at','sa_documents.updated_at','category'];
 
 
@@ -53,12 +49,9 @@ class ArchiveController extends BaseController {
             ->orderBy ( 'created_at', 'desc' )
             ->paginate(20);
 
-
         // dataSet 생성
         $dataSet = $this->createViewData ();
         $dataSet ['masterList'] = $masterList;
-        //$dataSet ['bodyParams']['archive'] = $archiveId;
-        $dataSet ['parameters']['archiveId'] = $archiveId;
         return view ( self::VIEW_PATH . '.index', $dataSet );
     }
 
@@ -109,7 +102,6 @@ class ArchiveController extends BaseController {
         // dataSet 생성
         $dataSet = $this->createViewData ();
         $dataSet ['masterList'] = $masterList;
-        //$dataSet ['bodyParams']['archive'] = $archive->id;
         $dataSet ['bodyParams']['folder'] = $folderId;
         if($is_only) $dataSet ['paginationParams']['only'] = true;
         return view ( self::VIEW_PATH . '.index', $dataSet );
@@ -118,7 +110,7 @@ class ArchiveController extends BaseController {
     
 
     /**
-     * 
+     * 검색 결과
      * @param Request $request
      * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
      */
@@ -152,11 +144,7 @@ class ArchiveController extends BaseController {
             // dataSet 생성
             $dataSet = $this->createViewData ();
             $dataSet ['masterList'] = $masterList;
-            //$dataSet ['parameters']['board'] = $boardId;
-            //$dataSet ['parameters']['profile'] = $archiveId;
             $dataSet ['parameters']['q'] = $word;
-            //$dataSet ['paginationParams']['board'] = $boardId;
-            $dataSet ['paginationParams']['archive_id'] = $archiveId;
             $dataSet ['paginationParams']['q'] = $word;
             return view ( self::VIEW_PATH . '.search', $dataSet );
         }
@@ -183,7 +171,6 @@ class ArchiveController extends BaseController {
 
         //$archiveBoardList = SAFolder::find($article->board_id);
         $masterList = $archiveBoardList = SAFolder::select(['id','name','parent_id','depth'])
-        //->where([['profile_id',$this->ArchiveProfile->id],['depth','2']])
         ->where('depth','1')
         ->where('archive_id', $archiveId)
         ->orderBy('index','asc')->get();
@@ -347,6 +334,7 @@ class ArchiveController extends BaseController {
 
     /**
      * id를 통한 archive 조회 및 권한 체크
+     * @param int $id 아카이브 Id
      */
     private function retrieveAuthArchive($id){
         
@@ -356,6 +344,7 @@ class ArchiveController extends BaseController {
         return $this->archive;
     }
 
+    
     /**
      * 
      * @return string[]
@@ -369,7 +358,7 @@ class ArchiveController extends BaseController {
 
         $layoutParams = array();
         $bodyParams = array();
-        if($this->archive){
+        if(isset($this->archive) && $this->archive != null){
             $layoutParams['archiveId'] = $this->archive->id;
             $layoutParams['archiveName'] = $this->archive->name;
             $bodyParams['archive'] = $this->archive->id;

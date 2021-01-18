@@ -15,7 +15,19 @@ use App\Models\ArchiveBookmark;
 class DocumentController extends Controller {
     protected const VIEW_PATH = 'app.archive.document';
     protected const ROUTE_ID = 'doc';
+
+
+    /**
+     * 현재 보고 있는 Archive 개체
+     */
+    protected $archive = null;
+
+
+    /**
+     * @deprecated
+     */
     protected $ArchiveProfile;
+
 
     /**
      * 생성자
@@ -23,6 +35,7 @@ class DocumentController extends Controller {
     public function __construct() {
         $this->middleware ( 'auth' );
     }
+
 
     /**
      * 글 본문 읽기
@@ -35,11 +48,8 @@ class DocumentController extends Controller {
        
         $archiveId = $document->archive_id;
         
-        // 권한 체크
-        $archive = SAArchive::select(['id', 'name'])
-            ->where ( [['user_id', Auth::id() ],['id',$archiveId]])
-            ->firstOrFail ();
-            
+        // archiveId 권한 체크 및 조회
+        $archive = $this->retrieveAuthArchive($archiveId);
         
         $folder = SAFolder::find($document->folder_id);
         $bookmark = ArchiveBookmark::firstOrNew(['id'=>$documentId]);
@@ -49,7 +59,7 @@ class DocumentController extends Controller {
         $dataSet ['archive'] = $archive;
         $dataSet ['folder'] = $folder;
         //$dataSet ['folder']->paths_decode = json_decode($folder->path);
-        $dataSet ['folder']->paths = $folder->paths();
+        if(isset($folder)) $dataSet ['folder']->paths = $folder->paths();
         $dataSet ['article'] = $document;
         //$dataSet ['previousList'] = $this->makePreviousListLink($request, $archiveId);
         $dataSet ['previousList'] = url()->previous();
@@ -61,25 +71,33 @@ class DocumentController extends Controller {
         return view ( self::VIEW_PATH . '.show', $dataSet );
     }
 
+
     /**
      * 글 생성
-     *
+     * 
+     * archive_id 파라미터를 필수로 한다. 
      */
     public function create(Request $request) {
+        
         // 유효성 검증
         $validatedData = $request->validate([
-            'archive_id' => 'required|integer'
+            'archive' => 'required|integer'
         ]);
 
         // 파라미터
-        $archiveId = $request->input('archive_id');
+        $archiveId = $request->input('archive');
 
+        // archiveId 권한 체크 및 조회
+        $archive = $this->retrieveAuthArchive($archiveId);
+
+        /*
         // 권한 체크
         SAArchive::select(['id'])
             ->where ( [['user_id', Auth::id() ],['id',$archiveId]])
             ->firstOrFail ();
+        */
         
-        $article = new Document;
+        $article = new SADocument;
         
         // 게시판 목록을 조회. 셀렉트박스 를 만들기 위함.
         $folderSelectList = $this->getFolderFormSelectList($archiveId);
@@ -87,15 +105,16 @@ class DocumentController extends Controller {
         // dataSet 생성
         $dataSet = $this->createViewData ();
         $dataSet ['article'] = $article;
+        $dataSet ['parameters']['archive_id'] = $archiveId;
         //$dataSet ['parameters']['board'] = $boardId;
-        $dataSet ['parameters']['profile'] = $archiveId;
         //$dataSet ['cancelButtonLink'] = $this->makePreviousListLink($request,$profileId);
         $dataSet ['cancelButtonLink'] = url()->previous();
-        $dataSet ['selectedBoard'] = $document->folder_id;
+        $dataSet ['selectedBoard'] = $article->folder_id;
         $dataSet ['boardList'] = $folderSelectList;
         return view ( self::VIEW_PATH . '.create', $dataSet );
     }
     
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -103,14 +122,13 @@ class DocumentController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function edit(Request $request, $documentId) {
-        //
+
+        // 문서 내용 조회
         $document = SADocument::findOrFail($documentId);
         $archiveId = $document->archive_id;
 
-        // 권한 체크
-        SAArchive::select(['id'])
-            ->where ( [['user_id', Auth::id() ],['id',$archiveId]])
-            ->firstOrFail ();
+        // archiveId 권한 체크 및 조회
+        $archive = $this->retrieveAuthArchive($archiveId);
 
         // 게시판 목록을 조회. 셀렉트박스 를 만들기 위함.
         $folderSelectList = $this->getFolderFormSelectList($archiveId);
@@ -118,15 +136,156 @@ class DocumentController extends Controller {
         // create dataSet
         $dataSet = $this->createViewData ();
         $dataSet ['article'] = $document;
-        $dataSet ['parameters']['profile'] = $archiveId;
+        //$dataSet ['parameters']['profile'] = $archiveId;
         //$dataSet ['cancelButtonLink'] = $this->makePreviousShowLink($request,$profileId, $documentId);
-        $dataSet ['cancelButtonLink'] = url()->previous();
+        //$dataSet ['cancelButtonLink'] = url()->previous();
+        $dataSet ['cancelButtonLink'] = route(self::ROUTE_ID.'.show', $document->id );
         $dataSet ['selectedBoard'] = $document->folder_id;
         $dataSet ['boardList'] = $folderSelectList;
         return view ( self::VIEW_PATH . '.edit', $dataSet );
         
     }
 
+    
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param \Illuminate\Http\Request $request        	
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request) {
+
+        // 유효성 검증
+        $validatedData = $request->validate([
+            'archive_id' => 'required|integer'
+        ]);
+
+        /**
+         * 파라미터
+         */
+        $archiveId = $request->input ( 'archive_id');
+        // 내용 관련 파라미터
+        $title = $request->input ( 'title' );
+        $content = $request->input ( 'content', ' ' );
+        // 문서 분류 관련 파라미터
+        $folderId = $request->input ( 'folder_id');
+        $reference = $request->input ('reference');
+        $category = $request->input ('category');
+        // 저장 옵션
+        $submitAction = $request->input ('action');
+
+        // archiveId 권한 체크 및 조회
+        $archive = $this->retrieveAuthArchive($archiveId);
+
+        // 데이터 insert	
+        $article = new SADocument;
+        $article->title = $title;
+        $article->content = $content;
+        $article->archive_id = $archiveId;
+        $article->folder_id = $folderId;
+        $article->reference = $reference;
+        $article->category = $category;
+        $article->save ();
+        
+        //$this->updateBoardCount();
+        /*
+        foreach($article->category_array as $item){
+            ArchiveCategoryRel::create(['profile_id'=>$profileId,'archive_id'=>$article->id,'category'=>$item]);
+        }
+        */
+
+        // 결과 처리
+        if ($submitAction === 'continue') {
+            return redirect()->route ( self::ROUTE_ID . '.edit', $article->id )
+            ->with('message', '저장되었습니다.' );
+        }
+        return redirect()->route ( self::ROUTE_ID . '.show', $article->id )
+        ->with('message', '저장되었습니다.' );
+    }
+    
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param \Illuminate\Http\Request $request        	
+     * @param int $id        	
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id) {
+       
+        /**
+         * 파라미터
+         */
+        // 내용 관련 파라미터
+        $title = $request->input ( 'title' );
+        $content = $request->input ( 'content',' ' );
+        // 문서 분류 관련 파라미터
+        $folderId = $request->input ( 'folder_id');
+        $reference = $request->input ('reference');
+        $category = $request->input ('category');
+        // 저장 옵션
+        $submitAction = $request->input ('action');
+
+        // 있는 값인지 id 체크
+        $article = SADocument::findOrFail ( $id );
+
+        // archiveId 권한 체크 및 조회
+        $archive = $this->retrieveAuthArchive($article->archive_id);
+
+        // 데이터 update
+        $beforeCategory = $article->category;
+        $article->title = $title;
+        $article->content = $content;
+        $article->folder_id = $folderId;
+        $article->reference = $reference;
+        $article->category = $category;
+        $article->save ();
+
+        //$this->updateBoardCount();
+
+        /*
+        // category 관련 처리
+        if($beforeCategory != $category){
+            ArchiveCategoryRel::where('archive_id',$archiveId)->delete();
+
+            foreach($article->category_array as $item){
+                ArchiveCategoryRel::create(['profile_id'=>$profileId,'archive_id'=>$article->id,'category'=>$item]);
+            }
+        }
+        */
+
+        // 결과 처리
+        if ($submitAction === 'continue') {
+            return redirect()->back()->with('message', '저장되었습니다.' );
+        }
+        return redirect()->route( self::ROUTE_ID . '.show', $article->id)
+        ->with('message', '저장되었습니다.' );
+    }
+
+    
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param int $id        	
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id) {
+        // 데이터 조회
+        $article = SADocument::findOrFail($id);
+        
+        // archiveId 권한 체크 및 조회
+        $archive = $this->retrieveAuthArchive($article->archive_id);
+
+        // delete 실행
+        $article->delete();
+        
+        //$this->updateBoardCount();
+        
+        return redirect('/archives/'.$archive->id)
+        ->with('message', '삭제되었습니다.' );
+    }
+    
+    
     /**
      * 문서 편집 때 폼에 나타날 '폴더 선택'을 위한 목록
      * 이거 향후 개선될 필요가 있음. 셀렉트박스로는 한계니까..
@@ -139,128 +298,8 @@ class DocumentController extends Controller {
         
         return $list;
     }
-    
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request        	
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request, $profileId) {
-        $this->setArchiveFromId($profileId);
-        //
-        $title = $request->input ( 'title' );
-        $content = $request->input ( 'content', ' ' );
-        $board_id = $request->input ( 'board_id' , '1');
-        $reference = $request->input ('reference');
-        $category = $request->input ('category');
 
-        // insert row		
-        $article = new Document;
-        $article->title = $title;
-        $article->content = $content;
-        $article->board_id = $board_id;
-        $article->reference = $reference;
-        $article->category = $category;
-        $article->profile_id = $profileId;
-        $article->save ();
-        
-        $this->updateBoardCount();
-        
-        foreach($article->category_array as $item){
-            ArchiveCategoryRel::create(['profile_id'=>$profileId,'archive_id'=>$article->id,'category'=>$item]);
-        }
 
-        // result processing
-        return redirect ()->route ( self::ROUTE_ID . '.show',['profile'=>$profileId, 'archive'=>$article->id] )->withSuccess ( 'New Post Successfully Created.' );
-    }
-    
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request        	
-     * @param int $id        	
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $profileId, $archiveId) {
-        $this->getArchiveProfile($request);
-        
-        $title = $request->input ( 'title' );
-        $content = $request->input ( 'content',' ' );
-        $board_id = $request->input ( 'board_id' , '1');
-        $reference = $request->input ('reference');
-        $category = $request->input ('category');
-
-        // saving
-        // 있는 값인지 id 체크
-        $article = SADocument::findOrFail ( $archiveId );
-        $beforeCategory = $article->category;
-        $article->title = $title;
-        $article->content = $content;
-        $article->board_id = $board_id;
-        $article->reference = $reference;
-        $article->category = $category;
-        $article->save ();
-
-        $this->updateBoardCount();
-
-        // category 관련 처리
-        if($beforeCategory != $category){
-            ArchiveCategoryRel::where('archive_id',$archiveId)->delete();
-
-            foreach($article->category_array as $item){
-                ArchiveCategoryRel::create(['profile_id'=>$profileId,'archive_id'=>$article->id,'category'=>$item]);
-            }
-        }
-
-        // after processing
-        if ($request->action === 'continue') {
-            return redirect ()->back ()->withSuccess ( 'Post saved.' );
-        }
-        return redirect ()->route ( self::ROUTE_ID . '.show',['profile'=>$profileId, 'archive'=>$article->id])->withSuccess ( 'Post saved.' );
-    }
-
-    /**
-     * 
-     * @param Request $request
-     * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
-     */
-    public function search(Request $request) {
-        $this->getArchiveProfile($request);
-
-        $boardId = $request->input('board', $this->ArchiveProfile->root_board_id);
-        $word = $request->input('q','');
-        
-        if(mb_strlen($word) < 2){
-            echo '검색어가 너무 짧음.';
-        } else {
-            $masterList = SADocument::select(['id', 'title','summary_var','reference','board_id','created_at','updated_at','category','profile_id'
-                ,DB::raw('(select name from sa_boards as s where s.id = board_id) as category_name')])
-                ->join(DB::raw("(
-                select node.board_id as t_board_id, parent.board_id as t_parent_id
-                from sa_board_tree AS node ,
-                    sa_board_tree AS parent
-                where node.lft between parent.lft and parent.rgt
-                ) as t"),'t.t_board_id','=','board_id')
-                ->where ( 't.t_parent_id',$boardId )
-                ->orderBy ( 'created_at', 'desc' )
-                ->search($word)
-                ->paginate(30);
-
-            // dataSet 생성
-            $dataSet = $this->createViewData ();
-            $dataSet ['articles'] = $masterList;
-            $dataSet ['parameters']['board'] = $boardId;
-            $dataSet ['parameters']['profile'] = $this->ArchiveProfile->id;
-            $dataSet ['parameters']['q'] = $word;
-            $dataSet ['pagParameters']['board'] = $boardId;
-            $dataSet ['pagParameters']['profile'] = $this->ArchiveProfile->id;
-            $dataSet ['pagParameters']['q'] = $word;
-            return view ( self::VIEW_PATH . '.search', $dataSet );
-            
-        }
-    }
-    
     /**
      * bookmark, favorite 기능 구현
      */
@@ -306,82 +345,41 @@ class DocumentController extends Controller {
 
         return response()->json($dataSet);
     }
-    
 
-    
+
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id        	
-     * @return \Illuminate\Http\Response
+     * id를 통한 archive 조회 및 권한 체크
+     * @param int $id 아카이브 Id
      */
-    public function destroy($profileId, $archiveId) {
-        $this->setArchiveFromId($profileId);
-
-        $item = SADocument::findOrFail($archiveId);
-        $item->delete();
+    private function retrieveAuthArchive($id){
         
-        $this->updateBoardCount();
-        
-        return redirect()
-        ->route(self::ROUTE_ID.'.index', ['profile'=>$profileId])
-        ->withSuccess('Post deleted.');
+        $this->archive = SAArchive::select(['id','name','route'])
+            ->where ( [['user_id', Auth::id() ],['id',$id]])
+            ->firstOrFail ();
+        return $this->archive;
     }
-    
+
     /**
      * 
      * @return string[]
      */
     protected function createViewData() {
-        $dataSet = array ();
-        $dataSet ['ROUTE_ID'] = self::ROUTE_ID;
-        $dataSet ['VIEW_PATH'] = self::VIEW_PATH;
-        $dataSet ['parameters'] = array();
-        return $dataSet;
-    }
+        $data = array ();
+        $data ['ROUTE_ID'] = self::ROUTE_ID;
+        $data ['VIEW_PATH'] = self::VIEW_PATH;
+        $data ['parameters'] = array();
 
-    
-    /**
-     * 분기에 따른 처리.
-     * '개발 전용' 과 '일반 전용' 으로 구분. 향후에 더 나뉘어질 수 있음. 귀찮으니 하드코딩한다. 
-     */
-    private function getArchiveProfile(Request $request)
-    {
-        $userId = Auth::id();
-
-        if($request->has('profile')){
-            $profileId = $request->input('profile');
-            // routeId 를 이용한 접근
-            //$this->ArchiveProfile = SAArchive::select(['name','root_board_id','route'])->where ( [['user_id', $userId ],['route',$ArchiveRouteId]])->firstOrFail ();
-    
-            // profileId 를 이용한 접근
-            $this->ArchiveProfile = SAArchive::select(['id','name','root_board_id','route'])
-                ->where ( [['user_id', $userId ],['id',$profileId]])
-                ->firstOrFail ();
-            
-        } else {
-            $this->ArchiveProfile = SAArchive::select(['id','name','root_board_id','route'])
-            ->where ( [['user_id', $userId ],['is_default','1']])
-            ->firstOrFail ();
+        $layoutParams = array();
+        $bodyParams = array();
+        if(isset($this->archive) && $this->archive != null){
+            $layoutParams['archiveId'] = $this->archive->id;
+            $layoutParams['archiveName'] = $this->archive->name;
+            $bodyParams['archive'] = $this->archive->id;
         }
+        $data ['layoutParams'] = $layoutParams;
+        $data ['bodyParams'] = $bodyParams;
+        return $data;
     }
-
-        
-    /**
-     * Archive Profile 의 정보를 조회. 
-     * this->ArchiveProfile 에 내용이 담긴다.
-     * profileId 를 인수로 받고, userID 를 통하여 일차적으로 인증을 한다.
-     * 해당 profile Id 에 접근 권한이 있는지 체크하게 됨. 권한이 없으면 Fail
-     */
-    private function setArchiveFromId($profileId)
-    {
-        $userId = Auth::id();
-        // profileId 를 이용한 접근
-        $this->ArchiveProfile = SAArchive::select(['id','name','root_board_id','route'])
-            ->where ( [['user_id', Auth::id() ],['id',$profileId]])
-            ->firstOrFail ();
-    }
-
 
         
     /**

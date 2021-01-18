@@ -6,6 +6,7 @@
 <script src="/assets/lib/prism/prism.js"></script>
 
 <div class="container-fluid mt-4 mb-5">
+	@include('layouts.modules.messages.messages_and_errors_bs4')
 	<h5>게시판 경로</h5>
 	<nav aria-label="breadcrumb">
 		<ol class="breadcrumb">
@@ -17,20 +18,6 @@
 			@endisset
 		</ol>
 	</nav>
-	<h4>정보</h4>
-	<div class="card mb-3">
-		<div class="card-body">
-			<div>작성 : {{ $article->created_at->format('Y-m-d g:ia') }}</div>
-			<div>수정 : {{ $article->updated_at->format('Y-m-d g:ia') }}</div>
-			<div>
-				분류 : <ul class="list-inline shh-cat-list" style="display:inline">
-					@foreach ($article->category_array as $i => $item)
-						<li class="list-inline-item px-1 mx-0"><a href="/{{$parameters['profile']}}/category/{{urlencode($item)}}">{{$item}}</a></li>
-					@endforeach
-				</ul>
-			</div>
-		</div>
-	</div>
 	<div class="d-flex justify-content-between">
 		<h4>본문</h4>
 		<div>
@@ -50,6 +37,20 @@
 			<p class="card-text">{!! $article->content !!}</p>
 		</div>
 	</div>
+	<h4 class="my-3">문서 정보</h4>
+	<div class="card">
+		<div class="card-body">
+			<div>작성 : {{ $article->created_at->format('Y-m-d g:ia') }}</div>
+			<div>수정 : {{ $article->updated_at->format('Y-m-d g:ia') }}</div>
+			<div>
+				분류 : <ul class="list-inline shh-cat-list" style="display:inline">
+					@foreach ($article->category_array as $i => $item)
+						<li class="list-inline-item px-1 mx-0"><a href="/{{$parameters['profile']}}/category/{{urlencode($item)}}">{{$item}}</a></li>
+					@endforeach
+				</ul>
+			</div>
+		</div>
+	</div>
 	<hr>
 	<div class="form-group row">
 		<div class="col-md-10 col-md-offset-2">
@@ -59,6 +60,7 @@
 			
 		</div>
 	</div>
+
 </div>
 <style>
 .sa-content-text {

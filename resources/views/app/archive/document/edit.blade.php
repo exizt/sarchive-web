@@ -14,6 +14,7 @@ $(function() {
 </script>
 
 <div class="container-fluid mt-4 mb-5">
+	@include('layouts.modules.messages.messages_and_errors_bs4')
 	<form class="form-horizontal" role="form" method="POST" action="{{ route($ROUTE_ID.'.update',['doc'=>$article->id]) }}">
 		<input type="hidden" name="_token" value="{{ csrf_token() }}">
 		<input type="hidden" name="_method" value="PUT">
@@ -25,7 +26,7 @@ $(function() {
 				<div class="d-flex w-100 justify-content-between">
 					<div>
 						<button type="submit" class="btn btn-primary btn-sm site-shortcut-key-s" name="action" value="finished">저장</button>
-						<button type="submit" class="btn btn-outline-success btn-sm" name="action" value="continue">중간 저장</button>
+						<button type="submit" class="btn btn-outline-success btn-sm" name="action" value="continue">저장 후 계속 편집</button>
 						<a class="btn btn-outline-secondary btn-sm site-shortcut-key-c" href="{{ $cancelButtonLink }}" role="button">취소</a>
 					</div>
 					<button type="button" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#modal-delete">삭제</button>
