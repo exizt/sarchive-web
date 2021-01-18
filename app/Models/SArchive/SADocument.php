@@ -67,19 +67,15 @@ class SADocument extends Model
     }
 
     /**
-     * meta 테이블과의 조인
-     */
-    public function meta(){
-        return $this->hasOne('App\Models\SArchive\SADocumentMeta', 'id');
-    }
-
-    /**
-     * meta 테이블과의 조인
+     * Archive 테이블과의 조인
      */
     public function archive(){
         return $this->belongsTo('App\Models\SArchive\SAArchive', 'archive_id');
     }
 
+    /**
+     * Folder 테이블과의 조인
+     */
     public function folder(){
         return $this->belongsTo('App\Models\SArchive\SAFolder', 'folder_id');
     }
