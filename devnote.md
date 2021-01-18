@@ -186,16 +186,17 @@ Category x Document | 카테고리 x 문서 릴레이션 테이블
 
 
 category_parent (분류 x 상위 분류)
-* 테이블명 : sa_category_parent_rel
+* 테이블명 : sa_category_rel (이전 sa_category_parent_rel)
 * 설명 : 하위 분류를 탐색하기 위해 생성하는 부분. categories.parent_category 가 수정될 때에 같이 변경해준다. 하나의 값을 레코드로 분류해주어서 검색에 용이하도록 한다.
 * 목적 : 하위 분류를 탐색하기 위한 목적. Front 에서는 Ajax 로 호출하게 구성함.
 * 컬럼
-  * profile_id : 아카이브 구분값.
-  * parent (string): 분류명 (한글 가능)
-  * child (string) : 하위 분류명 (한글 가능)
+  * archive_id : 아카이브 id
+  * category_name (string): 부모 카테고리명 (한글 가능)
+  * child_category_name (string) : 하위 카테고리명 (한글 가능)
 * 인덱스
-  * sa_category_parent_index : (profile_id,parent,child) Normal BTREE
-
+  * pk 인덱스 : (archive_id,category_name,child_category_name)
+  * idx_sa_category_rel_category : (archive_id, child_category_name) 
+    * 변경(작성/변경/삭제)시 속도 향상
 
 
 Bookmark | 북마크 테이블

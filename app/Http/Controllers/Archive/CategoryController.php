@@ -2,19 +2,25 @@
 
 namespace App\Http\Controllers\Archive;
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use App\Models\SArchive\SAArchive;
 use App\Models\SArchive\SAFolder;
 use App\Models\SArchive\SADocument;
 use App\Models\SArchive\SACategory;
-use App\Models\ArchiveCategoryParentRel;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\SArchive\SACategoryRel;
 
 class CategoryController extends Controller {
     protected const VIEW_PATH = 'app.category';
     protected const ROUTE_ID = 'category';
 
+    /**
+     * 연관된 archive 개체
+     */
+    protected $archive = null;
 
     /**
      * 생성자
@@ -64,9 +70,9 @@ class CategoryController extends Controller {
             ->paginate(20);
 
         // 하위 카테고리 조회
-        $childCategories = ArchiveCategoryParentRel::where('parent',$categoryName)
-            ->orderBy('child')
-            ->pluck('child');
+        $childCategories = SACategoryRel::where('category_name',$categoryName)
+            ->orderBy('child_category_name')
+            ->pluck('child_category_name');
 
         // create dataSet
         $dataSet = $this->createViewData ();
@@ -76,12 +82,12 @@ class CategoryController extends Controller {
         $dataSet ['childCategories'] = $childCategories;
 
         $dataSet ['parameters']['category'] = $categoryName;
-        $dataSet ['parameters']['profile'] = $archiveId;
+        //$dataSet ['parameters']['profile'] = $archiveId;
         return view ( self::VIEW_PATH . '.show', $dataSet );
     }
     
     /**
-     * 카테고리 정보 수정
+     * 카테고리 편집
      *
      * @param int $id
      * @return \Illuminate\Http\Response
@@ -99,14 +105,14 @@ class CategoryController extends Controller {
         $dataSet = $this->createViewData ();
         $dataSet ['item'] = $category;
         $dataSet ['archive'] = $archive;
-        $dataSet ['parameters']['profile'] = $archiveId;
+        //$dataSet ['parameters']['profile'] = $archiveId;
         //$dataSet ['parameters']['categoryId'] = $categoryId;
         return view ( self::VIEW_PATH . '.edit', $dataSet );
         
     }
 
     /**
-     * Update the specified resource in storage.
+     * 카테고리 편집 > 저장
      *
      * @param \Illuminate\Http\Request $request        	
      * @param int $id        	
@@ -115,52 +121,72 @@ class CategoryController extends Controller {
     public function update(Request $request, $archiveId, $categoryId) {
 
         $archive = SAArchive::find($archiveId);
-
-        $category = SACategory::findOrFail ($id);
         
+        /**
+         * 파라미터
+         */
+        $comments = $request->input ('comments');
+        $category = $request->input ('category');
+        
+        // 카테고리 데이터 조회
+        $item = SACategory::findOrFail ($categoryId);
+        
+        // archiveId 권한 체크 및 조회
+        $archive = $this->retrieveAuthArchive($item->archive_id);
+
         // saving
-        $category->comments = $request->input ('comments');
-        $category->category = $request->input ('category');
-        $category->save ();
+        $beforeCategory = $item->category;
+        $item->comments = $comments;
+        $item->category = $category;
+        $item->save ();
         
-        // 분류끼리의 릴레이션 처리
-        {
-            // 상위 분류에 대한 기존 연결을 제거
-            ArchiveCategoryParentRel::where([
-                ['archive_id',$archiveId],
-                ['child',$category->name]
-            ])->delete();
-
-            
-            // 상위 분류에 대한 연결을 생성
-            foreach($archiveCategory->parent_array as $item){
-                ArchiveCategoryParentRel::create([
-                    'profile_id' => $profileId,
-                    'parent'=>$item,
-                    'child'=>$archiveCategory->name
-                ]);
-            }
+        // 카테고리끼리의 릴레이션을 갱신
+        if($beforeCategory != $category){
+            $this->updateCategoryRel($archiveId, $item->name, $item->category_array);
         }
 
 
-        // after processing
+        // 결과 처리
         if ($request->action === 'continue') {
-            return redirect ()->back ()->withSuccess ( 'Post saved.' );
+            return redirect()->back()->with('message', '저장되었습니다.');
         }
-        return redirect ()->route ( self::ROUTE_ID.'.show', ['profile'=>$profileId,'category'=>urlencode($name)])->withSuccess ( 'Post saved.' );
+        return redirect ()->route ( self::ROUTE_ID.'.show', ['archiveId'=>$archiveId,'category'=>urlencode($item->name)])
+        ->with('message', '저장되었습니다.' );
     }
     
+    
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param int $id        	
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($archiveId, $id) {
+
+        $item = SACategory::findOrFail($id);
+        $item->delete();
+        
+        SACategoryRel::where('archive_id',$archiveId)
+            ->where('child_category_name',$item->name)
+            ->delete();
+
+        return redirect()
+        ->route(self::ROUTE_ID.'.show', ['archiveId'=>$archiveId, 'category'=>urlencode($item->name)])
+        ->with('message', '삭제되었습니다.' );
+    }
+
+
     /**
      * '현재 분류'와 '상위 분류'의 릴레이션 갱신
      * @param $archiveId 아카이브 id
      * @param $currentName 현재 분류의 이름
      * @param $categoryNames 상위 분류의 이름을 가진 배열
      */
-    private function updateCategoryParentRel($archiveId, $currentName, $categoryNames){
+    private function updateCategoryRel($archiveId, $currentName, $categoryNames){
 
         // 상위 분류에 대한 기존 연결을 제거
-        ArchiveCategoryParentRel::where('archive_id',$archiveId)
-            ->where('child',$currentName)
+        SACategoryRel::where('archive_id',$archiveId)
+            ->where('child_category_name',$currentName)
             ->delete();
         
         if(count($categoryNames) > 0){
@@ -170,8 +196,8 @@ class CategoryController extends Controller {
                 if(strlen(trim($categoryName))>0){
                     $datas[$k] = [
                         'archive_id' => $archiveId,
-                        'parent' => trim($categoryName),
-                        'child' => $currentName,
+                        'category_name' => trim($categoryName),
+                        'child_category_name' => $currentName,
                         'created_at' => Carbon::now()
                     ];
                 }
@@ -179,37 +205,25 @@ class CategoryController extends Controller {
 
             // 대량 할당
             if(count($datas)>0){
-                ArchiveCategoryParentRel::insert($datas);
+                SACategoryRel::insert($datas);
             }
         }
-
-
-        // 상위 분류에 대한 연결을 생성
-        foreach($archiveCategory->parent_array as $item){
-            ArchiveCategoryParentRel::create([
-                'profile_id' => $profileId,
-                'parent'=>$item,
-                'child'=>$archiveCategory->name
-            ]);
-        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id        	
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($profileId, $id) {
-
-        $item = SACategory::findOrFail($id);
-        $item->delete();
-        
-        return redirect()
-        ->route(self::ROUTE_ID.'.show', ['profile'=>$profileId,'category'=>$name_enc])
-        ->withSuccess('Post deleted.');
-    }
     
+    /**
+     * id를 통한 archive 조회 및 권한 체크
+     * @param int $id 아카이브 Id
+     */
+    private function retrieveAuthArchive($id){
+        
+        $this->archive = SAArchive::select(['id','name','route'])
+            ->where ( [['user_id', Auth::id() ],['id',$id]])
+            ->firstOrFail ();
+        return $this->archive;
+    }
+
+
     /**
      * 
      * @return string[]

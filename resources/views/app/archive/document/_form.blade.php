@@ -28,8 +28,8 @@ tinymce.init({
 	],
 	init_instance_callback: function (editor) {
 		editor.on('keyup', function (e) {
+			// 사이트에서 이용되는 단축키 기능
 			if(typeof shortcutKeyEvent === "function"){
-				// 사이트에서 이용되는 단축키 기능
 				shortcutKeyEvent(e);
 			}
 		});

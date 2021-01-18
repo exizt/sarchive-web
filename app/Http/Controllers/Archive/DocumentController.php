@@ -5,13 +5,13 @@ namespace App\Http\Controllers\Archive;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 use App\Http\Controllers\Controller;
 use App\Models\SArchive\SAArchive;
 use App\Models\SArchive\SAFolder;
 use App\Models\SArchive\SADocument;
 use App\Models\SArchive\SACategoryDocumentRel;
 use App\Models\ArchiveBookmark;
-use Carbon\Carbon;
 
 class DocumentController extends Controller {
     protected const VIEW_PATH = 'app.archive.document';
@@ -22,7 +22,7 @@ class DocumentController extends Controller {
      */
     protected $archive = null;
 
-    
+
     /**
      * 생성자
      */
@@ -67,7 +67,7 @@ class DocumentController extends Controller {
 
 
     /**
-     * 글 생성
+     * 문서 생성
      * 
      * archive_id 파라미터를 필수로 한다. 
      */
@@ -110,7 +110,7 @@ class DocumentController extends Controller {
     
 
     /**
-     * Show the form for editing the specified resource.
+     * 문서 편집
      *
      * @param int $id
      * @return \Illuminate\Http\Response
@@ -142,7 +142,7 @@ class DocumentController extends Controller {
 
     
     /**
-     * Store a newly created resource in storage.
+     * 문서 생성 > 저장
      *
      * @param \Illuminate\Http\Request $request        	
      * @return \Illuminate\Http\Response
@@ -200,7 +200,7 @@ class DocumentController extends Controller {
     
 
     /**
-     * Update the specified resource in storage.
+     * 문서 편집 > 저장
      *
      * @param \Illuminate\Http\Request $request        	
      * @param int $id        	
@@ -221,7 +221,7 @@ class DocumentController extends Controller {
         // 저장 옵션
         $submitAction = $request->input ('action');
 
-        // 있는 값인지 id 체크
+        // 문서 데이터 조회
         $document = SADocument::findOrFail ( $id );
 
         // archiveId 권한 체크 및 조회
@@ -256,9 +256,9 @@ class DocumentController extends Controller {
 
         // 결과 처리
         if ($submitAction === 'continue') {
-            return redirect()->back()->with('message', '저장되었습니다.' );
+            return redirect()->back()->with('message', '저장되었습니다.');
         }
-        return redirect()->route( self::ROUTE_ID . '.show', $article->id)
+        return redirect()->route( self::ROUTE_ID.'.show', $article->id)
         ->with('message', '저장되었습니다.' );
     }
 
