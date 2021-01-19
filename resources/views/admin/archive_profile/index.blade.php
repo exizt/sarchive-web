@@ -21,7 +21,7 @@
 	<div class="list-group">
 		@foreach ($masterList as $item)
 		<a class="list-group-item list-group-item-action flex-column align-items-start shh-profile-list" href="{{ route($ROUTE_ID.'.edit',$item->id) }}"
-			 data-profile-id="{{$item->id}}" data-name="{{$item->name}}">
+			 data-archive-id="{{$item->id}}" data-name="{{$item->name}}">
 			<div class="d-flex w-100 justify-content-between">
 				<h5 class="">{{ $item->name }}@if ($item->is_default) &nbsp;&nbsp;&nbsp;<span class="badge badge-success pull-right">기본</span> @endif </h5>
 				<div>
@@ -35,7 +35,7 @@
 				</div>
 			</div>
 			<p class="mb-1 pl-md-3 cz-item-summary">
-				<small>{{ $item->text }}</small>
+				<small>{{ $item->comments }}</small>
 			</p>
 		</a>
 		@endforeach
@@ -59,29 +59,33 @@ $(function(){
 	})
 	$("#shh-movemode-cancel").on("click",function(){location.reload();})
 	$("#shh-movemode-save").on("click",function(){
-		saveProfileSort()
+		saveArchiveSort()
 	})
 	$(".shh-btn-mode-up").on("click",onClickMoveUp);
 	$(".shh-btn-mode-down").on("click",onClickMoveDown);
 })
 
-function saveProfileSort(){
+/**
+ * 아카이브 순서 변경사항을 저장
+ */
+function saveArchiveSort(){
 	console.log("save");
-	var profileList = [];
+	var dataList = [];
 	$(".shh-profile-list").each(function(index){
 		var data = {
-			profileId : $(this).data("profileId"),
+			id : $(this).data("archiveId"),
 			name : $(this).data("name"),
 			index : index
 		};
-		profileList.push(data)
+		dataList.push(data)
 	})
 
-	console.log(profileList)
+	console.log(dataList)
+
 	$.post({
 		url: '/admin/archiveProfile/updateSort',
 		data: {
-			'listData': profileList
+			'dataList': dataList
 		}
 	})
 	.done(function(data){

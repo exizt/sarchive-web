@@ -14,11 +14,24 @@
 
 
 
-# php 에서 필요한 것
-* extension=openssl : 뭐였는지 기억 안 나지만 필요함
-* extension=pdo_mysql : DB 연결을 위해 필요
-* extension=mbstring : 뭐였는지 기억 안 남
-* extension=fileinfo : 파일업로드 기능을 위해 필요한 듯
+# URLs
+* / : 아카이브 선택 화면
+* /archives/{아카이브id} : 아카이브의 문서 조회
+* 문서
+  * /doc/{문서id}
+  * /doc/create
+  * /doc/{문서id}/edit
+* 폴더, 카테고리, 탐색기
+  * 폴더
+    * /folders/{폴더id}
+    * /folders/{폴더id}?only=1
+  * 탐색기
+    * /explorer/{아카이브id}/{폴더경로} : 폴더 탐색기
+  * 검색기
+    * /archives/{아카이브id}/search : 검색기
+  * 카테고리
+    * /archives/1/category/{카테고리명}
+
 
 
 # 개발 메모
