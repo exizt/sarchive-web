@@ -103,9 +103,7 @@ document.onkeyup = shortcutKeyEvent;
 		</nav>
 	</header>
 	<div id="layoutBody">
-		@yield('layout_header')
 		@yield('content')
-		@yield('layout_footer')
 	</div>
 	<!-- .site-layout-page -->
 	<footer>

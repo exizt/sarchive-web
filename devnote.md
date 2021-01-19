@@ -1,3 +1,32 @@
+# 개발 환경
+* Laravel 7.0 이상
+* PHP 7.4 이상 (요구사항 7.2.5 이상)
+
+
+Laravel 에서 필요한 PHP 구성
+
+* extension=openssl : 뭐였는지 기억 안 나지만 필요함
+* extension=pdo_mysql : DB 연결을 위해 필요
+* extension=mbstring : 뭐였는지 기억 안 남
+* extension=fileinfo : 파일업로드 기능을 위해 필요한 듯
+
+
+# 빌드&배포
+1. 로컬)
+  1. 라이브러리 등 업데이트 `composer update`
+  2. `git push`
+    1. '소스트리'로 커밋
+    2. 소스트리 > 깃 플로우 > 릴리즈 : 'v~~'
+    3. config/_app.php 에서 버전 정보 수정 후 커밋
+    4. 소스트리 > 깃 플로우 > 릴리즈 마무리
+2. 원격) `update` 스크립트 실행 (아래의 내용을 하나로 모은 스크립트)
+  1. `git pull` : git 내려받기
+  2. `composer install --optimize-autoloader --no-dev` : composer.lock을 토대로 설치.
+  3. `php artisan config:cache` : 'config 설정' 캐시 갱신
+  4. `php artisan route:cache` : 'route 설정' 캐시 갱신
+
+
+
 # Todo
 * 게시판 삭제 시에 기존 게시물이 어디로 이동할지... 
 * 북마크 목록.
@@ -5,13 +34,6 @@
   * 게시판 별로 검색. 카테고리 별로 검색
 * 테마 설정 가능하게
 * 폰트 설정 가능하게
-
-
-# URLs
-* /[프로필ID]/archives/[게시물ID] : ArchiveController
-* /[프로필ID]/category/[카테고리명(한글가능)] : CategoryController
-* /page/[페이지명(한글가능)] : PageController
-* (아카이브 목록 링크)?board=[게시판ID] : ArchiveController
 
 
 
@@ -112,8 +134,7 @@ Archives | 아카이브 목록 테이블
   * index : 정렬 순서  
   * (deprecated) root_board_id
 * 인덱스
-  * sa_profiles_user_index : (user_id, id) user_id 를 기준으로 profiles 를 조회하기 위함.
-  * sa_profiles_user_index_id : (user_id, index, id)
+  * idx_sa_archives_user_index : (user_id, id) user_id 를 기준으로 profiles 를 조회하기 위함.
 
 
 Documents | 문서 테이블
@@ -131,14 +152,15 @@ Documents | 문서 테이블
     * folder_id : 폴더 id
     * category : `[분류명][분류명2]` 형태로 입력되는 컬럼.
 * 인덱스
-  * sa_archives_latest_select_index : (board_id, created_at desc) 인덱스. 카테고리별로 정렬된 인덱스. 목록 불러올 때 이용되는 인덱스.
+  * idx_sa_documents_latest : (archive_id, created_at desc) 인덱스. 아카이브에서 목록 불러올 때 이용.
+  * idx_sa_documents_folder_latest : 폴더에서 목록 불러올 때 이용.
   * fulltext_index (title, content) 'Full Text' : 검색용 인덱스
 
 
 Folders | 폴더 테이블
 * 테이블명 : sa_folders (이전 sa_boards)
 * 컬럼
-  * id : 폴더 시스템 id
+  * id : (PK) 폴더 시스템 id
   * archive_id : 아카이브 id
   * name : 폴더 이름
   * comments : 부가 설명
@@ -147,10 +169,10 @@ Folders | 폴더 테이블
   * index : 정렬 순서
   * depth : 깊이
   * system_path (string) : 경로 `2/33/44/` 형태로 입력되는 컬럼
-
 * 인덱스
-  * sa_boards_profile_index : (profile_id, index) Normal BTREE : where (profile_id) order by(index) 를 위함. 일반적인 조회.
-  * sa_board_parent_index : (parent_id) Normal BTREE : parent_id 로 역탐색 할 때를 위함. 자식노드 탐색할 때 위함.
+  * pk 인덱스 : (id)
+  * idx_sa_folders_index : (profile_id, index) Normal BTREE : where (profile_id) order by(index) 를 위함. 일반적인 조회.
+  * idx_sa_folders_parent : (parent_id) Normal BTREE : parent_id 로 역탐색 할 때를 위함. 자식노드 탐색할 때 위함.
 
 
 
@@ -158,16 +180,17 @@ Categories | 분류 테이블
 * 테이블명 : sa_categories
 * 설명 : 분류 에 대한 정보 테이블. 분류명에 1:1 매칭이 되도록 함. 
 * 컬럼
-  * id : 카테고리 id
+  * id : (PK) 카테고리 id
   * archive_id : 아카이브 id
   * name : 외부에서 분류명을 중점적으로 탐색하게 됨. unique 를 하거나 pk 를 해야 함. 또는 indexing 을 하거나 해야 함.
   * comments : 부가 설명
   * category (string) : 상위 카테고리. `[분류명][분류명2]` 형태로 입력되는 컬럼.
   * redirect : 넘겨주기가 필요한 경우. 값이 입력되었으면 '넘겨주기 카테고리'로 감안함.
-* 인덱스 
+* 인덱스
+  * pk 인덱스 : (id)
   * idx_sa_categories_name : (archive_id, name) Normal BTREE
     * name 으로 탐색시 archive_id도 포함해서 해당 카테고리를 찾기에. 속도 향상을 위한 인덱스.
-  
+
 
 
 Category x Document | 카테고리 x 문서 릴레이션 테이블
@@ -175,9 +198,9 @@ Category x Document | 카테고리 x 문서 릴레이션 테이블
 * 목적 : 카테고리에서 하위 문서 탐색을 도와주는 테이블. (문서 테이블에서는 `[분류1][분류2]` 형태로 되어있으므로 이것을 별도의 row로 구성해주고 인덱싱을 해줌)
 * 변경 시기 : 문서 작성/문서 변경/문서 삭제에 영향을 받음.
 * 컬럼
-  * archive_id : 아카이브 id
-  * category_name (string) : 카테고리명 (한글 가능)
-  * document_id : 문서 id
+  * archive_id : (PK) 아카이브 id
+  * category_name (string) : (PK) 카테고리명 (한글 가능)
+  * document_id : (PK) 문서 id
 * 인덱스
   * pk 인덱스 : archive_id, category_name, document_id 순으로 pk 인덱스가 걸려 있음. 
     * archive_id, category_name 으로 document_id 탐색이 잦을 것이므로 이것을 향상시키기 위한 목적.
@@ -185,17 +208,17 @@ Category x Document | 카테고리 x 문서 릴레이션 테이블
     * 문서 변경(작성/변경/삭제)시 속도를 향상하기 위한 목적.
 
 
-category_parent (분류 x 상위 분류)
+Category x relations (분류 x 상위 분류)
 * 테이블명 : sa_category_rel (이전 sa_category_parent_rel)
 * 설명 : 하위 분류를 탐색하기 위해 생성하는 부분. categories.parent_category 가 수정될 때에 같이 변경해준다. 하나의 값을 레코드로 분류해주어서 검색에 용이하도록 한다.
 * 목적 : 하위 분류를 탐색하기 위한 목적. Front 에서는 Ajax 로 호출하게 구성함.
 * 컬럼
-  * archive_id : 아카이브 id
-  * category_name (string): 부모 카테고리명 (한글 가능)
-  * child_category_name (string) : 하위 카테고리명 (한글 가능)
+  * archive_id (PK) : 아카이브 id
+  * category_name (string): (PK) 부모 카테고리명 (한글 가능)
+  * child_category_name (string) : (PK) 하위 카테고리명 (한글 가능)
 * 인덱스
   * pk 인덱스 : (archive_id,category_name,child_category_name)
-  * idx_sa_category_rel_category : (archive_id, child_category_name) 
+  * idx_sa_category_rel_child : (archive_id, child_category_name) Normal BTREE
     * 변경(작성/변경/삭제)시 속도 향상
 
 
@@ -228,20 +251,11 @@ Bookmark | 북마크 테이블
 ## 데이터베이스
 
 테이블명 
-* prefix 로 'sa_' 를 붙인다. sa 는 Source Archive 의 약어.
+* prefix : 'sa_' 를 붙인다. (Source Archive 의 약어)
 
 
 인덱스명
 * prefix 로는 '테이블명_' 을 동일하게 한다. 차후에 혼동을 방지하는 것이 목적.
 * suffix 로는 '_index' 를 붙인다. 인덱스 개체임을 명시하기 위함.
 * 중간값은 무난하다면 키 값으로 한다. 명칭 중복이 예견된다면 독특한 명을 사용하거나 숫자를 추가적으로 붙인다.
-
-# URL & Class 명 룰
-Case 1) 데이터를 조회하고, 데이터베이스와 직연결된 서비스의 경우 
-예시)
-* 컨트롤러 : Controllers.Services.ArchiveController
-* 모델 : Models.Archive
-* 뷰 : services.archive.index, services.archive.show, service.archive.edit, service.archive.create
-* 테이블 : Archives
-* URL : /archive, /archive/{number}, /archive/{number}/edit, /archive/create
 
