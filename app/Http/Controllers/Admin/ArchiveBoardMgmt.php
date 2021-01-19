@@ -28,8 +28,7 @@ class ArchiveBoardMgmt extends Controller
 	}
 	
     /**
-     * Archive 카테고리 목록을 출력한다.
-     * @return \Illuminate\Http\Response
+     * 폴더 목록 조회
      */
     public function index(Request $request)
     {
@@ -45,8 +44,7 @@ class ArchiveBoardMgmt extends Controller
     }
 
     /**
-     * Archive 카테고리 목록을 출력한다.
-     * @return \Illuminate\Http\Response
+     * 폴더 목록 Ajax
      */
     public function index_ajax(Request $request)
     {
@@ -84,7 +82,7 @@ class ArchiveBoardMgmt extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * 폴더 목록 > 저장 프로세스
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
@@ -92,7 +90,6 @@ class ArchiveBoardMgmt extends Controller
      */
     public function updateList(Request $request)
     {
-        
         //print_r($_POST);
         $archiveId = $request->input('archive_id');
         $listData = $request->input('list_data');
@@ -162,7 +159,7 @@ class ArchiveBoardMgmt extends Controller
                     'index' => $i,
                     'name' => $item['text'],
                     'depth' => $item['depth'],
-                    'path' => json_encode($item['path']),
+                    //'path' => json_encode($item['path']),
                     'archive_id' => $archiveId
                 ]);
 
@@ -181,7 +178,7 @@ class ArchiveBoardMgmt extends Controller
                     'index' => $i,
                     'name' => $item['text'],
                     'depth' => $item['depth'],
-                    'path' => json_encode($item['path']),
+                    //'path' => json_encode($item['path']),
                     'archive_id' => $archiveId
                 ]);
 

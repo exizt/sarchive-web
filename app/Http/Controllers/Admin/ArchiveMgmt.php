@@ -10,7 +10,7 @@ use App\Models\SArchive\SAArchive;
 use App\Models\SArchive\SAFolder;
 use App\Models\SArchive\SADocument;
 
-class ArchiveProfileMgmt extends Controller
+class ArchiveMgmt extends Controller
 {
 	protected const VIEW_PATH = 'admin.archive_profile';
 	protected const ROUTE_ID = 'admin.archiveProfile';
