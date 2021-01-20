@@ -1,4 +1,4 @@
-@extends('layouts.archive_layout') 
+@extends('layouts.sarchive_layout') 
 @section('title',"") 
 @section('content')
 <div>

@@ -1,4 +1,4 @@
-@extends('layouts.admin_layout')
+@extends('layouts.sarchive_layout', ['layoutMode' => 'admin', 'currentMenu'=>'archive-control']) 
 @section('title',"신규") 
 @section('content')
 <script>
@@ -12,7 +12,6 @@ $(function() {
 	});
 });
 </script>
-
 <div>
 	<form class="form-horizontal" role="form" method="POST" action="{{ route($ROUTE_ID.'.store') }}">
 		<input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -29,5 +28,4 @@ $(function() {
 		</div>
 	</form>
 </div>
-
 @endsection

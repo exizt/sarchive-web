@@ -13,18 +13,15 @@
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-title" content="S아카이브">
 <link rel="shortcut icon" href="/assets/brand/favicon/favicon-2021.ico" />
-<!-- ## styles ## -->
+<!-- styles -->
 <link rel="stylesheet" href="/assets/lib/bootstrap/4.3.1-dark-theme/css/bootstrap.css">
 <link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/fontawesome.min.css">
 <link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/brands.min.css">
 <link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/solid.min.css">
 <!--<link rel="stylesheet" href="/assets/lib/font-awesome-4.7.0/css/font-awesome.min.css">-->
-<link rel="stylesheet" href="/assets/lib/google-material-icons/iconfont/material-icons.css">
-<link rel="stylesheet" href="/assets/lib/google-material-icons/after-material-icons.css">
-<link rel="stylesheet" href="/assets/css/bs-callout.css">
 <link rel="stylesheet" href="/assets/css/site-base.css">
 <link rel="stylesheet" href="/assets/css/site-layouts.css">
-<!-- ## scripts ## -->
+<!-- scripts -->
 <script src="/assets/lib/jquery/jquery-3.2.1.min.js"></script>
 <!-- popper.JS : dropdown of bootstrap 을 위해 필요. (bootstrap 4.0.0 이후로 추가) -->
 <script src="/assets/lib/bootstrap/required/4.3.1/popper/1.14.3/popper.min.js"></script>

@@ -18,21 +18,6 @@
 <link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/fontawesome.min.css">
 <link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/brands.min.css">
 <link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/solid.min.css">
-<!--<link rel="stylesheet" href="/assets/lib/font-awesome-4.7.0/css/font-awesome.min.css">-->
-<link rel="stylesheet" href="/assets/css/site-base.css">
-<link rel="stylesheet" href="/assets/css/site-layouts.css">
-<!-- ## scripts ## -->
-<script src="/assets/lib/jquery/jquery-3.2.1.min.js"></script>
-<!-- popper.JS : dropdown of bootstrap 을 위해 필요. (bootstrap 4.0.0 이후로 추가) -->
-<script src="/assets/lib/bootstrap/required/4.3.1/popper/1.14.3/popper.min.js"></script>
-<script src="/assets/lib/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-<script src="/assets/js/site-base.js"></script>
-@stack('style-head') 
-@stack('script-head')
-<!--<script src="/assets/js/site-shortcut.js"></script>-->
-<link rel="stylesheet" href="/assets/site/archive/archive.css">
-<script src="/assets/js/core-func.js"></script>
-<script src="/assets/site/archive/archive.js"></script>
 </head>
 <body>
 	<header>
@@ -41,18 +26,6 @@
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
-
-			<div class="collapse navbar-collapse" id="navbarSupportedContent">
-				<ul class="navbar-nav">
-					<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink_My" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">메뉴</a>
-						<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink_My">
-                            <a class="dropdown-item" href="/login">로그인</a> 
-							<div class="dropdown-divider"></div>
-							<a class="dropdown-item" href="{{ config('app.c_site_url','') }}">개인사이트로 이동</a> 
-						</div>
-					</li>
-				</ul>
-			</div>
 		</nav>
 	</header>
 	<div id="layoutBody" class="py-5">
@@ -62,9 +35,6 @@
 	<footer>
 		<div class="container-fluid text-right">
         	<p class="text-muted pt-5">© SH Hong. All rights reserved.</p>
-        </div>
-        <div class="scrolltop">
-        	<div class="scrolltop-arrow"></div>
         </div>
 	</footer>
 </body>

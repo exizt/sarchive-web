@@ -1,4 +1,4 @@
-@extends('layouts.archive_layout') 
+@extends('layouts.sarchive_layout') 
 @section('title',"$article->title") 
 @section('content') 
 {{-- prism : 코드 syntaxhighlighter 종류 중 하나 --}}

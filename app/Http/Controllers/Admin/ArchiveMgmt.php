@@ -12,8 +12,8 @@ use App\Models\SArchive\SADocument;
 
 class ArchiveMgmt extends Controller
 {
-	protected const VIEW_PATH = 'admin.archive_profile';
-	protected const ROUTE_ID = 'admin.archiveProfile';
+	protected const VIEW_PATH = 'admin.archive-control';
+	protected const ROUTE_ID = 'admin.archiveMgmt';
     
     /**
      * 생성자
@@ -71,7 +71,7 @@ class ArchiveMgmt extends Controller
         $item = SAArchive::where ( 'id', $id )->where('user_id',$userId)->firstOrFail ();
 
         // 삭제시 이동을 선택하기 위한 목록
-        $ArchiveProfileList = SAArchive::select(['id','name','is_default','created_at'])
+        $archiveList = SAArchive::select(['id','name','is_default','created_at'])
         ->where('user_id',$userId)
         ->orderBy('created_at','asc')->get();
 
@@ -79,7 +79,7 @@ class ArchiveMgmt extends Controller
         $dataSet ['item'] = $item;
 
         // 아카이브 삭제 때 필요한 다른 아카이브 목록
-        $dataSet ['ArchiveProfileList'] = $ArchiveProfileList;
+        $dataSet ['archiveList'] = $archiveList;
         return view ( self::VIEW_PATH . '.edit', $dataSet );
     }
 
@@ -118,17 +118,7 @@ class ArchiveMgmt extends Controller
         $item->user_id = $userId;
         $item->save();
 
-        /*
-        // 최상단 카테고리를 생성해야함.
-        $archiveBoard = SAFolder::create([
-            'profile_id' => $item->id,
-            'parent_id'=> '0',
-            'name' => $item->name,
-            'depth' => '1'
-        ]);
-        */
-
-    	return redirect ()->route ( self::ROUTE_ID . '.edit', ['id'=>$item->id] )->with('message', '카테고리를 생성하였습니다.');
+       	return redirect ()->route ( self::ROUTE_ID . '.edit', ['id'=>$item->id] )->with('message', '카테고리를 생성하였습니다.');
     }
 
     /**
@@ -173,7 +163,7 @@ class ArchiveMgmt extends Controller
     /**
      * 아카이브 삭제
      * 
-     * @todo 개선이 필요함.
+     * @todo 분류 이동
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -203,35 +193,8 @@ class ArchiveMgmt extends Controller
             'archive_id'=>$willMoveArchiveId
         ]);
 
-        // 1-2-1. 폴더 이동.
-        // 'depth가 2' 이면서 'parent_id가 해당 아카이브의 최상위 폴더인 것'을 '옮길 아카이브의 최상위 폴더'로 parend_id 를 변경해주면 된다.
-        // archive_id 를 변경해줌.
-
-        // 1-2-2. 문서 정보 변경
-        // 최상위 폴더에 해당하는 문서들은 folder_id 를 변경해준다.
-        // archive_id 를 변경해준다.
-        // 해당되는 게시물이 있을 때에는, 옮길 아카이브를 선택하는 화면으로 이동시킨다. 
-        // 아카이브에 해당되는 게시물은 다른 아카이브로 이동시킨다. 
-        // 해당되는 게시물이 없을 때에 삭제를 진행한다.
-        // 해당되는 카테고리 는 삭제하도록 한다.
+        // 1-2-3. 분류 를 이동해줘야 함. 기존에 없는 경우에만 이동.
         
-
-
-
-        /*
-        $applicableBoardIds = SAFolder::where('profile_id',$id)->pluck('id');
-
-        if(SAFolder::select(['id'])->where('profile_id',$id)->exists()){
-            // 해당하는 Archive 를 이동시키기. (profile_id 와 board_id 를 변경.)
-            SADocument::whereIn('board_id',$applicableBoardIds)->update([
-                'profile_id'=>$willMoveProfileId,
-                'board_id'=>$willMoveBoardId
-            ]);
-
-            // 해당하는 Board 는 삭제하기.
-            SAFolder::where('profile_id',$id)->delete();
-        }
-        */
 
         // 삭제 실행
         $archive->delete();
@@ -241,6 +204,7 @@ class ArchiveMgmt extends Controller
 
     /**
      * 아카이브의 순서 변경 처리
+     * 
      */
     public function updateSort(Request $request){
         $dataList = $request->input('dataList', array());

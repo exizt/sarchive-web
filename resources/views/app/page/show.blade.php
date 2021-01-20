@@ -1,4 +1,4 @@
-@extends('layouts.page_layout') 
+@extends('layouts.sarchive_layout') 
 @section('title',"") 
 @section('content') 
 <div class="container-fluid mt-4 mb-5">

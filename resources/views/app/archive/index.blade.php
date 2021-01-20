@@ -1,7 +1,7 @@
-@extends('layouts.archive_layout') 
+@extends('layouts.sarchive_layout') 
 @section('title',"") 
 @section('content')
-<div id="curBoardId">
+<div>
     <div class="mt-4 mb-5">
         <div class="container-fluid">
             <div class="row">

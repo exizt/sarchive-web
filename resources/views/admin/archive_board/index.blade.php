@@ -1,28 +1,30 @@
-@extends('layouts.admin_layout') 
+@extends('layouts.sarchive_layout', ['layoutMode' => 'admin', 'currentMenu'=>'folder-control']) 
 @section('title',"아카이브 카테고리 관리")
 @section('content')
-<div class="my-3">
-	<h3>게시판 목록</h3>
-</div>
-<div id="messages">
-	<div class="shh-alert-msg-tpl alert alert-success alert-dismissible fade show" role="alert" style="display:none">
-		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-			<span aria-hidden="true">&times;</span>
-		</button>
+<div>
+	<div class="my-3">
+		<h3>폴더 목록</h3>
 	</div>
+	<div id="messages">
+		<div class="shh-alert-msg-tpl alert alert-success alert-dismissible fade show" role="alert" style="display:none">
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+	</div>
+	<ul class="nav nav-tabs" id="navTab">
+		@foreach ($archiveList as $item)
+		<li class="nav-item"><a class="nav-link" href="#" data-profile="{{$item->id}}">{{$item->name}}</a></li>
+		@endforeach
+	</ul>
+	
+	<div id="tree-container" class="mt-1 mb-3"></div>
+	<button id="shh-btn-save" class="btn btn-sm btn-primary">저장</button>
+	<button id="shh-btn-create" class="btn btn-sm btn-outline-success">게시판 추가</button>
+	<button id="shh-btn-rename" class="btn btn-sm btn-outline-success">이름 변경</button>
+	<button id="shh-btn-delete" class="btn btn-sm btn-outline-success">삭제</button>
+	<button id="shh-btn-save-test" class="btn btn-sm btn-outline-success">저장 (테스트)</button>
 </div>
-<ul class="nav nav-tabs" id="navTab">
-	@foreach ($ArchiveProfileList as $item)
-	<li class="nav-item"><a class="nav-link" href="#" data-profile="{{$item->id}}">{{$item->name}}</a></li>
-	@endforeach
-</ul>
-
-<div id="tree-container" class="mt-1 mb-3"></div>
-<button id="shh-btn-save" class="btn btn-sm btn-primary">저장</button>
-<button id="shh-btn-create" class="btn btn-sm btn-outline-success">게시판 추가</button>
-<button id="shh-btn-rename" class="btn btn-sm btn-outline-success">이름 변경</button>
-<button id="shh-btn-delete" class="btn btn-sm btn-outline-success">삭제</button>
-<button id="shh-btn-save-test" class="btn btn-sm btn-outline-success">저장 (테스트)</button>
 
 <script src="/assets/lib/jstree/jstree.min.js"></script>
 <link rel="stylesheet" href="/assets/lib/jstree/themes/default/style.min.css" />

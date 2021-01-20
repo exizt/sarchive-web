@@ -1,4 +1,4 @@
-@extends('layouts.admin_layout') 
+@extends('layouts.sarchive_layout', ['layoutMode' => 'admin', 'currentMenu'=>'archive-control']) 
 @section('title',"아카이브 프로필 편집") 
 @section('content')
 <script>
@@ -12,8 +12,7 @@ $(function() {
 	});
 });
 </script>
-
-<div class="container-fluid mt-4 mb-5">
+<div>
 	<form class="form-horizontal" role="form" method="POST" action="{{ route($ROUTE_ID.'.update',$item->id) }}">
 		<input type="hidden" name="_token" value="{{ csrf_token() }}">
 		<input type="hidden" name="_method" value="PUT">
@@ -49,7 +48,7 @@ $(function() {
 				<p class="lead">정말 삭제하시겠습니까?</p>
 				해당되는 게시물을 이동하게 될 아카이브 선택하기.
 				<select name="will_move" class="form-control" title="아카이브 프로필 선택">
-				@foreach ($ArchiveProfileList as $item)
+				@foreach ($archiveList as $item)
 				<option value="{{ $item->id }}">{{ $item->name }}</option>
 				@endforeach
 				</select>

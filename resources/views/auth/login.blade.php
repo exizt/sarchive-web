@@ -1,4 +1,4 @@
-@extends('layouts.login_layout')
+@extends('layouts.auth_layout')
 @section('title',"로그인")  
 @section('content')
 <div class="container">
