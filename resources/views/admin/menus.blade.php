@@ -2,7 +2,7 @@
 	<a href="/admin/archiveMgmt" 
 		class="list-group-item @if ($current == 'archive-control') active @endif"
 	>아카이브 설정</a>
-	<a href="/admin/archiveBoard" 
+	<a href="/admin/folderMgmt" 
 	class="list-group-item @if ($current == 'folder-control') active @endif"
 	>폴더 설정</a>
 	<a href="/admin/advanced" 

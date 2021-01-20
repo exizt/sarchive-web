@@ -8,15 +8,15 @@
                 <div class="col-md-9">
                     <div class="row px-0 mx-0">
                         <div class="d-flex w-100 justify-content-between">
-                            @if(isset($archiveBoard))
-                            <h4 class="">게시글 목록 (선택된 게시판 : {{ $archiveBoard->name }})</h4>
+                            @if(isset($parameters['folder']))
+                            <h4 class="">글 목록 (선택된 폴더 : {{ $parameters['folder']->name }})</h4>
                             @else
                             <h4 class="">아카이브</h4>
                             @endif
                             <small class="text-mute">Page {{ $masterList->currentPage() }} of {{ $masterList->lastPage() }}</small>
                         </div>
-                        @if(isset($archiveBoard))
-                        <p class="lead">{{ $archiveBoard->comment }}</p>
+                        @if(isset($parameters['folder']))
+                        <p class="lead">{{ $parameters['folder']->comment }}</p>
                         @endif
                     </div>
                     <div class="text-right">

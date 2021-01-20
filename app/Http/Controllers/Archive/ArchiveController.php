@@ -96,17 +96,14 @@ class ArchiveController extends BaseController {
             ->orderBy ( 'created_at', 'desc' )
             ->paginate(20);
         }
-
-        //$archiveBoard = SAFolder::select(['name', 'comment'])->where ( 'id', $boardId )->firstOrFail ();
-        //$categoryName = SAFolder::select('name')->where ( 'id', $boardId )->firstOrFail ()->name;
         
         // dataSet 생성
         $dataSet = $this->createViewData ();
         $dataSet ['masterList'] = $masterList;
         $dataSet ['bodyParams']['folder'] = $folderId;
+        $dataSet ['parameters']['folder'] = $folder;
         if($is_only) $dataSet ['paginationParams']['only'] = true;
         return view ( self::VIEW_PATH . '.index', $dataSet );
-
     }
     
 
@@ -170,8 +167,7 @@ class ArchiveController extends BaseController {
             ->where ( [['user_id', Auth::id() ],['id',$archiveId]])
             ->firstOrFail ();
 
-        //$archiveBoardList = SAFolder::find($article->board_id);
-        $masterList = $archiveBoardList = SAFolder::select(['id','name','parent_id','depth'])
+        $masterList = SAFolder::select(['id','name','parent_id','depth'])
         ->where('depth','1')
         ->where('archive_id', $archiveId)
         ->orderBy('index','asc')->get();

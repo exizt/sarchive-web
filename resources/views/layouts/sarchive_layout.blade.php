@@ -30,11 +30,9 @@
 <!-- ## semi modules ## -->
 <link rel="stylesheet" href="/assets/modules/scrolltop/scrolltop.css">
 <script src="/assets/modules/scrolltop/scrolltop.js"></script>
-<link rel="stylesheet" href="/assets/modules/sh-sidenav/sh-sidenav.css">
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 @stack('style-head')
 @stack('script-head')
-<!--<script src="/assets/js/site-shortcut.js"></script>-->
 <link rel="stylesheet" href="/assets/site/archive/archive.css">
 <script src="/assets/js/core-func.js"></script>
 <script src="/assets/js/shortcut-key-event.js"></script>
