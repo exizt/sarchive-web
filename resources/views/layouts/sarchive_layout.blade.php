@@ -36,7 +36,7 @@
 <link rel="stylesheet" href="/assets/site/archive/archive.css">
 <script src="/assets/js/core-func.js"></script>
 <script src="/assets/js/shortcut-key-event.js"></script>
-<script src="/assets/site/archive/archive.js?v={{ time() }}"></script>
+<script src="/assets/site/archive/archive.js"></script>
 <script>
 $(function(){
     ajaxHeaderNav()
