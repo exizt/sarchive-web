@@ -28,11 +28,11 @@ Route::middleware(['auth'])->group(function () {
 });
 Route::middleware(['auth'])->name('admin.')->prefix('admin')->group(function(){
     Route::view('/','admin.index',['ROUTE_ID'=>'archives']);
-    Route::resource('archiveBoard', 'Admin\ArchiveBoardMgmt', ['except'=>['show','create','edit','store','update','destroy']]);
-    Route::get('archiveBoard/index_ajax', 'Admin\ArchiveBoardMgmt@index_ajax')->name('archiveBoard.indexAjax');
-    Route::post('archiveBoard/updateList', 'Admin\ArchiveBoardMgmt@updateList')->name('archiveBoard.updateList');
-    Route::resource('archiveProfile', 'Admin\ArchiveMgmt', ['except'=>['show']]);
-    Route::post('archiveProfile/updateSort', 'Admin\ArchiveMgmt@updateSort')->name('archiveProfile.updateSort');
+    Route::resource('folderMgmt', 'Admin\ArchiveFolderMgmt', ['except'=>['show','create','edit','store','update','destroy']]);
+    Route::get('folderMgmt/index_ajax', 'Admin\ArchiveFolderMgmt@index_ajax')->name('folderMgmt.indexAjax');
+    Route::post('folderMgmt/updateList', 'Admin\ArchiveFolderMgmt@updateList')->name('folderMgmt.updateList');
+    Route::resource('archiveMgmt', 'Admin\ArchiveMgmt', ['except'=>['show']]);
+    Route::post('archiveMgmt/updateSort', 'Admin\ArchiveMgmt@updateSort')->name('archiveMgmt.updateSort');
     Route::resource('archivePage', 'Admin\ArchivePageMgmt', ['except'=>['show']]);
     Route::view('advanced','admin.advanced',['ROUTE_ID'=>'advanced']);
 });

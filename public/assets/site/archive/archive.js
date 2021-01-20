@@ -13,12 +13,34 @@ function getFolderId(){
 }
 
 /**
+ * 사용할 만한 것인지 체크
+ * @param v 
+ */
+function isNotEmpty(v){
+    if(typeof v === "undefined" || str == null || str == "")
+        return false;
+    else
+        return true;
+}
+
+
+
+var func = {
+    exists : function(v){
+        if(typeof v === "undefined" || v == null)
+            return false;
+        else
+            return true;
+    }
+}
+
+/**
  * 상단 header nav를 그리는 함수
  */
 function ajaxHeaderNav(){
 
     var archiveId = getArchiveId()
-    if(typeof archiveId === 'undefined'){
+    if(!func.exists(archiveId)){
         return;
     }
 
@@ -68,10 +90,10 @@ function doAjaxFolderList(){
     var mode = "folder"
     var params = {}
 
-    if(typeof folderId === "undefined" || folderId == null){
-        if(typeof archiveId === "undefined" || archiveId == null){
-            return
-        }
+    // folderId 와 archiveId 가 없을 때는 실행하지 않음.
+    if(!func.exists(folderId) && !func.exists(archiveId)) return
+
+    if(!func.exists(folderId)){
         mode = "archive"
         params = {archive_id : archiveId}
     } else {

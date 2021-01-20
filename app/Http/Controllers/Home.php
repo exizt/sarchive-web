@@ -9,7 +9,7 @@ use App\Models\SArchive\SAArchive;
 
 class Home extends Controller {
 	protected const VIEW_PATH = 'archive_profile';
-	protected const ROUTE_ID = 'archiveProfile';
+	protected const ROUTE_ID = '';
 
 	/**
 	 *

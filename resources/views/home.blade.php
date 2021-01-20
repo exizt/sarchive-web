@@ -1,4 +1,4 @@
-@extends('layouts.archive_layout') 
+@extends('layouts.sarchive_layout') 
 @section('title','S아카이브')
 @section('content')
 <div class="py-5">
