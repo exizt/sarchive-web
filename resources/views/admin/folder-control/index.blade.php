@@ -65,7 +65,7 @@ $(function () {
  function ajaxJSTree(archiveId){
     $.ajax({
         method : 'GET',
-        url: '/admin/archiveBoard/index_ajax',
+        url: '/admin/folderMgmt/index_ajax',
         dataType: 'json',
         data: { archive_id : archiveId }, //json 타입
         success: function(json){
@@ -138,7 +138,7 @@ function jstree_delete() {
 function doSave(dataSet){
 	var s;
 	$.post({
-        url: '/admin/archiveBoard/updateList',
+        url: '/admin/folderMgmt/updateList',
         dataType: 'json',
 		beforeSend: function(){
 			s = showAlertMessage("waiting...",'warning');
