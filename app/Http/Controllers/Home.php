@@ -4,12 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Profile;
+use App\Models\SArchive\SAArchive;
 
 
 class Home extends Controller {
 	protected const VIEW_PATH = 'archive_profile';
-	protected const ROUTE_ID = 'archiveProfile';
+	protected const ROUTE_ID = '';
 
 	/**
 	 *
@@ -22,7 +22,7 @@ class Home extends Controller {
 
 			$userId = Auth::id();
 
-			$masterList = Profile::select(['id','name','text','root_board_id','is_default','created_at'])
+			$masterList = SAArchive::select(['id','name','comments','is_default','created_at'])
 			->where('user_id',$userId)
 			->orderBy('index','asc')
 			->orderBy('id','asc')

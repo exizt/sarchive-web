@@ -1,8 +1,10 @@
 # 개요 
-자세한 내용은 todo.md 를 참조할 것.
+SArchive 프로젝트
+* 오래된 코드나 문서를 정리하고 아카이빙하는 목적의 서비스
+* 위키 문서 링크 : [링크](https://swiki.asv.kr/wiki/개발:SARChive_프로젝트)
 
-* 위키 문서 링크 : [링크](https://swiki.asv.kr/wiki/나의 프로젝트/S아카이브)
 
+개발 관련으로는 'devnote.md' 문서를 참조할 것.
 
 
 # 사이트 내의 단축키
@@ -14,22 +16,8 @@
 
 
 
-# URL & Class 명 룰
-Case 1) 데이터를 조회하고, 데이터베이스와 직연결된 서비스의 경우 
-예시)
-* 컨트롤러 : Controllers.Services.ArchiveController
-* 모델 : Models.Archive
-* 뷰 : services.archive.index, services.archive.show, service.archive.edit, service.archive.create
-* 테이블 : Archives
-* URL : /archive, /archive/{number}, /archive/{number}/edit, /archive/create
 
 
-
-# php 에서 필요한 것
-* extension=openssl : 뭐였는지 기억 안 나지만 필요함
-* extension=pdo_mysql : DB 연결을 위해 필요
-* extension=mbstring : 뭐였는지 기억 안 남
-* extension=fileinfo : 파일업로드 기능을 위해 필요한 듯
 
 
 # 개발 메모
