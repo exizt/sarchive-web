@@ -27,7 +27,7 @@ Route::middleware(['auth'])->group(function () {
     //Route::get('category/{name?}', 'Archive\CategoryController@show')->where('category','(.*)');
 });
 Route::middleware(['auth'])->name('admin.')->prefix('admin')->group(function(){
-    Route::view('/','admin.index',['ROUTE_ID'=>'archives']);
+    Route::get('/', 'Admin\AdminController@index');
     Route::resource('folderMgmt', 'Admin\ArchiveFolderMgmt', ['except'=>['show','create','edit','store','update','destroy']]);
     Route::get('folderMgmt/index_ajax', 'Admin\ArchiveFolderMgmt@index_ajax')->name('folderMgmt.indexAjax');
     Route::post('folderMgmt/updateList', 'Admin\ArchiveFolderMgmt@updateList')->name('folderMgmt.updateList');
