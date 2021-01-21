@@ -18,38 +18,6 @@ class PageController extends Controller {
 		$this->middleware ( 'auth' );
 	}
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function index(Request $request) {
-	    $masterList = Page::paginate(20);
-
-		// dataSet 생성
-        $dataSet = $this->createViewData ();
-        $dataSet ['masterListSet'] = $masterList;
-        return view ( self::VIEW_PATH . '.index', $dataSet );
-
-	}
-
-	/**
-	 * 글 본문 읽기
-	 *
-	 * @param int $id
-	 * @return \Illuminate\Http\Response
-	 */
-	public function show(Request $request, $pageTitle) {
-	    $pageData = Page::where ( 'title', $pageTitle )->firstOrFail ();
-	    
-	    // create dataSet
-	    $dataSet = $this->createViewData ();
-		$dataSet ['page'] = $pageData;
-		if($request->has('profile')){
-			$dataSet ['parameters']['profile'] = $request->input('profile');
-		}
-	    return view ( self::VIEW_PATH . '.show', $dataSet );
-	}
 	
 	/**
 	 * 글 본문 읽기

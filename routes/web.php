@@ -8,22 +8,21 @@ Auth::routes(['register' => false, 'verify'=> true]);
 Route::get ( '/', 'Home@index' );
 
 // ajax
-Route::get('ajax/header_nav', 'Archive\ArchiveController@doAjax_getHeaderNav');
-Route::get('ajax/folder_nav', 'Archive\ArchiveController@doAjax_getFolderNav');
+Route::get('ajax/header_nav', 'Archive\ExplorerController@doAjax_getHeaderNav');
+Route::get('ajax/folder_nav', 'Archive\ExplorerController@doAjax_getFolderNav');
 
 // SArchive ----------------------------
 Route::middleware(['auth'])->group(function () {
-    Route::get('archives/{id}', 'Archive\ArchiveController@retrieveDocsByArchive')->name('archive.retrieve');
-    Route::get('folders/{id}', 'Archive\ArchiveController@retrieveDocsByFolder')->name('folder.show');
-    Route::get('archives/{archiveId}/search', 'Archive\ArchiveController@search')->name('search')->where('archiveId', '[0-9]+');;
+    Route::get('static/{uri}', 'Home@staticPage');
+    Route::get('archives/{id}', 'Archive\ArchiveController@first')->name('archive.first');
+    Route::get('archives/{archiveId}/search', 'Archive\ExplorerController@search')->name('search')->where('archiveId', '[0-9]+');;
+    Route::get('archives/{id}/latest', 'Archive\ExplorerController@showDocsByArchive')->name('archive.retrieve');
+    Route::get('folders/{id}', 'Archive\ExplorerController@showDocsByFolder')->name('folder.show');
 
     Route::resource('doc', 'Archive\DocumentController', ['except'=>['index']]);
-    Route::get('static/{uri}', 'Archive\PageController@staticPage');
-
     Route::post('archives/ajax_mark', 'Archive\DocumentController@doAjax_mark');
     Route::resource('archives/{archiveId}/category', 'Archive\CategoryController', ['except'=>['create','store']]);
 
-    Route::resource('page', 'Archive\PageController');
     //Route::get('category/{name?}', 'Archive\CategoryController@show')->where('category','(.*)');
 });
 Route::middleware(['auth'])->name('admin.')->prefix('admin')->group(function(){
@@ -33,6 +32,6 @@ Route::middleware(['auth'])->name('admin.')->prefix('admin')->group(function(){
     Route::post('folderMgmt/updateList', 'Admin\ArchiveFolderMgmt@updateList')->name('folderMgmt.updateList');
     Route::resource('archiveMgmt', 'Admin\ArchiveMgmt', ['except'=>['show']]);
     Route::post('archiveMgmt/updateSort', 'Admin\ArchiveMgmt@updateSort')->name('archiveMgmt.updateSort');
-    Route::resource('archivePage', 'Admin\ArchivePageMgmt', ['except'=>['show']]);
+    //Route::resource('archivePage', 'Admin\ArchivePageMgmt', ['except'=>['show']]);
     Route::view('advanced','admin.advanced',['ROUTE_ID'=>'advanced']);
 });

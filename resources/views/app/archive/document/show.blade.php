@@ -13,7 +13,7 @@
 			<li class="breadcrumb-item"><a href="/archives/{{$archive->id}}">{{ $archive->name }}</a></li> 
 			@isset ($folder->paths)
 			@foreach ($folder->paths as $item)
-			<li class="breadcrumb-item"><a href="{{$item->id}}">{{ $item->name }}</a></li> 
+			<li class="breadcrumb-item"><a href="/folders/{{$item->id}}">{{ $item->name }}</a></li> 
 			@endforeach
 			@endisset
 		</ol>

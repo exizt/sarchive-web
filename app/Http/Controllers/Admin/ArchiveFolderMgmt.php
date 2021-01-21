@@ -199,7 +199,7 @@ class ArchiveFolderMgmt extends Controller
         }
 
         // tree table 작성. (프로시저 호출)
-        //$this->updateListTreeTable();
+        $this->updateListTreeTable($archiveId);
 
         $dataSet = array();
         $dataSet['success'] = '변경 완료되었습니다.';
@@ -226,9 +226,13 @@ class ArchiveFolderMgmt extends Controller
 
     /**
      * 프로시저 실행
-     * @deprecated left, right 로 트리형태를 구현하는 방식인데 이제는 사용 안 하기로 함.
+     * 
+     * system_path 를 생성하는 프로시저 호출.
+     * 
+     * 예전 방식은 left, right 로 트리형태를 구현하는 방식이었었음.. 현재는 변경함.
      */
-    private function updateListTreeTable(){
-        DB::statement('call procedure_insert_menus()');
+    private function updateListTreeTable($archiveId){
+        //DB::statement('call procedure_insert_menus()');
+        DB::statement("call proc_build_folders_systempath_in_archive('{$archiveId}')");
     }
 }
