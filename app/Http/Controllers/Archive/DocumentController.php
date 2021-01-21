@@ -316,20 +316,7 @@ class DocumentController extends Controller {
         return redirect('/archives/'.$archive->id)
         ->with('message', '삭제되었습니다.' );
     }
-    
-    
-    /**
-     * 문서 편집 때 폼에 나타날 '폴더 선택'을 위한 목록
-     * 이거 향후 개선될 필요가 있음. 셀렉트박스로는 한계니까..
-     */
-    protected function getFolderFormSelectList($archiveId){
-        // 게시판 목록을 조회. 셀렉트박스 를 만들기 위함.
-        $list = SAFolder::select(['id','name','parent_id','depth'])
-        ->where ( 'archive_id', $archiveId )
-        ->orderBy('index','asc')->get();
-        
-        return $list;
-    }
+
 
 
     /**
@@ -378,6 +365,22 @@ class DocumentController extends Controller {
         return response()->json($dataSet);
     }
 
+        
+    
+    /**
+     * 문서 편집 때 폼에 나타날 '폴더 선택'을 위한 목록
+     * 이거 향후 개선될 필요가 있음. 셀렉트박스로는 한계니까..
+     */
+    protected function getFolderFormSelectList($archiveId){
+        // 게시판 목록을 조회. 셀렉트박스 를 만들기 위함.
+        $list = SAFolder::select(['id','name','parent_id','depth'])
+        ->where ( 'archive_id', $archiveId )
+        ->orderBy('index','asc')->get();
+        
+        return $list;
+    }
+
+
 
     /**
      * id를 통한 archive 조회 및 권한 체크
@@ -391,6 +394,8 @@ class DocumentController extends Controller {
         return $this->archive;
     }
 
+
+    
     /**
      * 
      * @return string[]
