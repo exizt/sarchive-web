@@ -21,7 +21,7 @@
                     </div>
                     <div class="text-right">
                         <a href="" class="btn btn-outline-primary">새 폴더</a>
-                        <a href="" class="btn btn-outline-primary">새 문서</a>
+                        <a href="/doc/create?archive={{ $layoutParams['archiveId'] }}" class="btn btn-outline-primary">새 문서</a>
                     </div>
                     <hr class="mt-1">
                     <div class="list-group">

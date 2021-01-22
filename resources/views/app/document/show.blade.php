@@ -7,10 +7,10 @@
 
 <div class="container-fluid mt-4 mb-5">
 	@include('layouts.modules.messages.messages_and_errors_bs4')
-	<h5>게시판 경로</h5>
+	<h5>위치</h5>
 	<nav aria-label="breadcrumb">
 		<ol class="breadcrumb">
-			<li class="breadcrumb-item"><a href="/archives/{{$archive->id}}">{{ $archive->name }}</a></li> 
+			<li class="breadcrumb-item"><a href="/archives/{{$archive->id}}/latest">{{ $archive->name }}</a></li> 
 			@isset ($folder->paths)
 			@foreach ($folder->paths as $item)
 			<li class="breadcrumb-item"><a href="/folders/{{$item->id}}">{{ $item->name }}</a></li> 

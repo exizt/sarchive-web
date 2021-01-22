@@ -1,4 +1,4 @@
-@extends('layouts.sarchive_layout', ['layoutMode' => 'admin', 'currentMenu'=>'archive-control']) 
+@extends('layouts.sarchive_layout')
 @section('title',"아카이브 프로필 편집") 
 @section('content')
 <script>
@@ -12,7 +12,8 @@ $(function() {
 	});
 });
 </script>
-<div>
+<div class="container py-5">
+	@include('layouts.modules.messages.messages_and_errors_bs4')	
 	<form class="form-horizontal" role="form" method="POST" action="{{ route($ROUTE_ID.'.update',$item->id) }}">
 		<input type="hidden" name="_token" value="{{ csrf_token() }}">
 		<input type="hidden" name="_method" value="PUT">

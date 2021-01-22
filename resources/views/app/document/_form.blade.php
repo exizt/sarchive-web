@@ -46,13 +46,9 @@ tinymce.init({
 	</div>
 
 	<div class="form-group">
-		<label for="boardSelectInput">게시판 선택</label>
-    	<select name="board_id" class="form-control" title="게시판 선택" id="boardSelectInput">
-    		@foreach ($boardList as $it)
-				<option value="{{ $it->id }}" @isset($selectedBoard) @if ($it->id == $selectedBoard) selected="selected" @endif @endif>{!! 
-				str_repeat("&nbsp;",($it->depth-1)*7).' '.$it->name !!}</option>
-    		@endforeach
-    	</select>
+    <label for="folderName">폴더 선택</label>
+    <input id="folderName" class="form-control" type="text" placeholder="" readonly @isset($article->folder) value="{{ $article->folder->name }}" @endisset>
+		<input name="folder_id" type="hidden" id="folder_id" value="{{ $article->folder_id }}">
 	</div>
 
 	<div class="form-group">
@@ -69,6 +65,26 @@ tinymce.init({
 		<input name="reference" type="text" id="articleReference" class="form-control" value="{{ $article->reference }}" placeholder="" aria-label="">
 	</div>	
 </div>
+<div class="modal fade" id="modalChoiceFolder" tabIndex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h6 class="modal-title">폴더 선택</h6>
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<div class="modal-body">
+        <iframe id="jsTreeIframe" src=""></iframe>
+			</div>
+			<div class="modal-footer">
+        <input type="hidden" id="selectedFolderId">
+        <input type="hidden" id="selectedFolderName">
+        <button type="button" class="btn btn-default" data-dismiss="modal" id="btnChangeFolderId">변경</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" id="btnChangeFolderIdNone">선택 없애기</button>
+			</div>
+		</div>
+	</div>
+</div>
 <script>
 $(function(){
 	$(".shh-evt-append-ref").on("click",function(){
@@ -76,6 +92,26 @@ $(function(){
 			$("#articleReference").val($(this).data("value"))
 		}
 	});
+	$("#folderName").on("click", function(){
+		console.log("click")
+		$('#modalChoiceFolder').modal('show')
+    loadJsTreeIframe()
+  })
+  $("#btnChangeFolderId").on("click", function(){
+    var folderId = $("#selectedFolderId").val()
+    $("#folder_id").val(folderId)
+    var folderName = $("#selectedFolderName").val()
+    $("#folderName").val(folderName)
+  })
+  $("#btnChangeFolderIdNone").on("click", function(){
+    $("#folder_id").val("")
+    $("#folderName").val("")
+  })
 });
+
+function loadJsTreeIframe(){
+  document.getElementById("jsTreeIframe").src = "/jstree-ajax.html";
+}
+
 
 </script>

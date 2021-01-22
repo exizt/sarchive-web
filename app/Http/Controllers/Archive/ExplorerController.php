@@ -31,7 +31,7 @@ class ExplorerController extends BaseController {
      * 생성자
      */
     public function __construct() {
-        $this->middleware ( 'auth' )->except(['doAjax_getBoardList','doAjax_getHeaderNav']);
+        $this->middleware ( 'auth' )->except(['doAjax_getFolderNav','doAjax_getHeaderNav']);
     }
 
     
@@ -184,6 +184,33 @@ class ExplorerController extends BaseController {
     }
 
 
+    public function doAjax_getChildFolder(Request $request){
+        // 파라미터
+        $archiveId = $request->input('archive_id');
+        $folderId = $request->input('folder_id');
+
+        $cols = ['id','name as text','parent_id as parent','depth'];
+        if(!empty($archiveId)){
+            $folders = SAFolder::getRootsByArchive($archiveId, $cols);
+
+            if(!empty($folders)){
+                foreach($folders as $k => $v){
+                    $item = $v;
+                    if($item->parent == '0'){
+                        $item->parent = '#';
+                    }
+                    $folders[$k] = $item;
+                }
+            }
+        } else {
+            $folders = SAFolder::getChildFolders($folderId, $cols);
+        }
+
+
+        $dataSet['list'] = $folders;
+        return response()->json($folders);
+    }
+
     /**
      * 아카이브 화면에서 nav 메뉴를 가져오는 Ajax 부분.
      */
@@ -220,7 +247,7 @@ class ExplorerController extends BaseController {
 
         if($mode == 'folder'){
             // 현재의 폴더 정보
-            $currentFolder = SAFolder::select(['id','name','parent_id','depth', 'system_path'])
+            $currentFolder = SAFolder::select(['id','name','parent_id','depth', 'system_path', 'doc_count'])
                 ->where ( 'id', $folderId )
                 ->firstOrFail ();
             //$currentPath = $currentFolder->system_path;
@@ -232,8 +259,8 @@ class ExplorerController extends BaseController {
             $masterList = DB::select("select 
                                 p1.parent_id as parent_id,
                                 p1.id,
-                    p1.name,
-                                p1.doc_count,
+                                p1.name,
+                                p1.doc_count_all as count,
                                 p1.depth,
                                 p1.system_path
             from        sa_folders p1
@@ -257,8 +284,8 @@ class ExplorerController extends BaseController {
             $masterList = DB::select("select 
                                 p1.parent_id as parent_id,
                                 p1.id,
-                    p1.name,
-                                p1.doc_count,
+                                p1.name,
+                                p1.doc_count_all as count,
                                 p1.depth,
                                 p1.system_path
             from        sa_folders p1

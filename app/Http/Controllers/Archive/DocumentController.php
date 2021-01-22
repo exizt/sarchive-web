@@ -14,7 +14,7 @@ use App\Models\SArchive\SACategoryDocumentRel;
 use App\Models\ArchiveBookmark;
 
 class DocumentController extends Controller {
-    protected const VIEW_PATH = 'app.archive.document';
+    protected const VIEW_PATH = 'app.document';
     protected const ROUTE_ID = 'doc';
 
     /**
@@ -61,7 +61,6 @@ class DocumentController extends Controller {
 
         // 공용 파라미터 처리
         $dataSet ['parameters']['archiveId'] = $archiveId;
-        //$dataSet ['parameters']['board'] = $archive->board_id;
         return view ( self::VIEW_PATH . '.show', $dataSet );
     }
 
@@ -94,17 +93,15 @@ class DocumentController extends Controller {
         $article = new SADocument;
         
         // 게시판 목록을 조회. 셀렉트박스 를 만들기 위함.
-        $folderSelectList = $this->getFolderFormSelectList($archiveId);
+        //$folderSelectList = $this->getFolderFormSelectList($archiveId);
 
         // dataSet 생성
         $dataSet = $this->createViewData ();
         $dataSet ['article'] = $article;
         $dataSet ['parameters']['archive_id'] = $archiveId;
-        //$dataSet ['parameters']['board'] = $boardId;
         //$dataSet ['cancelButtonLink'] = $this->makePreviousListLink($request,$profileId);
         $dataSet ['cancelButtonLink'] = url()->previous();
-        $dataSet ['selectedBoard'] = $article->folder_id;
-        $dataSet ['boardList'] = $folderSelectList;
+        //$dataSet ['folderList'] = $folderSelectList;
         return view ( self::VIEW_PATH . '.create', $dataSet );
     }
     
@@ -125,7 +122,7 @@ class DocumentController extends Controller {
         $archive = $this->retrieveAuthArchive($archiveId);
 
         // 게시판 목록을 조회. 셀렉트박스 를 만들기 위함.
-        $folderSelectList = $this->getFolderFormSelectList($archiveId);
+        //$folderSelectList = $this->getFolderFormSelectList($archiveId);
 
         // create dataSet
         $dataSet = $this->createViewData ();
@@ -134,8 +131,7 @@ class DocumentController extends Controller {
         //$dataSet ['cancelButtonLink'] = $this->makePreviousShowLink($request,$profileId, $documentId);
         //$dataSet ['cancelButtonLink'] = url()->previous();
         $dataSet ['cancelButtonLink'] = route(self::ROUTE_ID.'.show', $document->id );
-        $dataSet ['selectedBoard'] = $document->folder_id;
-        $dataSet ['boardList'] = $folderSelectList;
+        //$dataSet ['folderList'] = $folderSelectList;
         return view ( self::VIEW_PATH . '.edit', $dataSet );
         
     }
@@ -176,18 +172,27 @@ class DocumentController extends Controller {
         $article->title = $title;
         $article->content = $content;
         $article->archive_id = $archiveId;
-        $article->folder_id = $folderId;
+        
+        if($folderId != null){
+            $folder = SAFolder::findOrFail($folderId);
+            $article->folder_id = $folderId;
+        }
         $article->reference = $reference;
-        $article->category = $category;
         $article->save ();
         
-        //$this->updateBoardCount();
-        /*
-        foreach($article->category_array as $item){
-            SACategoryDocumentRel::create(['profile_id'=>$profileId,'archive_id'=>$article->id,'category'=>$item]);
+        // folder 의 문서 수 변경.
+        if(isset($folder)){
+            $this->updateFolderDocCount($folderId);
         }
-        */
-        $this->updateCategoryDocumentRel($archiveId, $documentId, $article->category_array);
+
+        // 카테고리 입력. 값의 길이가 3이상일 때 입력.
+        if($category!=null && strlen($category) >= 3){
+            // 값 입력
+            $article->category = $category;
+
+            // Category 와 Document 의 릴레이션 갱신
+            $this->updateCategoryDocumentRel($archiveId, $article->id, $article->category_array);
+        }
 
         // 결과 처리
         if ($submitAction === 'continue') {
@@ -228,70 +233,66 @@ class DocumentController extends Controller {
         $archive = $this->retrieveAuthArchive($document->archive_id);
 
         // 데이터 update
-        $beforeCategory = $document->category;
         $document->title = $title;
         $document->content = $content;
-        $document->folder_id = $folderId;
         $document->reference = $reference;
-        $document->category = $category;
         
-        //$this->updateBoardCount();
+        // folderId 의 유효성 체크 및 처리
+        $changedFolderIds = array();
+        if($folderId != null){
+            // 변경 전의 folder_id
+            $beforeFolderId = $document->folder_id;
 
-        /*
-        // category 관련 처리
-        if($beforeCategory != $category){
-            SACategoryDocumentRel::where('archive_id',$archiveId)->delete();
+            // folderId 가 0이면 folder 분류에서 제외시키겠다는 것을 가정한다.
+            if($folderId == 0){
+                /// 폴더에서 제외시킬 때
 
-            foreach($document->category_array as $item){
-                SACategoryDocumentRel::create(['profile_id'=>$profileId,'archive_id'=>$document->id,'category'=>$item]);
+                $document->folder_id = null;
+
+                // 기존의 folder 에서 카운트 변경
+                $changedFolderIds[] = $beforeFolderId;
+
+            } else if($beforeFolderId != $folderId){
+                /// 폴더 변경이 이루어졌을 때
+                // 새로운 folderId가 유효한지 체크
+                $folder = SAFolder::findOrFail($folderId);
+                
+                // 값의 변경
+                $document->folder_id = $folderId;
+
+                if(!empty($beforeFolderId)) $changedFolderIds[] = $beforeFolderId;
+                $changedFolderIds[] = $folderId;
             }
         }
-        */
-        // Category 와 Document 의 릴레이션 갱신
-        if($beforeCategory != $category){
+
+        // category 갱신
+        if($document->category != $category){
+            // 값 변경
+            $document->category = $category;
+
+            // Category 와 Document 의 릴레이션 갱신
             $this->updateCategoryDocumentRel($document->archive_id, $document->id, $document->category_array);
         }
 
+        // 저장 처리
         $document->save();
+
+        // folder 의 문서 수 변경.
+        if(!empty($changedFolderIds)){
+            foreach($changedFolderIds as $curFolderId){
+                $this->updateFolderDocCount($curFolderId);
+            }
+        }
 
         // 결과 처리
         if ($submitAction === 'continue') {
             return redirect()->back()->with('message', '저장되었습니다.');
         }
-        return redirect()->route( self::ROUTE_ID.'.show', $article->id)
+        return redirect()->route( self::ROUTE_ID.'.show', $document->id)
         ->with('message', '저장되었습니다.' );
     }
 
-    /**
-     * Category 와 Document 의 릴레이션 갱신
-     */
-    private function updateCategoryDocumentRel($archiveId, $documentId, $categoryNames){
-        //if(!is_array($categoryNames)) return;
-
-        // 기존의 해당하는 것 제거
-        SACategoryDocumentRel::where('document_id',$documentId)->delete();
-
-        if(count($categoryNames) > 0){
-            // insert 할 데이터 생성
-            $datas = array();
-            foreach($categoryNames as $k => $categoryName){
-                if(strlen(trim($categoryName))>0){
-                    $datas[$k] = [
-                        'archive_id' => $archiveId,
-                        'category_name' => trim($categoryName),
-                        'document_id' => $documentId,
-                        'created_at' => Carbon::now()
-                    ];
-                }
-            }
     
-            // 대량 할당
-            if(count($datas)>0){
-                SACategoryDocumentRel::insert($datas);
-            }
-        }
-    }
-
     /**
      * 문서 삭제.
      *
@@ -301,7 +302,8 @@ class DocumentController extends Controller {
     public function destroy($id) {
         // 데이터 조회
         $article = SADocument::findOrFail($id);
-        
+        $folderId = $article->folder_id;
+
         // archiveId 권한 체크 및 조회
         $archive = $this->retrieveAuthArchive($article->archive_id);
 
@@ -311,8 +313,10 @@ class DocumentController extends Controller {
         // Category x Document 릴레이션에서 기존의 해당하는 것 제거
         SACategoryDocumentRel::where('document_id',$id)->delete();
         
-        //$this->updateBoardCount();
+        // folder 의 문서 수 변경.
+        $this->updateFolderDocCount($folderId);
         
+        // @todo 폴더의 게시물 목록 or 아카이브의 게시물 목록으로 이동
         return redirect('/archives/'.$archive->id)
         ->with('message', '삭제되었습니다.' );
     }
@@ -365,6 +369,38 @@ class DocumentController extends Controller {
         return response()->json($dataSet);
     }
 
+
+
+    /**
+     * Category 와 Document 의 릴레이션 갱신
+     */
+    private function updateCategoryDocumentRel($archiveId, $documentId, $categoryNames){
+        //if(!is_array($categoryNames)) return;
+
+        // 기존의 해당하는 것 제거
+        SACategoryDocumentRel::where('document_id',$documentId)->delete();
+
+        if(count($categoryNames) > 0){
+            // insert 할 데이터 생성
+            $datas = array();
+            foreach($categoryNames as $k => $categoryName){
+                if(strlen(trim($categoryName))>0){
+                    $datas[$k] = [
+                        'archive_id' => $archiveId,
+                        'category_name' => trim($categoryName),
+                        'document_id' => $documentId,
+                        'created_at' => Carbon::now()
+                    ];
+                }
+            }
+    
+            // 대량 할당
+            if(count($datas)>0){
+                SACategoryDocumentRel::insert($datas);
+            }
+        }
+    }
+
         
     
     /**
@@ -395,7 +431,7 @@ class DocumentController extends Controller {
     }
 
 
-    
+
     /**
      * 
      * @return string[]
@@ -420,11 +456,43 @@ class DocumentController extends Controller {
 
         
     /**
-     * boardList 테이블의 count 값을 갱신
+     * folder 테이블의 doc_count 값을 갱신
      * @deprecated 코드 개선이 필요함.
      */
-    private function updateBoardCount()
+    private function updateFolderDocCount($folderId)
     {
+        if(empty($folderId)) return;
+        $folder = SAFolder::findOrFail($folderId);
+        
+        /**
+         * folderId 기준으로 doc_count 갱신
+         */
+        $count = SADocument::where('folder_id', $folderId)->count();
+        $folder->doc_count = $count;
+        $folder->save();
+
+        // 상위를 탐색하면서 doc_count_all 갱신
+        // 현재 폴더의 system_path 를 / 기준으로 나누면 제각기 상위 노드의 id이다. 
+        // 이것을 기준으로 갱신한다.
+
+        /* 쿼리
+        update sa_folders 
+          inner join (select id, name, system_path, (select count(*) from sa_documents as doc inner join sa_folders as p1 on doc.folder_id = p1.id
+          where left(p1.system_path, length(sa_folders.system_path)) = sa_folders.system_path) as count
+          from sa_folders) as d
+        on d.id = sa_folders.id
+        set sa_folders.doc_count_all = d.count
+        */
+        $paths = $folder->paths_array();
+        if(count($paths) > 1){
+            SAFolder::join(DB::raw('(select id, name, system_path, 
+                    (select count(*) from sa_documents as doc inner join sa_folders as p1 on doc.folder_id = p1.id
+                    where left(p1.system_path, length(sa_folders.system_path)) = sa_folders.system_path) as count
+                from sa_folders) as d'),'d.id','=','sa_folders.id')
+            ->whereIn('sa_folders.id', $folder->paths_array())
+            ->update(['sa_folders.doc_count_all'=> DB::raw('d.count')]);
+        }
+
         /*
         $affected = DB::update('update sa_boards 
             set count = (select count(id) from archives
@@ -433,6 +501,7 @@ class DocumentController extends Controller {
         */
         
         // 좀 더 세밀화 된 쿼리
+        /*
         DB::update('update sa_boards
             set count = (select count(sa_archives.id)
                 from 
@@ -446,7 +515,7 @@ class DocumentController extends Controller {
                 cate.board_id = sa_archives.board_id
                 and cate.parent_id = sa_boards.id
                 group by cate.parent_id)');
-        
+        */
     }
     
     /**

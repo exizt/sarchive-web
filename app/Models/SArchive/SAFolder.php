@@ -13,10 +13,18 @@ class SAFolder extends Model
         'index','depth'];
 
     /**
+     * 모델의 pathsArray 를 반환
+     */
+    public function paths_array(){
+        $paths = explode('/', rtrim($this->attributes['system_path'], '/'));
+        return $paths;
+    }
+
+    /**
      * path 목록 조회
      */
     public function paths(){
-        $paths = explode('/', $this->attributes['system_path']);
+        $paths = $this->paths_array();
 
         $result = SAFolder::select(['id','name'])
                 ->whereIn('id', $paths )
@@ -25,8 +33,28 @@ class SAFolder extends Model
         return $result;
     }
 
+    public static function getRootsByArchive($archiveId, $cols){
+        $query = SAFolder::where('depth','1')
+        ->where('archive_id', $archiveId);
+
+        if(!empty($cols)){
+            $query = $query->select($cols);
+        }
+        return $query->orderBy('index','asc')->get();
+    }
+
+    public static function getChildFolders($folderId, $cols){
+        $query = SAFolder::where('parent_id', $folderId);
+
+        if(!empty($cols)){
+            $query = $query->select($cols);
+        }
+
+        return $query->orderBy('index','asc')->get();
+    }
+
     /**
-     * Archive 조회
+     * Archive 테이블 조인 조회
      */
     public function archive(){
         return $this->belongsTo('App\Models\SArchive\SAArchive', 'archive_id');
