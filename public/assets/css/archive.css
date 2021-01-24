@@ -1,4 +1,16 @@
 @charset "UTF-8";
+#logo {
+    background: center / contain no-repeat url("/assets/logo/polymer-white-18dp.svg");
+    background-repeat: no-repeat;
+    width: 2rem;
+    height: 2rem;
+    -webkit-animation: spinX 3s infinite;
+    animation: spinX 3s infinite;
+}
+@keyframes spinX {  
+    0%   {-webkit-transform: rotateX(0deg); -webkit-transform-origin: 0% 50% 0;}  
+    100% {-webkit-transform: rotateX(360deg); -webkit-transform-origin: 0% 50% 0;}  
+}
 p.cz-item-summary{
     overflow : hidden;
     text-overflow: ellipsis;
