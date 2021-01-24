@@ -68,7 +68,7 @@
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb" id="shh-nav-board-path"></ol>
                     </nav>
-                    <h5>게시판</h5>
+                    <h5>폴더</h5>
                     <div class="list-group sarc-layout-nav-folder-list" id="shh-nav-board-list"></div>
                     <div class="list-group pt-3" id="js-folderNav-folderOnly" style="display:none"></div>
                 </div>

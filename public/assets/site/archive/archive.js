@@ -161,26 +161,27 @@ function doAjaxFolderList(){
         var selectorId = "shh-nav-board-list";
 
         $.each(data.list, result)
+        var idPrefix = 'folderNav-item-';
         function result(i, item){
-            var idPrefix = 'folderNav-item-';
             var depth = item.depth - currentDepth
             var nav = document.getElementById(selectorId)
             if(depth == 1){
-                nav.innerHTML += buildHtml(`${idPrefix}${item.id}`, `/folders/${item.id}`,item.name, item.count, depth)
+                nav.innerHTML += buildHtml(item.id, `/folders/${item.id}`,item.name, item.count, depth)
             } else {
                 var repeatString = "❯".repeat(depth-1)
                 var label = `${repeatString}&nbsp;&nbsp;${item.name}`
-                var html = buildHtml(`${idPrefix}${item.id}`, `/folders/${item.id}`,label, item.count, depth)
+                var html = buildHtml(item.id, `/folders/${item.id}`,label, item.count, depth)
                 //document.getElementById(`${idPrefix}${item.parent_id}`).nextElementSibling.innerHTML += html
                 document.getElementById(`${idPrefix}${item.parent_id}`).insertAdjacentHTML('beforebegin', html);
             }
         }
         function buildHtml(id, link, label, count, depth){
             var html = `<a href="${link}"
-                class="list-group-item list-group-item-action d-flex justify-content-between align-items-center sarc-depth-${depth}">
-                    ${label} 
-                    <span class="badge badge-secondary badge-pill">${count}</span>
-            </a><span style="display:none" id="${id}"></span>`
+                class="list-group-item list-group-item-action d-flex justify-content-between align-items-center sarc-depth-${depth}"
+                data-id="${id}" data-label="${label}">
+                    ${label}
+                    <span class="arch-indexEditMode-hide badge badge-secondary badge-pill">${count}</span>
+            </a><span style="display:none" id="${idPrefix}${id}"></span>`
             return html
         }
     }

@@ -139,6 +139,7 @@ class FolderController extends Controller {
         $folder->archive_id = $archive->id;
         $folder->name = $name;
         $folder->comments = $comments;
+        $folder->index = 99999;
         $folder->save ();
 
         /**
@@ -158,10 +159,16 @@ class FolderController extends Controller {
             $folder->depth = $parentFolder->depth + 1;
             $folder->save();
         } else {
+            $folder->parent_id = 0;// 디폴트 값
+
             $folder->system_path = SAFolder::generateSystemPath($folder->id);
             $folder->depth = 1;
             $folder->save();
         }
+
+        // 동일 부모 아래에 위치한 것들의 순서를 조정.
+        $this->updateChildFolderIndex($folder->parent_id, $folder->archive_id);
+
         return redirect("/folders/{$folder->id}")
             ->with('message', '저장되었습니다.' );
     }
@@ -265,6 +272,9 @@ class FolderController extends Controller {
             $this->updateFolderDocCount($folder->id);
         }
 
+        // 동일 부모 아래에 위치한 것들의 순서를 조정.
+        $this->updateChildFolderIndex($folder->parent_id, $folder->archive_id);
+
         // 결과 처리
         if ($submitAction === 'continue') {
             return redirect()->back()->with('message', '저장되었습니다.');
@@ -334,6 +344,30 @@ class FolderController extends Controller {
 
 
     /**
+     * 순서 변경 처리
+     */
+    public function updateSort(Request $request){
+        $dataList = $request->input('dataList', array());
+
+        if(empty($dataList)) abort(403);
+        
+        foreach($dataList as $i => $item){
+            $folder = SAFolder::findOrFail ( $item['id'] );
+            $folder->index = $item['index'];
+            $folder->save();
+        }
+
+        $request->session()->flash('message', '변경 완료되었습니다.');
+
+        // 결과값
+        $dataSet = array();
+        $dataSet['success'] = '변경 완료되었습니다.';
+        return response()->json($dataSet);
+    }
+
+
+
+    /**
      * id를 통한 archive 조회 및 권한 체크
      * @param int $id 아카이브 Id
      */
@@ -346,6 +380,21 @@ class FolderController extends Controller {
     }
 
 
+    /**
+     * parentId 를 기준으로 폴더의 index 를 새로 갱신.
+     */
+    private function updateChildFolderIndex($parentId, $archiveId){
+        DB::statement(DB::raw('set @rownum:=0'));
+
+        SAFolder::join(DB::raw(
+            '(select id, @rownum:=@rownum+1 as rownum
+            from sa_folders 
+            where parent_id = ?
+            and archive_id = ?
+            order by `index`) as t2'),'t2.id','=','sa_folders.id')
+        ->setBindings([$parentId, $archiveId], 'join')
+        ->update(['sa_folders.index'=> DB::raw('t2.rownum')]);
+    }
 
     /**
      * 
@@ -377,67 +426,5 @@ class FolderController extends Controller {
     {
         if(empty($folderId)) return;
         SAFolder::updateDocCountAll($folderId);
-    }
-
-   
-    /**
-     * 이전 링크 주소.
-     * 바로 이전 주소를 가지고 셋팅을 하는데, '새로고침' 을 하는 경우도 있기 때문에, 세션에 넣어두고 활용한다.
-     * 뭔가 동작이 원하는 느낌이 아니다...살펴봐야 할 듯...
-     * 
-     * url()->previous()가 바로 직전 주소를 가져오는데, 새로고침을 해버리면 자신의 링크만을 가리키게 된다.
-     * 그 경우를 보정하기 위한 메서드이다. 
-     * @param Request $rqeust
-     * @return string
-     */
-    protected function makePreviousListLink(Request $request, $archiveId)
-    {
-        $previous = url()->previous();
-        
-        $routeLink = route ( self::ROUTE_ID . '.index', ['profile'=> $archiveId]);
-
-        //``
-
-        return (strtok($previous,'?') == $routeLink) ? $previous : $routeLink;
-    }
-
-    /**
-     * '취소 링크' 생성.
-     */
-    protected function makePreviousShowLink(Request $request, $profileId, $archiveId)
-    {
-        $previous = url()->previous();
-        
-        $routeLink = route ( self::ROUTE_ID . '.show', ['profile'=> $profileId, 'archive'=>$archiveId]);
-
-        return (strtok($previous,'?') == $routeLink) ? $previous : $routeLink;
-    }
-
-    /**
-     * 이전 링크 주소.
-     * 바로 이전 주소를 가지고 셋팅을 하는데, '새로고침' 을 하는 경우도 있기 때문에, 세션에 넣어두고 활용한다.
-     * 뭔가 동작이 원하는 느낌이 아니다...살펴봐야 할 듯...
-     * @param Request $rqeust
-     * @return string
-     * @deprecated 사용하지 않음.
-     */
-    protected function getPreviousLink(Request $request)
-    {
-        $session_previousName = 'devscrap-previousList';
-        // 바로 이전 주소가 list 형태의 index 경로라면, flash session 에 저장.
-        $request->session()->reflash();
-        $request->session()->keep([$session_previousName]);
-        
-        $previous = url()->previous();
-        $previous_identifier = strtok($previous,'?');
-        
-        // 해당 패턴과 일치하거나 index 의 주소인 경우에 previous 세션에 저장
-        if($previous_identifier == route ( self::ROUTE_ID . '.index', ['profile'=>1])){
-            $request->session()->flash($session_previousName, $previous);
-        }
-        
-        //session 에 해당 값이 있으면 세션 값 사용. 없으면 목록 주소로 대체.
-        return ($request->session()->get($session_previousName,'') != '') ?
-        $request->session()->get($session_previousName,'') : route ( self::ROUTE_ID . '.index', ['profile'=>1]);
     }
 }

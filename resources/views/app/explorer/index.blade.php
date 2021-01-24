@@ -24,7 +24,7 @@
                         @endif
                     </div>
                     <div class="text-right">
-                        <a href="" class="btn btn-outline-primary">새 폴더</a>
+                        <a href="/folders/create?archive={{ $layoutParams['archiveId'] }}" class="btn btn-outline-primary">새 폴더</a>
                         <a href="/doc/create?archive={{ $layoutParams['archiveId'] }}" class="btn btn-outline-primary">새 문서</a>
                     </div>
                     <hr class="mt-1">
@@ -57,9 +57,19 @@
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb" id="shh-nav-board-path"></ol>
                     </nav>
-                    <h5>게시판</h5>
+                    <h5>폴더</h5>
                     <div class="list-group sarc-layout-nav-folder-list" id="shh-nav-board-list"></div>
                     <div class="list-group pt-3" id="js-folderNav-folderOnly" style="display:none"></div>
+                    <div class="d-flex w-100 justify-content-between">
+                        <span>
+                            <a href="{{ route($ROUTE_ID.'.create') }}" class="btn btn-outline-success btn-sm arch-indexEditMode-show" style="display:none">신규</a>
+                        </span>
+                        <span>
+                            <a href="#" id="btnIndexEditModeToggle" class="btn btn-outline-success btn-sm arch-indexEditMode-hide">변경</a>
+                            <a href="#" id="btnIndexEditModeCancel" class="btn btn-outline-success btn-sm arch-indexEditMode-show" style="display:none">순서변경 취소</a>
+                            <a href="#" id="btnIndexEditModeSave" class="btn btn-outline-success btn-sm arch-indexEditMode-show" style="display:none">순서변경 저장</a>
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -70,6 +80,95 @@
 <script>
     $(function(){
         doAjaxFolderList()
+        bindIndexMode()
     })
+    function bindIndexMode(){
+        var listItemClassName = "arch-indexEditMode-listitem";
+        var listItemSelector = "."+listItemClassName;
+        
+        $("#btnIndexEditModeToggle").on("click",changeIndexEditModeOn)
+        $("#btnIndexEditModeCancel").on("click",function(){location.reload();})
+        $("#btnIndexEditModeSave").on("click",saveArchiveSort)
+        $(document).on("click",".arch-indexEditMode-up",onClickMoveUp);
+        $(document).on("click",".arch-indexEditMode-down",onClickMoveDown);
+
+        /**
+         * 인덱스 변경 모드로 전환
+         */
+        function changeIndexEditModeOn(){
+            // folderNav에 맞춘 작업
+            $("#shh-nav-board-list").find("span").remove();
+            $(".sarc-depth-1").addClass(listItemClassName);
+            $(".sarc-depth-1").append(`<span>
+						<button type="button" class="btn btn-primary btn-sm arch-indexEditMode-up">▲</button>
+						<button type="button" class="btn btn-primary btn-sm arch-indexEditMode-down">▼</button>
+                    </span>`);
+            $(".sarc-depth-2").remove();
+            $(".sarc-depth-3").remove();
+            $(".sarc-depth-4").remove();
+            $(".sarc-depth-5").remove();
+            $(".sarc-depth-5").remove();
+
+            // 일반적인 보여지는 부분 처리
+            $(".arch-indexEditMode-hide").hide()
+            $(".arch-indexEditMode-show").show()
+            $(listItemSelector).attr("href","#");
+        }
+
+        /**
+         * 아카이브 순서 변경사항을 저장
+         */
+        function saveArchiveSort(){
+            // 작업 해야함.
+            var dataList = [];
+            $(".sarc-depth-1").each(function(index){
+                var data = {
+                    id : $(this).data("id"),
+                    name : $(this).data("label"),
+                    index : index+1
+                };
+                dataList.push(data)
+            })
+            console.log(dataList)
+    
+            ajaxSave(dataList)
+        }
+
+        function ajaxSave(dataList){
+            $.post({
+                url: '/folders/updateSort',
+                data: {
+                    'dataList': dataList
+                }
+            })
+            .done(function(data){
+                location.reload()
+            })
+        }
+
+        function onClickMoveUp(){
+            moveUp($(this).closest(".sarc-depth-1"),".sarc-depth-1")
+        }
+
+        function onClickMoveDown(){
+            moveDown($(this).closest(".sarc-depth-1"),".sarc-depth-1")
+        }
+
+        function moveUp($current,sel){
+            var hook = $current.prev(sel)
+            if(hook.length){
+                var elementToMove = $current.detach();
+                hook.before(elementToMove);
+            }
+        }
+
+        function moveDown($current,sel){
+            var hook = $current.next(sel)
+            if(hook.length){
+                var elementToMove = $current.detach();
+                hook.after(elementToMove);
+            }
+        }
+    }
 </script>
 @endsection
