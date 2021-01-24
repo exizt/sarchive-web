@@ -40,6 +40,33 @@ class Home extends Controller {
 		}
 	}
 
+		
+	/**
+	 * 글 본문 읽기
+	 *
+	 * @param int $id
+	 * @return \Illuminate\Http\Response
+	 */
+	public function staticPage(Request $request, $uri) {
+	    
+	    // create dataSet
+	    $dataSet = $this->createViewData ();
+		if($request->has('archiveId')){
+			$dataSet ['parameters']['archiveId'] = $request->input('archiveId');
+		}
+
+		switch ($uri) {
+			case 'shortcut':
+				$blade = 'shortcut';
+				break;
+			
+			default:
+				abort(404);
+				break;
+		}
+	    return view ( 'app.static_pages.'.$blade, $dataSet );
+	}
+	
 	/**
      *
      * @return string[]

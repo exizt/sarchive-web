@@ -2,25 +2,20 @@
 @section('title',"검색 결과") 
 @section('content')
 <div class="container">
-    <div class="row px-0 mx-0 mt-5">
-        <div class="d-flex w-100 justify-content-between">
-            <h4 class="">검색 결과</h4>
-            <small class="text-mute">Page {{ $masterList->currentPage() }} of {{ $masterList->lastPage() }}</small>
-        </div>
-    </div>
-    <div class="list-group">
+    <h6 class="mt-5 text-muted">검색 결과</h6>
+    <div class="list-group list-group-flush">
         @foreach ($masterList as $item)
         <a class="list-group-item list-group-item-action flex-column align-items-start" 
             href="{{ "/doc/{$item->id}" }}">
             <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{ $item->title }}</h5>
-                <small>{{ $item->created_at->format('Y-m-d') }}</small>
+                <h4 class="mb-1">{{ $item->title }}</h4>
             </div>
-            <p class="mb-1 pl-md-3 cz-item-summary">
-                <small>{{ $item->summary_var }}</small>
+            <p class="mb-1 cz-item-summary">
+                <small class="text-muted">{{ $item->summary_var }}</small>
             </p>
-            <div class="text-right">
+            <div class="d-flex w-100 justify-content-between">
                 <small>@if(isset($item->folder)) 폴더 : {{ $item->folder->name }} @endif</small>
+                <small>{{ $item->created_at->format('Y-m-d') }}</small>
             </div>
         </a>
         @endforeach

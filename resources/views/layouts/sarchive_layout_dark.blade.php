@@ -14,14 +14,13 @@
 <meta name="apple-mobile-web-app-title" content="S아카이브">
 <link rel="shortcut icon" href="/assets/brand/favicon/favicon-2021.ico" />
 <!-- styles -->
-<link rel="stylesheet" href="/assets/lib/bootstrap/4.3.1/css/bootstrap.css">
+<link rel="stylesheet" href="/assets/lib/bootstrap/4.3.1-dark-theme/css/bootstrap.css">
 <link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/fontawesome.min.css">
 <link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/brands.min.css">
 <link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/solid.min.css">
 <!--<link rel="stylesheet" href="/assets/lib/font-awesome-4.7.0/css/font-awesome.min.css">-->
 <link rel="stylesheet" href="/assets/css/site-base.css">
 <link rel="stylesheet" href="/assets/css/site-layouts.css">
-<link rel="stylesheet" href="/assets/modules/scroll-up/css/sh-scrollup.css">
 <!-- scripts -->
 <script src="/assets/lib/jquery/jquery-3.2.1.min.js"></script>
 <!-- popper.JS : dropdown of bootstrap 을 위해 필요. (bootstrap 4.0.0 이후로 추가) -->
@@ -29,15 +28,19 @@
 <script src="/assets/lib/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script src="/assets/js/site-base.js"></script>
 <!-- ## semi modules ## -->
-<script src="/assets/modules/scroll-up/sh-scrollup.min.js"></script>
+<link rel="stylesheet" href="/assets/modules/scrolltop/scrolltop.css">
+<script src="/assets/modules/scrolltop/scrolltop.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-@stack('layout-styles')
-@stack('layout-scripts')
+@stack('style-head')
+@stack('script-head')
 <link rel="stylesheet" href="/assets/site/archive/archive.css">
 <script src="/assets/js/core-func.js"></script>
 <script src="/assets/js/shortcut-key-event.js"></script>
 <script src="/assets/site/archive/archive.js"></script>
 <script>
+$(function(){
+    ajaxHeaderNav()
+})
 document.onkeyup = shortcutKeyEvent;
 </script>
 </head>
@@ -61,12 +64,10 @@ document.onkeyup = shortcutKeyEvent;
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav mr-auto" id="shh-header-navbar"></ul>
               @isset($layoutParams['archiveId'])
-              @if(($layoutMode ?? '') != 'first')
               <form class="form-inline my-2 my-lg-0" action="/archives/{{ $layoutParams['archiveId'] }}/search">
                   <input class="form-control mr-sm-2 site-shortcut-key-f" type="search" placeholder="Search" aria-label="Search" name="q" value="{{ $parameters['q'] ?? ''}}">
                   <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
               </form>
-              @endif
               @endisset
               <ul class="navbar-nav">
                   <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink_My" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ Auth::user()->name }}</a>
@@ -108,9 +109,13 @@ document.onkeyup = shortcutKeyEvent;
     @yield('content')
     @endif
   </div>
+  <!-- .site-layout-page -->
   <footer>
     <div class="container-fluid text-right">
       <p class="text-muted pt-5">© SH Hong. All rights reserved.</p>
+    </div>
+    <div class="scrolltop">
+      <div class="scrolltop-arrow"></div>
     </div>
   </footer>
 </body>

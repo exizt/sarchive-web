@@ -11,18 +11,32 @@
 							<h4 class="">분류 : {{ $category->name }}
 								&nbsp;&nbsp;&nbsp;
 							<a class="btn btn-outline-info btn-sm site-shortcut-key-e" 
-								href="{{ route($ROUTE_ID.'.edit',['archiveId'=>$archive->id,'category'=>$category->id]) }}" 
+								href="{{ route('category.edit',['archive'=>$archive->id,'category'=>$category->id]) }}" 
 								role="button">편집</a>
 						</h4>
 						<small class="text-mute">Page {{ $masterList->currentPage() }}/{{ $masterList->lastPage() }}</small>
 						</div>
 						<p class="lead">{{ $category->comments }}</p>
 					</div>
-					<h6>여기에 속하는 문서</h6>
+					@if(count($childCategories))
+					<h5>하위 분류</h5>
+					<div class="row mb-5 mx-0">
+						@foreach ($childCategories as $item)
+						<div class="list-group col mx-2">
+							<a class="list-group-item list-group-item-action"
+								href="{{route('explorer.category',['archive'=>$archive->id,'category'=>urlencode($item)])}}">
+								{{$item}}
+							</a>
+						</div>
+						@endforeach
+					</div>
+					
+					@endif					
+					<h5>여기에 속하는 문서</h5>
 					<div class="list-group">
 						@foreach ($masterList as $item) 
 						<a class="list-group-item list-group-item-action flex-column align-items-start" 
-							href="/doc/{{ $item->id }}">
+							href="/doc/{{ $item->id }}?lcategory={{ urlencode($category->name) }}">
 							<div class="d-flex w-100 justify-content-between">
 								<h5 class="mb-1">{{ $item->title }}</h5>
 								<small>{{ $item->created_at->format('Y-m-d') }}</small>
@@ -30,34 +44,21 @@
 							<p class="mb-1 pl-md-3 cz-item-summary">
 								<small>{{ $item->summary_var }}</small>
 							</p>
-							<div class="d-flex justify-content-between">
-								<small>게시판 : {{ $item->category_name }}</small>
-							</div>
 						</a> @endforeach
 					</div>
-					@if(count($childCategories))
-					<hr>
-					<h6>여기에 속하는 분류</h6>
-					<div class="list-group">
-						@foreach ($childCategories as $item)
-						<a class="list-group-item list-group-item-action"
-							href="{{route($ROUTE_ID.'.show',['archiveId'=>$archive->id,'category'=>urlencode($item)])}}">
-							{{$item}}
-						</a>
-						@endforeach
-					</div>
-					@endif
+
 					@if(count($category->category_array))
 					<hr>
 					<div class="card">
 						<div class="card-body">
-							상위 분류&nbsp;:&nbsp;&nbsp;
+							상위 분류&nbsp;:&nbsp;
+							<ul class="sarc-cat-list">
 							@foreach ($category->category_array as $i=>$item)
-								@if($i>0) | @endif
-								<a href="{{route($ROUTE_ID.'.show',['archiveId'=>$archive->id,'category'=>urlencode($item)])}}">
+							<li><a href="{{route('explorer.category',['archive'=>$archive->id,'category'=>urlencode($item)])}}">
 									{{$item}}
-								</a>&nbsp;
+								</a></li>
 							@endforeach
+							</ul>
 						</div>
 					</div>
 					@endif
@@ -67,8 +68,8 @@
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb" id="shh-nav-board-path"></ol>
                     </nav>
-                    <h5>게시판</h5>
-                    <div class="list-group" id="shh-nav-board-list"></div>
+                    <h5>폴더</h5>
+                    <div class="list-group sarc-layout-nav-folder-list" id="shh-nav-board-list"></div>
                     <div class="list-group pt-3" id="js-folderNav-folderOnly" style="display:none"></div>
                 </div>
 			</div>
@@ -77,20 +78,6 @@
 		<div class="text-xs-center">{{ $masterList->links() }}</div>
 	</div>
 </div>
-<style>
-.shh-navboardlist-depth-1{
-	/*padding-left: 1.75rem;*/
-}
-.shh-navboardlist-depth-2{
-	padding-left: 3.5rem;
-}
-.shh-navboardlist-depth-3{
-	padding-left: 6.0em;
-}
-.shh-navboardlist-depth-4{
-	padding-left: 8.5rem;
-}
-</style>
 <script>
     $(function(){
         doAjaxFolderList()

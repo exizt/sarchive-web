@@ -12,18 +12,6 @@ function getFolderId(){
     return $("body").data("folder")
 }
 
-/**
- * 사용할 만한 것인지 체크
- * @param v 
- */
-function isNotEmpty(v){
-    if(typeof v === "undefined" || str == null || str == "")
-        return false;
-    else
-        return true;
-}
-
-
 
 var func = {
     exists : function(v){
@@ -31,6 +19,12 @@ var func = {
             return false;
         else
             return true;
+    },
+    empty : function(v){
+        if(typeof v === "undefined" || v == null || v == "")
+            return true;
+        else
+            return false;
     }
 }
 
@@ -136,13 +130,12 @@ function doAjaxFolderList(){
     function buildCurrentPaths(mode, data){
 
         // 맨 앞 '아카이브' 생성
-        var html = buildHtml(`/archives/${data.archive.id}`, data.archive.name)
+        var html = buildHtml(`/archives/${data.archive.id}/latest`, data.archive.name)
 
         // 후위 폴더 경로 생성
         if(mode == "folder"){
             if(typeof data.currentPaths !== "undefined"){
                 $.each(data.currentPaths,function(i,item){
-                    //console.log(item)
                     html += buildHtml(`/folders/${item.id}`, item.name)
                 })
             }
@@ -158,12 +151,47 @@ function doAjaxFolderList(){
         }
     }
 
-    /**
+        /**
      * 하위 폴더 리스트 생성 함수
      * @param string mode 
      * @param object data 
      */
     function buildFolderListItem(mode, data){
+        var currentDepth = (mode == "folder") ? data.currentFolder.depth : 0
+        var selectorId = "shh-nav-board-list";
+
+        $.each(data.list, result)
+        var idPrefix = 'folderNav-item-';
+        function result(i, item){
+            var depth = item.depth - currentDepth
+            var nav = document.getElementById(selectorId)
+            if(depth == 1){
+                nav.innerHTML += buildHtml(item.id, `/folders/${item.id}`,item.name, item.count, depth)
+            } else {
+                var repeatString = "❯".repeat(depth-1)
+                var label = `${repeatString}&nbsp;&nbsp;${item.name}`
+                var html = buildHtml(item.id, `/folders/${item.id}`,label, item.count, depth)
+                //document.getElementById(`${idPrefix}${item.parent_id}`).nextElementSibling.innerHTML += html
+                document.getElementById(`${idPrefix}${item.parent_id}`).insertAdjacentHTML('beforebegin', html);
+            }
+        }
+        function buildHtml(id, link, label, count, depth){
+            var html = `<a href="${link}"
+                class="list-group-item list-group-item-action d-flex justify-content-between align-items-center sarc-depth-${depth}"
+                data-id="${id}" data-label="${label}">
+                    ${label}
+                    <span class="arch-indexEditMode-hide badge badge-secondary badge-pill">${count}</span>
+            </a><span style="display:none" id="${idPrefix}${id}"></span>`
+            return html
+        }
+    }
+
+    /**
+     * 하위 폴더 리스트 생성 함수
+     * @param string mode 
+     * @param object data 
+     */
+    function buildFolderListItem_Legacy(mode, data){
         var currentDepth = (mode == "folder") ? data.currentFolder.depth : 0
         var html = "";
         $.each(data.list, function(i,item){
@@ -173,8 +201,8 @@ function doAjaxFolderList(){
             if(depth >3) return
             var repeatString = "❯".repeat(depth-1)
             var label = `${repeatString}&nbsp;&nbsp;${item.name}`
-            html += buildHtml(`/folders/${item.id}`,label, item.doc_count, depth)
-            buildFolderListItem(item, currentDepth)
+            html += buildHtml(`/folders/${item.id}`,label, item.count, depth)
+            //buildFolderListItem(item, currentDepth)
         })
         //$("#shh-nav-board-list").append(html)
         document.getElementById("shh-nav-board-list").innerHTML = html
@@ -197,21 +225,27 @@ function doAjaxFolderList(){
 
         var link = ""
         var label = ""
+        var count = null
         if(mode == "folder"){
             link = `/folders/${data.currentFolder.id}?only=1`
             label = `${data.currentFolder.name} (only)`
+            count = data.currentFolder.doc_count
         } else {
             link = `/archives/${data.archive.id}?only=1`
             label = `${data.archive.name} (only)`
         }
 
         // html 생성
-        document.getElementById(selectorId).innerHTML = buildHtml(link, label)
+        document.getElementById(selectorId).innerHTML = buildHtml(link, label, count)
         document.getElementById(selectorId).style.display = ""
 
-        function buildHtml(link, label){
+        function buildHtml(link, label, count){
             var html = `<a href="${link}" 
-            class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" >${label}</a>`
+            class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" >${label}`
+            if(!func.empty(count)){
+                html += `<span class="badge badge-secondary badge-pill">${count}</span>`
+            }
+            html += "</a>";
             return html
         }
     }
