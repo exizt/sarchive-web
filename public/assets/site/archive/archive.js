@@ -13,7 +13,7 @@ function getFolderId(){
 }
 
 function getBodyParam(keyname, defValue){
-    def = (typeof defValue === "undefined" || defValue == "") ? "" : defValue
+    var def = (typeof defValue === "undefined" || defValue == "") ? "" : defValue
     var s = document.body.dataset[keyname]
     return (typeof s === "undefined" || s == "")? def : s
 }
