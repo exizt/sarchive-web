@@ -319,7 +319,7 @@ class ExplorerController extends BaseController {
                         p4.parent_id, 
                         p5.parent_id, 
                         p6.parent_id)
-            order       by p1.index, p2.index, p3.index, p4.index, p5.index, p1.id;",[$folderId]);
+            order by    p1.depth, p1.index;",[$folderId]);
             
             
 
@@ -339,7 +339,8 @@ class ExplorerController extends BaseController {
             left join   sa_folders p5 on p5.id = p4.parent_id  
             left join   sa_folders p6 on p6.id = p5.parent_id
             where       p1.archive_id = ?
-            order       by p1.index, p2.index, p3.index, p4.index, p5.index, p1.id;",[$archiveId]);
+            order by    p1.depth, p1.index;",[$archiveId]);
+            //order       by p1.index, p2.index, p3.index, p4.index, p5.index, p1.id;
         }
 
         $dataSet = array();

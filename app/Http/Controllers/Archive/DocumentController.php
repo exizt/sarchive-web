@@ -48,21 +48,30 @@ class DocumentController extends Controller {
         $folder = SAFolder::find($document->folder_id);
         $bookmark = ArchiveBookmark::firstOrNew(['id'=>$documentId]);
 
-        // create dataSet
-        $dataSet = $this->createViewData ();
-        $dataSet ['archive'] = $archive;
-        $dataSet ['folder'] = $folder;
-        //$dataSet ['folder']->paths_decode = json_decode($folder->path);
-        if(isset($folder)) $dataSet ['folder']->paths = $folder->paths();
-        $dataSet ['article'] = $document;
-        //$dataSet ['previousList'] = $this->makePreviousListLink($request, $archiveId);
-        $dataSet ['previousList'] = url()->previous();
-        $dataSet ['bookmark'] = $bookmark;
+        // create viewData
+        $viewData = $this->createViewData ();
+        $viewData ['archive'] = $archive;
+        $viewData ['folder'] = $folder;
+        //$viewData ['folder']->paths_decode = json_decode($folder->path);
+        if(isset($folder)) $viewData ['folder']->paths = $folder->paths();
+        $viewData ['article'] = $document;
+        $viewData ['previousLink'] = url()->previous();
+        $viewData ['bookmark'] = $bookmark;
 
         // 공용 파라미터 처리
-        $dataSet ['parameters']['archiveId'] = $archiveId;
-        return view ( self::VIEW_PATH . '.show', $dataSet );
+        $viewData ['parameters']['archiveId'] = $archiveId;
+
+        $linkParams = $this->buildLinkParams($request);
+        $actionLinks = (object)[];
+        $actionLinks->edit = route(self::ROUTE_ID.'.edit',array_merge($linkParams,['doc'=>$document->id]));
+        // list 링크 생성
+        $actionLinks->list = $this->generatePreviousListLink($archive->id, $linkParams);
+
+        $viewData ['actionLinks'] = $actionLinks;
+        return view ( self::VIEW_PATH . '.show', $viewData );
     }
+
+
 
 
     /**
@@ -83,28 +92,17 @@ class DocumentController extends Controller {
         // archiveId 권한 체크 및 조회
         $archive = $this->retrieveAuthArchive($archiveId);
 
-        /*
-        // 권한 체크
-        SAArchive::select(['id'])
-            ->where ( [['user_id', Auth::id() ],['id',$archiveId]])
-            ->firstOrFail ();
-        */
-        
+        // document 개체 생성
         $article = new SADocument;
         
-        // 게시판 목록을 조회. 셀렉트박스 를 만들기 위함.
-        //$folderSelectList = $this->getFolderFormSelectList($archiveId);
-
         // dataSet 생성
         $dataSet = $this->createViewData ();
         $dataSet ['article'] = $article;
         $dataSet ['parameters']['archive_id'] = $archiveId;
-        //$dataSet ['cancelButtonLink'] = $this->makePreviousListLink($request,$profileId);
-        $dataSet ['cancelButtonLink'] = url()->previous();
-        //$dataSet ['folderList'] = $folderSelectList;
         return view ( self::VIEW_PATH . '.create', $dataSet );
     }
     
+
 
     /**
      * 문서 편집
@@ -121,19 +119,18 @@ class DocumentController extends Controller {
         // archiveId 권한 체크 및 조회
         $archive = $this->retrieveAuthArchive($archiveId);
 
-        // 게시판 목록을 조회. 셀렉트박스 를 만들기 위함.
-        //$folderSelectList = $this->getFolderFormSelectList($archiveId);
+        // data 생성
+        $viewData = $this->createViewData ();
+        $viewData ['article'] = $document;
 
-        // create dataSet
-        $dataSet = $this->createViewData ();
-        $dataSet ['article'] = $document;
-        //$dataSet ['parameters']['profile'] = $archiveId;
-        //$dataSet ['cancelButtonLink'] = $this->makePreviousShowLink($request,$profileId, $documentId);
-        //$dataSet ['cancelButtonLink'] = url()->previous();
-        $dataSet ['cancelButtonLink'] = route(self::ROUTE_ID.'.show', $document->id );
-        //$dataSet ['folderList'] = $folderSelectList;
-        return view ( self::VIEW_PATH . '.edit', $dataSet );
+        $linkParams = $this->buildLinkParams($request);
+        $actionLinks = (object)[];
+        $actionLinks->cancel = route(self::ROUTE_ID.'.show', array_merge($linkParams,['doc'=>$document->id]) );
+
+        $viewData ['actionLinks'] = $actionLinks;
+        return view ( self::VIEW_PATH . '.edit', $viewData );
         
+
     }
 
     
@@ -284,12 +281,16 @@ class DocumentController extends Controller {
             }
         }
 
+
         // 결과 처리
         if ($submitAction === 'continue') {
             return redirect()->back()->with('message', '저장되었습니다.');
+        } else {
+            $linkParams = $this->buildLinkParamsByUrl(url()->previous());
+
+            return redirect()->route( self::ROUTE_ID.'.show', array_merge($linkParams,['doc'=>$document->id]))
+            ->with('message', '저장되었습니다.' );
         }
-        return redirect()->route( self::ROUTE_ID.'.show', $document->id)
-        ->with('message', '저장되었습니다.' );
     }
 
     
@@ -316,8 +317,11 @@ class DocumentController extends Controller {
         // folder 의 문서 수 변경.
         $this->updateFolderDocCount($folderId);
         
+        $linkParams = $this->buildLinkParamsByUrl(url()->previous());
+        $previousListLink = $this->generatePreviousListLink($archive->id, $linkParams);
+
         // @todo 폴더의 게시물 목록 or 아카이브의 게시물 목록으로 이동
-        return redirect('/archives/'.$archive->id)
+        return redirect($previousListLink)
         ->with('message', '삭제되었습니다.' );
     }
 
@@ -372,6 +376,79 @@ class DocumentController extends Controller {
 
 
     /**
+     * 목록으로 돌아가는 링크를 생성.
+     * 일반적인 경우는 route메소드에 인자값만 추가로 넘겨주면 되지만,
+     * 목록으로 돌아가는 링크는 제각기 다르므로 이 메서드에서 정의해준다.
+     */
+    private function generatePreviousListLink($archiveId, $linkParams){
+        $params = array();
+        
+        if(isset($linkParams['lfolder'])){
+            // 폴더에 의한 최신 게시물
+            $explorerRouteId = 'explorer.folder';
+            $params['id'] = $linkParams['lfolder'];
+        } else if(isset($linkParams['lcategory'])){
+            // 카테고리에 의한 최신 게시물
+            $explorerRouteId = 'explorer.category';
+            $params['archive'] = $archiveId;
+            $params['category'] = $linkParams['lcategory'];
+            // 카테고리 접근
+            //$cat = urlencode($params['lcategory']);
+        } else {
+            // 아카이브의 최신 게시물(기본값)
+            $explorerRouteId = 'explorer.archive';
+            $params['id'] = $archiveId;
+        }
+        $link = route($explorerRouteId, $params);
+        return $link;
+    }
+
+
+
+    /**
+     * Request를 통해서 링크에 이용될 파라미터 배열을 생성.
+     * 
+     * @return array
+     */
+    private function buildLinkParams(Request $request){
+        $parameters = array();
+        $paramKeys = ['larchive','lcategory','lfolder'];
+        foreach($paramKeys as $pKey){
+            $value = $request->input($pKey);
+            if(!empty($value)){
+
+                $parameters[$pKey] = $value;
+            }
+        }
+
+        return $parameters;
+    }
+
+
+
+    /**
+     * URL 문자열을 통해서 링크에 이용될 파라미터 배열을 생성한다.
+     * 
+     * @return array
+     */
+    private function buildLinkParamsByUrl($url){
+        $allowed_keys = ['lcategory','lfolder','larchive'];
+        $matches = array();
+
+        // query 부분을 배열화
+        $parts = parse_url($url);
+        if(!empty($parts['query'])){
+            parse_str($parts['query'], $queryArray);
+            
+            // 허용된 것만 처리
+            $matches = array_intersect_key($queryArray, array_flip($allowed_keys));
+        }
+        return $matches;
+    }
+
+
+
+    /**
      * Category 와 Document 의 릴레이션 갱신
      */
     private function updateCategoryDocumentRel($archiveId, $documentId, $categoryNames){
@@ -401,21 +478,6 @@ class DocumentController extends Controller {
         }
     }
 
-        
-    
-    /**
-     * 문서 편집 때 폼에 나타날 '폴더 선택'을 위한 목록
-     * 이거 향후 개선될 필요가 있음. 셀렉트박스로는 한계니까..
-     */
-    protected function getFolderFormSelectList($archiveId){
-        // 게시판 목록을 조회. 셀렉트박스 를 만들기 위함.
-        $list = SAFolder::select(['id','name','parent_id','depth'])
-        ->where ( 'archive_id', $archiveId )
-        ->orderBy('index','asc')->get();
-        
-        return $list;
-    }
-
 
 
     /**
@@ -428,6 +490,17 @@ class DocumentController extends Controller {
             ->where ( [['user_id', Auth::id() ],['id',$id]])
             ->firstOrFail ();
         return $this->archive;
+    }
+
+
+        
+    /**
+     * folder 테이블의 doc_count 값을 갱신
+     */
+    private function updateFolderDocCount($folderId)
+    {
+        if(empty($folderId)) return;
+        SAFolder::updateDocCountAll($folderId);
     }
 
 
@@ -452,130 +525,5 @@ class DocumentController extends Controller {
         $data ['layoutParams'] = $layoutParams;
         $data ['bodyParams'] = $bodyParams;
         return $data;
-    }
-
-        
-    /**
-     * folder 테이블의 doc_count 값을 갱신
-     * @deprecated 코드 개선이 필요함.
-     */
-    private function updateFolderDocCount($folderId)
-    {
-        if(empty($folderId)) return;
-        $folder = SAFolder::findOrFail($folderId);
-        
-        /**
-         * folderId 기준으로 doc_count 갱신
-         */
-        $count = SADocument::where('folder_id', $folderId)->count();
-        $folder->doc_count = $count;
-        $folder->save();
-
-        // 상위를 탐색하면서 doc_count_all 갱신
-        // 현재 폴더의 system_path 를 / 기준으로 나누면 제각기 상위 노드의 id이다. 
-        // 이것을 기준으로 갱신한다.
-
-        /* 쿼리
-        update sa_folders 
-          inner join (select id, name, system_path, (select count(*) from sa_documents as doc inner join sa_folders as p1 on doc.folder_id = p1.id
-          where left(p1.system_path, length(sa_folders.system_path)) = sa_folders.system_path) as count
-          from sa_folders) as d
-        on d.id = sa_folders.id
-        set sa_folders.doc_count_all = d.count
-        */
-        $paths = $folder->paths_array();
-        if(count($paths) > 1){
-            SAFolder::join(DB::raw('(select id, name, system_path, 
-                    (select count(*) from sa_documents as doc inner join sa_folders as p1 on doc.folder_id = p1.id
-                    where left(p1.system_path, length(sa_folders.system_path)) = sa_folders.system_path) as count
-                from sa_folders) as d'),'d.id','=','sa_folders.id')
-            ->whereIn('sa_folders.id', $folder->paths_array())
-            ->update(['sa_folders.doc_count_all'=> DB::raw('d.count')]);
-        }
-
-        /*
-        $affected = DB::update('update sa_boards 
-            set count = (select count(id) from archives
-            where archives.board_id = sa_boards.id
-            group by board_id)');
-        */
-        
-        // 좀 더 세밀화 된 쿼리
-        /*
-        DB::update('update sa_boards
-            set count = (select count(sa_archives.id)
-                from 
-                sa_archives,
-                (SELECT node.board_id, parent.board_id as parent_id
-                    FROM sa_board_tree AS node ,
-                             sa_board_tree AS parent
-                    WHERE node.lft BETWEEN parent.lft AND parent.rgt
-                ) as cate
-                WHERE 
-                cate.board_id = sa_archives.board_id
-                and cate.parent_id = sa_boards.id
-                group by cate.parent_id)');
-        */
-    }
-    
-    /**
-     * 이전 링크 주소.
-     * 바로 이전 주소를 가지고 셋팅을 하는데, '새로고침' 을 하는 경우도 있기 때문에, 세션에 넣어두고 활용한다.
-     * 뭔가 동작이 원하는 느낌이 아니다...살펴봐야 할 듯...
-     * 
-     * url()->previous()가 바로 직전 주소를 가져오는데, 새로고침을 해버리면 자신의 링크만을 가리키게 된다.
-     * 그 경우를 보정하기 위한 메서드이다. 
-     * @param Request $rqeust
-     * @return string
-     */
-    protected function makePreviousListLink(Request $request, $archiveId)
-    {
-        $previous = url()->previous();
-        
-        $routeLink = route ( self::ROUTE_ID . '.index', ['profile'=> $archiveId]);
-
-        //``
-
-        return (strtok($previous,'?') == $routeLink) ? $previous : $routeLink;
-    }
-
-    /**
-     * '취소 링크' 생성.
-     */
-    protected function makePreviousShowLink(Request $request, $profileId, $archiveId)
-    {
-        $previous = url()->previous();
-        
-        $routeLink = route ( self::ROUTE_ID . '.show', ['profile'=> $profileId, 'archive'=>$archiveId]);
-
-        return (strtok($previous,'?') == $routeLink) ? $previous : $routeLink;
-    }
-
-    /**
-     * 이전 링크 주소.
-     * 바로 이전 주소를 가지고 셋팅을 하는데, '새로고침' 을 하는 경우도 있기 때문에, 세션에 넣어두고 활용한다.
-     * 뭔가 동작이 원하는 느낌이 아니다...살펴봐야 할 듯...
-     * @param Request $rqeust
-     * @return string
-     * @deprecated 사용하지 않음.
-     */
-    protected function getPreviousLink(Request $request)
-    {
-        $session_previousName = 'devscrap-previousList';
-        // 바로 이전 주소가 list 형태의 index 경로라면, flash session 에 저장.
-        $request->session()->reflash();
-        $request->session()->keep([$session_previousName]);
-        
-        $previous = url()->previous();
-        $previous_identifier = strtok($previous,'?');
-        
-        // 해당 패턴과 일치하거나 index 의 주소인 경우에 previous 세션에 저장
-        if($previous_identifier == route ( self::ROUTE_ID . '.index', ['profile'=>1])){
-            $request->session()->flash($session_previousName, $previous);
-        }
-        
-        //session 에 해당 값이 있으면 세션 값 사용. 없으면 목록 주소로 대체.
-        return ($request->session()->get($session_previousName,'') != '') ?
-        $request->session()->get($session_previousName,'') : route ( self::ROUTE_ID . '.index', ['profile'=>1]);
     }
 }

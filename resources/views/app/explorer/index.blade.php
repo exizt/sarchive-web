@@ -9,7 +9,11 @@
                     <div class="row px-0 mx-0">
                         <div class="d-flex w-100 justify-content-between">
                             @if(isset($parameters['folder']))
-                            <h4 class="">글 목록 (선택된 폴더 : {{ $parameters['folder']->name }})</h4>
+                            <div>
+                                <h4 class="">글 목록 (선택된 폴더 : {{ $parameters['folder']->name }})
+                                    <a href="{{ route('folders.edit', [$parameters['folder']->id]) }}" class="btn btn-sm btn-outline-primary">편집</a>
+                                </h4>
+                            </div>
                             @else
                             <h4 class="">아카이브</h4>
                             @endif
@@ -27,7 +31,12 @@
                     <div class="list-group">
                         @foreach ($masterList as $item)
                         <a class="list-group-item list-group-item-action flex-column align-items-start" 
-                            href="{{ "/doc/{$item->id}" }}">
+                        @if(isset($parameters['folder']))
+                            href="{{ "/doc/{$item->id}?lfolder={$parameters['folder']->id}" }}"
+                        @else 
+                            href="{{ "/doc/{$item->id}" }}"
+                        @endif
+                            >
                             <div class="d-flex w-100 justify-content-between">
                                 <h5 class="mb-1">{{ $item->title }}</h5>
                                 <small>{{ $item->created_at->format('Y-m-d') }}</small>
