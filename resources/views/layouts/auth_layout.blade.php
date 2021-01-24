@@ -12,17 +12,18 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-title" content="S아카이브">
-<link rel="shortcut icon" href="/assets/brand/favicon/favicon-2021.ico" />
+<link rel="shortcut icon" href="/assets/favicon/favicon-2021.ico" />
 <!-- ## styles ## -->
-<link rel="stylesheet" href="/assets/lib/bootstrap/4.3.1-dark-theme/css/bootstrap.css">
-<link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/fontawesome.min.css">
-<link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/brands.min.css">
-<link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/solid.min.css">
+<!--<link rel="stylesheet" href="/assets/lib/bootstrap/4.3.1-dark-theme/css/bootstrap.css">-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.6.0/darkly/bootstrap.min.css" integrity="sha512-A/WvCV75maYUI3F3yjeSqYg0dUIepPRx14Qw8EZjJ/udG5/s3uDWLHnm1FSbYzrJg4RLdAdEm/f6+1V6AxCBJQ==" crossorigin="anonymous" />
+<!--<link rel="stylesheet" href="/assets/lib/bootstrap/4.3.1/css/bootstrap.min.css">-->
+<link rel="stylesheet" href="/assets/css/archive.css">
 </head>
 <body>
 	<header>
-		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-			<a class="navbar-brand" href="/"><i class="fab fa-superpowers fa-spin" aria-hidden="true"></i>&nbsp;&nbsp;S아카이브</a>
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark py-2">
+			<a id="logo" class="navbar-brand mr-2" href="/"></a>
+			<a class="navbar-brand" href="/">S아카이브</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
