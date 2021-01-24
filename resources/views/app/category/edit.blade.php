@@ -15,7 +15,7 @@ $(function() {
 
 <div class="container-fluid mt-4 mb-5">
 	<form class="form-horizontal" role="form" method="POST" 
-		action="{{ route($ROUTE_ID.'.update',['archiveId'=>$archive->id,'category'=>$item->id]) }}">
+		action="{{ route($ROUTE_ID.'.update',['archive'=>$archive->id,'category'=>$item->id]) }}">
 		<input type="hidden" name="_token" value="{{ csrf_token() }}">
 		<input type="hidden" name="_method" value="PUT">
 
@@ -50,8 +50,10 @@ $(function() {
 				<p class="lead">정말 삭제하시겠습니까?</p>
 			</div>
 			<div class="modal-footer">
-				<form method="POST" action="{{ route($ROUTE_ID.'.destroy',['archiveId'=>$archive->id,'category'=>$item->id]) }}">
-					<input type="hidden" name="_token" value="{{ csrf_token() }}"> <input type="hidden" name="_method" value="DELETE">
+				<form method="POST" 
+					action="{{ route($ROUTE_ID.'.destroy',['archive'=>$archive->id,'category'=>$item->id]) }}">
+					<input type="hidden" name="_token" value="{{ csrf_token() }}">
+					<input type="hidden" name="_method" value="DELETE">
 					<button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
 					<button type="submit" class="btn btn-danger">예</button>
 				</form>

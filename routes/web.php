@@ -15,9 +15,9 @@ Route::get('ajax/folderList', 'Archive\ExplorerController@doAjax_getChildFolder'
 // SArchive ----------------------------
 Route::middleware(['auth'])->group(function () {
     Route::get('static/{uri}', 'Home@staticPage');
-    Route::get('archives/{id}', 'Archive\ArchiveController@first')->name('archive.first')->where('id', '[0-9]+');;
-    Route::get('archives/{archiveId}/search', 'Archive\ExplorerController@search')->name('search')->where('archiveId', '[0-9]+');
-    Route::get('archives/{id}/latest', 'Archive\ExplorerController@showDocsByArchive')->name('archive.retrieve');
+    Route::get('archives/{id}', 'Archive\ArchiveController@first')->name('archive.first')->where('id', '[0-9]+');
+    Route::get('archives/{archive}/search', 'Archive\ExplorerController@search')->name('search')->where('archive', '[0-9]+');
+    Route::get('archives/{id}/latest', 'Archive\ExplorerController@showDocsByArchive')->name('explorer.archive')->where('id', '[0-9]+');
     Route::get('folders/{id}', 'Archive\ExplorerController@showDocsByFolder')->name('explorer.folder')->where('id', '[0-9]+');
     Route::get('archives/{archive}/category/{category}', 'Archive\ExplorerController@showDocsByCategory')->name('explorer.category');
 

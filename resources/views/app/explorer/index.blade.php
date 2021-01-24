@@ -58,7 +58,7 @@
                         <ol class="breadcrumb" id="shh-nav-board-path"></ol>
                     </nav>
                     <h5>게시판</h5>
-                    <div class="list-group" id="shh-nav-board-list"></div>
+                    <div class="list-group sarc-layout-nav-folder-list" id="shh-nav-board-list"></div>
                     <div class="list-group pt-3" id="js-folderNav-folderOnly" style="display:none"></div>
                 </div>
             </div>
@@ -67,24 +67,9 @@
         <div class="text-xs-center">{{ $masterList->appends($paginationParams)->links() }}</div>
     </div>
 </div>
-<style>
-.shh-navboardlist-depth-1{
-    /*padding-left: 1.75rem;*/
-}
-.shh-navboardlist-depth-2{
-    padding-left: 3.5rem;
-}
-.shh-navboardlist-depth-3{
-    padding-left: 6.0em;
-}
-.shh-navboardlist-depth-4{
-    padding-left: 8.5rem;
-}
-</style>
 <script>
     $(function(){
         doAjaxFolderList()
     })
 </script>
-
 @endsection

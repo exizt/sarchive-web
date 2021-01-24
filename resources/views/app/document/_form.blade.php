@@ -87,31 +87,32 @@ tinymce.init({
 </div>
 <script>
 $(function(){
-	$(".shh-evt-append-ref").on("click",function(){
-		if(typeof $(this).data("value") !== "undefined"){
-			$("#articleReference").val($(this).data("value"))
-		}
-	});
-	$("#folderName").on("click", function(){
-		console.log("click")
-		$('#modalChoiceFolder').modal('show')
-    loadJsTreeIframe()
-  })
-  $("#btnChangeFolderId").on("click", function(){
-    var folderId = $("#selectedFolderId").val()
-    $("#folder_id").val(folderId)
-    var folderName = $("#selectedFolderName").val()
-    $("#folderName").val(folderName)
-  })
-  $("#btnChangeFolderIdNone").on("click", function(){
-    $("#folder_id").val("")
-    $("#folderName").val("")
-  })
+    $(".shh-evt-append-ref").on("click",function(){
+        if(typeof $(this).data("value") !== "undefined"){
+            $("#articleReference").val($(this).data("value"))
+        }
+    });
+    $("#folderName").on("click", function(){
+        //console.log("click")
+        $('#modalChoiceFolder').modal('show')
+        loadJsTreeIframe()
+    })
+    $("#btnChangeFolderId").on("click", function(){
+        var folderId = $("#selectedFolderId").val()
+        $("#folder_id").val(folderId)
+        var folderName = $("#selectedFolderName").val()
+        $("#folderName").val(folderName)
+    })
+    $("#btnChangeFolderIdNone").on("click", function(){
+        $("#folder_id").val("")
+        $("#folderName").val("")
+    })
 });
 
-function loadJsTreeIframe(){
-  document.getElementById("jsTreeIframe").src = "/jstree-ajax.html";
+function bindFolderSelectorDialog(){
+    
 }
-
-
+function loadJsTreeIframe(){
+    document.getElementById("jsTreeIframe").src = "/jstree-ajax.html";
+}
 </script>
