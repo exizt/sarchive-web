@@ -27,7 +27,8 @@ $(function() {
 					<div>
 						<button type="submit" class="btn btn-primary btn-sm site-shortcut-key-s" name="action" value="finished">저장</button>
 						<button type="submit" class="btn btn-outline-success btn-sm" name="action" value="continue">중간 저장</button>
-						<a class="btn btn-outline-secondary btn-sm site-shortcut-key-c" href="{{ url()->previous() }}" role="button">뒤로</a>
+						<a class="btn btn-outline-secondary btn-sm site-shortcut-key-c" 
+							href="{{ route('explorer.category',['archive'=>$archive->id,'category'=>urlencode($item->name)]) }}" role="button">뒤로</a>
 					</div>
 					<button type="button" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#modal-delete">삭제</button>
 				</div>
