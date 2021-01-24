@@ -19,6 +19,7 @@ Laravel 에서 필요한 PHP 구성
     2. 소스트리 > 깃 플로우 > 릴리즈 : 'v~~'
     3. config/_app.php 에서 버전 정보 수정 후 커밋
     4. 소스트리 > 깃 플로우 > 릴리즈 마무리
+    5. 'push' 실행
 2. 원격) `update` 스크립트 실행 (아래의 내용을 하나로 모은 스크립트)
   1. `git pull` : git 내려받기
   2. `composer install --optimize-autoloader --no-dev` : composer.lock을 토대로 설치.

@@ -20,6 +20,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('archives/{id}/latest', 'Archive\ExplorerController@showDocsByArchive')->name('explorer.archive')->where('id', '[0-9]+');
     Route::get('folders/{id}', 'Archive\ExplorerController@showDocsByFolder')->name('explorer.folder')->where('id', '[0-9]+');
     Route::get('archives/{archive}/category/{category}', 'Archive\ExplorerController@showDocsByCategory')->name('explorer.category');
+    Route::get('folder-selector', 'Archive\ExplorerController@folderSelector')->name('explorer.folder')->where('id', '[0-9]+');
 
     Route::resource('archives', 'Archive\ArchiveController', ['except'=>['show']]);
     Route::post('archives/updateSort', 'Archive\ArchiveController@updateSort')->name('archives.updateSort');

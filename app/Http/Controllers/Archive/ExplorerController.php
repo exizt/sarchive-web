@@ -200,6 +200,32 @@ class ExplorerController extends BaseController {
     }
     
 
+    
+
+    public function folderSelector(Request $request){
+        $archiveId = $request->input('archive');
+        $excluded = $request->input('excluded');
+        $folderIdReturn = $request->input('idReturn');
+        $folderNameReturn = $request->input('nameReturn');
+
+        // archiveId 권한 체크 및 조회
+        $archive = $this->retrieveAuthArchive($archiveId);
+
+
+        $dataSet = $this->createViewData ();
+        if(!empty($excluded) && $excluded != 'undefined'){
+            $dataSet['bodyParams']['excluded'] = $excluded;
+        }
+        if(!empty($folderIdReturn) && $folderIdReturn != 'undefined'){
+            $dataSet['bodyParams']['folder-id-of-parent'] = $folderIdReturn;
+        }
+        if(!empty($folderNameReturn) && $folderNameReturn != 'undefined'){
+            $dataSet['bodyParams']['folder-name-of-parent'] = $folderNameReturn;
+        }
+        return view ( self::VIEW_PATH . '.folder-selector', $dataSet );
+    }
+
+
     /**
      * 상단 네비게이션 아이템 조회
      */
