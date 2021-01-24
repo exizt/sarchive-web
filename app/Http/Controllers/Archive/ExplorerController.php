@@ -55,7 +55,7 @@ class ExplorerController extends BaseController {
         if($is_only) $qry = $qry->whereNull('folder_id');
 
         $masterList = $qry->orderBy ( 'created_at', 'desc' )
-        ->paginate(20);
+        ->paginate(15);
 
         // dataSet 생성
         $dataSet = $this->createViewData ();
@@ -92,7 +92,7 @@ class ExplorerController extends BaseController {
                 ->whereRaw ( 'left(system_path, length(?)) = ?', [$folder_path, $folder_path] )
                 ->with ('folder')
                 ->orderBy ( 'created_at', 'desc' )
-                ->paginate(20);
+                ->paginate(15);
                 //print_r(DB::getQueryLog());
         } else {
             /**
@@ -102,7 +102,7 @@ class ExplorerController extends BaseController {
             ->where ( 'folder_id',$folder->id )
             ->with ('folder')
             ->orderBy ( 'created_at', 'desc' )
-            ->paginate(20);
+            ->paginate(15);
         }
         
         // dataSet 생성
@@ -139,7 +139,7 @@ class ExplorerController extends BaseController {
               ->join("sa_category_document_rel as rel",'rel.document_id','=','sa_documents.id')
             ->where ( 'rel.category_name',$categoryName )
             ->orderBy ( 'sa_documents.created_at', 'desc' )
-            ->paginate(20);
+            ->paginate(15);
 
         // 하위 카테고리 조회
         $childCategories = SACategoryRel::where('category_name',$categoryName)

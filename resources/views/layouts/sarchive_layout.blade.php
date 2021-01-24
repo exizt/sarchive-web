@@ -12,31 +12,31 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-title" content="S아카이브">
-<link rel="shortcut icon" href="/assets/brand/favicon/favicon-2021.ico" />
+<link rel="shortcut icon" href="/assets/favicon/favicon-2021.ico" />
 <!-- styles -->
-<link rel="stylesheet" href="/assets/lib/bootstrap/4.3.1/css/bootstrap.css">
-<link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/fontawesome.min.css">
-<link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/brands.min.css">
-<link rel="stylesheet" href="/assets/lib/font-awesome/font-awesome-5.9.0/css/solid.min.css">
-<!--<link rel="stylesheet" href="/assets/lib/font-awesome-4.7.0/css/font-awesome.min.css">-->
+<!--<link rel="stylesheet" href="/assets/lib/bootstrap/4.3.1/css/bootstrap.min.css">-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA==" crossorigin="anonymous" />
 <link rel="stylesheet" href="/assets/css/site-base.css">
 <link rel="stylesheet" href="/assets/css/site-layouts.css">
 <link rel="stylesheet" href="/assets/modules/scroll-up/css/sh-scrollup.css">
+<link rel="stylesheet" href="/assets/css/archive.css">
 <!-- scripts -->
-<script src="/assets/lib/jquery/jquery-3.2.1.min.js"></script>
+<!--<script src="/assets/lib/jquery/jquery-3.2.1.min.js"></script>-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
 <!-- popper.JS : dropdown of bootstrap 을 위해 필요. (bootstrap 4.0.0 이후로 추가) -->
-<script src="/assets/lib/bootstrap/required/4.3.1/popper/1.14.3/popper.min.js"></script>
-<script src="/assets/lib/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<!--<script src="/assets/lib/bootstrap/required/4.3.1/popper/1.14.3/popper.min.js"></script>-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/popper.min.js" integrity="sha512-eHo1pysFqNmmGhQ8DnYZfBVDlgFSbv3rxS0b/5+Eyvgem/xk0068cceD8GTlJOZsUrtjANIrFhhlwmsL1K3PKg==" crossorigin="anonymous"></script>
+<!--<script src="/assets/lib/bootstrap/4.3.1/js/bootstrap.min.js"></script>-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js" integrity="sha512-XKa9Hemdy1Ui3KSGgJdgMyYlUg1gM+QhL6cnlyTe2qzMCYm4nAZ1PsVerQzTTXzonUR+dmswHqgJPuwCq1MaAg==" crossorigin="anonymous"></script>
 <script src="/assets/js/site-base.js"></script>
 <!-- ## semi modules ## -->
 <script src="/assets/modules/scroll-up/sh-scrollup.min.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 @stack('layout-styles')
 @stack('layout-scripts')
-<link rel="stylesheet" href="/assets/site/archive/archive.css">
 <script src="/assets/js/core-func.js"></script>
 <script src="/assets/js/shortcut-key-event.js"></script>
-<script src="/assets/site/archive/archive.js"></script>
+<script src="/assets/js/archive.js"></script>
 <script>
 document.onkeyup = shortcutKeyEvent;
 </script>
@@ -44,9 +44,8 @@ document.onkeyup = shortcutKeyEvent;
 <body @isset($bodyParams) @foreach ($bodyParams as $k => $v) data-{{$k}}="{{$v}}" @endforeach @endisset >
   <header>
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-          <a class="navbar-brand mr-2" href="/" style="font-size:1.5rem;">
-              <i class="fab fa-superpowers fa-spin" aria-hidden="true"></i>
-          </a>
+          <a id="logo" class="navbar-brand mr-2" href="/"></a>
+
           @isset($layoutParams['archiveId'])
           <a class="navbar-brand" href="/archives/{{$layoutParams['archiveId']}}">
               {{$layoutParams['archiveName'] ?? 'S아카이브'}}

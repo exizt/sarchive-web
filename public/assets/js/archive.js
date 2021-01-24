@@ -164,9 +164,9 @@ function doAjaxFolderList(){
     function buildFolderListItem(mode, data){
         var currentDepth = (mode == "folder") ? data.currentFolder.depth : 0
         var selectorId = "shh-nav-board-list";
+        var idPrefix = 'folderNav-item-';
 
         $.each(data.list, result)
-        var idPrefix = 'folderNav-item-';
         function result(i, item){
             var depth = item.depth - currentDepth
             var nav = document.getElementById(selectorId)
