@@ -104,6 +104,7 @@ class FolderController extends Controller {
         $dataSet = $this->createViewData ();
         $dataSet ['item'] = $folder;
         $dataSet ['parentFolder'] = $parentFolder;
+        $dataSet ['bodyParams']['folder'] = $folder->id;
         $dataSet ['cancelButtonLink'] = url()->previous();
         return view ( self::VIEW_PATH . '.edit', $dataSet );
     }

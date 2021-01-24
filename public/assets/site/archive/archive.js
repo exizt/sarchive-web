@@ -12,6 +12,11 @@ function getFolderId(){
     return $("body").data("folder")
 }
 
+function getBodyParam(keyname, defValue){
+    def = (typeof defValue === "undefined" || defValue == "") ? "" : defValue
+    var s = document.body.dataset[keyname]
+    return (typeof s === "undefined" || s == "")? def : s
+}
 
 var func = {
     exists : function(v){
@@ -337,4 +342,17 @@ function pagination_responsive($paginate){
             $paginate.find('li').eq(11).after(html);
         }
     }
+}
+
+/**
+ * folderSelector 호출
+ */
+function loadFolderSelectorIframe(iframeId, archiveId, options){
+    var url = `/folder-selector?archive=${archiveId}`
+
+    if(typeof options !== "undefined"){
+        var s = new URLSearchParams(options).toString();
+        url += "&"+s
+    }
+    document.getElementById(iframeId).src = url;
 }

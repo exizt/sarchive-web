@@ -86,33 +86,38 @@ tinymce.init({
 	</div>
 </div>
 <script>
-$(function(){
-    $(".shh-evt-append-ref").on("click",function(){
-        if(typeof $(this).data("value") !== "undefined"){
-            $("#articleReference").val($(this).data("value"))
-        }
+    $(function(){
+        $(".shh-evt-append-ref").on("click",function(){
+            if(typeof $(this).data("value") !== "undefined"){
+                $("#articleReference").val($(this).data("value"))
+            }
+        });
+        $("#folderName").on("click", function(){
+            $('#modalChoiceFolder').modal('show')
+            loadFolderSelectorIframe("jsTreeIframe",getArchiveId(), {
+                idReturn: "selectedFolderId",
+                nameReturn: "selectedFolderName",
+            })
+        })
+        bindFolderSelectorDialog()
     });
-    $("#folderName").on("click", function(){
-        //console.log("click")
-        $('#modalChoiceFolder').modal('show')
-        loadJsTreeIframe()
-    })
-    $("#btnChangeFolderId").on("click", function(){
-        var folderId = $("#selectedFolderId").val()
-        $("#folder_id").val(folderId)
-        var folderName = $("#selectedFolderName").val()
-        $("#folderName").val(folderName)
-    })
-    $("#btnChangeFolderIdNone").on("click", function(){
-        $("#folder_id").val("")
-        $("#folderName").val("")
-    })
-});
 
-function bindFolderSelectorDialog(){
-    
-}
-function loadJsTreeIframe(){
-    document.getElementById("jsTreeIframe").src = "/jstree-ajax.html";
-}
+    function bindFolderSelectorDialog(){
+        var folder_id_sel = "folder_id"
+        var folder_name_sel = "folderName"
+
+        document.getElementById("btnChangeFolderId").addEventListener('click', event => {
+            var folderId = document.getElementById("selectedFolderId").value
+            var folderName = document.getElementById("selectedFolderName").value
+            setFolderIdName(folderId, folderName)
+        })
+        document.getElementById("btnChangeFolderIdNone").addEventListener('click', event => {
+            setFolderIdName("0","")
+        })
+
+        function setFolderIdName(id, name){
+            document.getElementById(folder_id_sel).value = id
+            document.getElementById(folder_name_sel).value = name
+        }
+    }
 </script>
