@@ -136,7 +136,6 @@ function doAjaxFolderList(){
         if(mode == "folder"){
             if(typeof data.currentPaths !== "undefined"){
                 $.each(data.currentPaths,function(i,item){
-                    //console.log(item)
                     html += buildHtml(`/folders/${item.id}`, item.name)
                 })
             }
@@ -152,12 +151,46 @@ function doAjaxFolderList(){
         }
     }
 
-    /**
+        /**
      * 하위 폴더 리스트 생성 함수
      * @param string mode 
      * @param object data 
      */
     function buildFolderListItem(mode, data){
+        var currentDepth = (mode == "folder") ? data.currentFolder.depth : 0
+        var selectorId = "shh-nav-board-list";
+
+        $.each(data.list, result)
+        function result(i, item){
+            var idPrefix = 'folderNav-item-';
+            var depth = item.depth - currentDepth
+            var nav = document.getElementById(selectorId)
+            if(depth == 1){
+                nav.innerHTML += buildHtml(`${idPrefix}${item.id}`, `/folders/${item.id}`,item.name, item.count, depth)
+            } else {
+                var repeatString = "❯".repeat(depth-1)
+                var label = `${repeatString}&nbsp;&nbsp;${item.name}`
+                var html = buildHtml(`${idPrefix}${item.id}`, `/folders/${item.id}`,label, item.count, depth)
+                //document.getElementById(`${idPrefix}${item.parent_id}`).nextElementSibling.innerHTML += html
+                document.getElementById(`${idPrefix}${item.parent_id}`).insertAdjacentHTML('beforebegin', html);
+            }
+        }
+        function buildHtml(id, link, label, count, depth){
+            var html = `<a href="${link}"
+                class="list-group-item list-group-item-action d-flex justify-content-between align-items-center sarc-depth-${depth}">
+                    ${label} 
+                    <span class="badge badge-secondary badge-pill">${count}</span>
+            </a><span style="display:none" id="${id}"></span>`
+            return html
+        }
+    }
+
+    /**
+     * 하위 폴더 리스트 생성 함수
+     * @param string mode 
+     * @param object data 
+     */
+    function buildFolderListItem_Legacy(mode, data){
         var currentDepth = (mode == "folder") ? data.currentFolder.depth : 0
         var html = "";
         $.each(data.list, function(i,item){
@@ -168,7 +201,7 @@ function doAjaxFolderList(){
             var repeatString = "❯".repeat(depth-1)
             var label = `${repeatString}&nbsp;&nbsp;${item.name}`
             html += buildHtml(`/folders/${item.id}`,label, item.count, depth)
-            buildFolderListItem(item, currentDepth)
+            //buildFolderListItem(item, currentDepth)
         })
         //$("#shh-nav-board-list").append(html)
         document.getElementById("shh-nav-board-list").innerHTML = html

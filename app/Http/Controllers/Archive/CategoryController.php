@@ -50,46 +50,6 @@ class CategoryController extends Controller {
     }
     
 
-    /**
-     * 카테고리에 해당하는 문서 목록 및 카테고리 정보
-     *
-     */
-    public function show(Request $request, $archiveId, $encodedName) {
-        // 카테고리명
-        $categoryName = urldecode($encodedName);
-        
-        // archiveId 권한 체크 및 조회
-        $archive = $this->retrieveAuthArchive($archiveId);
-
-        // 아카이브 카테고리 (조회하고 없으면 새로 insert함)
-        $category = SACategory::firstOrCreate(['archive_id'=>$archiveId, 'name'=>$categoryName]);
-
-        // 이 분류에 속하는 문서 목록을 조회
-        $masterList = SADocument::select([
-            'sa_documents.id', 'sa_documents.title','sa_documents.summary_var',
-            'sa_documents.reference','sa_documents.folder_id','sa_documents.category',
-            'sa_documents.created_at','sa_documents.updated_at'])
-              ->join("sa_category_document_rel as rel",'rel.document_id','=','sa_documents.id')
-            ->where ( 'rel.category_name',$categoryName )
-            ->orderBy ( 'sa_documents.created_at', 'desc' )
-            ->paginate(20);
-
-        // 하위 카테고리 조회
-        $childCategories = SACategoryRel::where('category_name',$categoryName)
-            ->orderBy('child_category_name')
-            ->pluck('child_category_name');
-
-        // create dataSet
-        $dataSet = $this->createViewData ();
-        $dataSet ['masterList'] = $masterList;
-        $dataSet ['archive'] = $archive;
-        $dataSet ['category'] = $category;
-        $dataSet ['childCategories'] = $childCategories;
-
-        $dataSet ['parameters']['category'] = $categoryName;
-        //$dataSet ['parameters']['profile'] = $archiveId;
-        return view ( self::VIEW_PATH . '.show', $dataSet );
-    }
     
     /**
      * 카테고리 편집
@@ -155,7 +115,7 @@ class CategoryController extends Controller {
         if ($request->action === 'continue') {
             return redirect()->back()->with('message', '저장되었습니다.');
         }
-        return redirect ()->route ( self::ROUTE_ID.'.show', ['archiveId'=>$archiveId,'category'=>urlencode($item->name)])
+        return redirect ()->route ( 'explorer.category', ['archive'=>$archiveId,'category'=>urlencode($item->name)])
         ->with('message', '저장되었습니다.' );
     }
     
@@ -184,7 +144,7 @@ class CategoryController extends Controller {
 
         // 결과 처리
         return redirect()
-        ->route(self::ROUTE_ID.'.show', ['archiveId'=>$archiveId, 'category'=>urlencode($item->name)])
+        ->route(self::ROUTE_ID.'.show', ['archive'=>$archiveId, 'category'=>urlencode($item->name)])
         ->with('message', '삭제되었습니다.' );
     }
 

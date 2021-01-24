@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\SArchive\SAArchive;
 use App\Models\SArchive\SAFolder;
 use App\Models\SArchive\SADocument;
-use App\Models\ArchiveBookmark;
+use App\Models\SArchive\SACategory;
+use App\Models\SArchive\SACategoryRel;
 
 
 class ExplorerController extends BaseController {
@@ -113,6 +114,49 @@ class ExplorerController extends BaseController {
         return view ( self::VIEW_PATH . '.index', $dataSet );
     }
     
+
+
+    
+    /**
+     * 카테고리에 해당하는 문서 목록 및 카테고리 정보
+     *
+     */
+    public function showDocsByCategory(Request $request, $archiveId, $encodedName) {
+        // 카테고리명
+        $categoryName = urldecode($encodedName);
+        
+        // archiveId 권한 체크 및 조회
+        $archive = $this->retrieveAuthArchive($archiveId);
+
+        // 아카이브 카테고리 (조회하고 없으면 새로 insert함)
+        $category = SACategory::firstOrCreate(['archive_id'=>$archiveId, 'name'=>$categoryName]);
+
+        // 이 분류에 속하는 문서 목록을 조회
+        $masterList = SADocument::select([
+            'sa_documents.id', 'sa_documents.title','sa_documents.summary_var',
+            'sa_documents.reference','sa_documents.folder_id','sa_documents.category',
+            'sa_documents.created_at','sa_documents.updated_at'])
+              ->join("sa_category_document_rel as rel",'rel.document_id','=','sa_documents.id')
+            ->where ( 'rel.category_name',$categoryName )
+            ->orderBy ( 'sa_documents.created_at', 'desc' )
+            ->paginate(20);
+
+        // 하위 카테고리 조회
+        $childCategories = SACategoryRel::where('category_name',$categoryName)
+            ->orderBy('child_category_name')
+            ->pluck('child_category_name');
+
+        // create dataSet
+        $dataSet = $this->createViewData ();
+        $dataSet ['masterList'] = $masterList;
+        $dataSet ['archive'] = $archive;
+        $dataSet ['category'] = $category;
+        $dataSet ['childCategories'] = $childCategories;
+        $dataSet ['parameters']['category'] = $categoryName;
+        return view ( self::VIEW_PATH . '.category', $dataSet );
+    }
+
+
 
     /**
      * 검색 결과
@@ -275,7 +319,7 @@ class ExplorerController extends BaseController {
                         p4.parent_id, 
                         p5.parent_id, 
                         p6.parent_id)
-            order       by p1.index, p2.index, p3.index, p4.index, p5.index, p1.id;",[$folderId]);
+            order by    p1.depth, p1.index;",[$folderId]);
             
             
 
@@ -295,7 +339,8 @@ class ExplorerController extends BaseController {
             left join   sa_folders p5 on p5.id = p4.parent_id  
             left join   sa_folders p6 on p6.id = p5.parent_id
             where       p1.archive_id = ?
-            order       by p1.index, p2.index, p3.index, p4.index, p5.index, p1.id;",[$archiveId]);
+            order by    p1.depth, p1.index;",[$archiveId]);
+            //order       by p1.index, p2.index, p3.index, p4.index, p5.index, p1.id;
         }
 
         $dataSet = array();
@@ -305,53 +350,6 @@ class ExplorerController extends BaseController {
         }
         $dataSet['archive'] = $archive;
         $dataSet['list'] = $masterList;
-        return response()->json($dataSet);
-    }
-
-
-    /**
-     * bookmark, favorite 기능 구현
-     */
-    public function doAjax_mark(Request $request){
-
-        $archiveId = $request->input('archive');
-        //$profileId = $request->input('profile_id');
-        $mode = $request->input('mode');
-
-        $archive = SADocument::findOrFail($archiveId);
-        $profileId = $archive->profile_id;
-
-        $item = ArchiveBookmark::firstOrNew(
-            ['archive_id' => $archiveId]
-        );
-
-        if($mode == 'bookmark'){
-            if($item->is_bookmark){
-                $item->is_bookmark = false;
-            } else {
-                $item->is_bookmark = true;
-            }
-        } else if($mode == 'favorite'){
-            if($item->is_favorite){
-                $item->is_favorite = false;
-            } else {
-                $item->is_favorite = true;
-            }
-        }
-        $item->profile_id = $profileId;
-        $item->save();
-
-        
-        $dataSet = array();
-        $dataSet ['data'] = [
-            'archive' => $archiveId,
-            'is_bookmark' => ($item->is_bookmark)? 1: 0,
-            'is_favorite' => ($item->is_favorite)? 1:0
-        ];
-        $dataSet['success'] = '변경 완료되었습니다.';
-
-        $request->session()->flash('message', '변경 완료되었습니다.');
-
         return response()->json($dataSet);
     }
 

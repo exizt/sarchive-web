@@ -13,7 +13,7 @@
         <a class="btn btn-sm btn-outline-secondary site-shortcut-key-n site-shortcut-key-a" 
           href="{{ route('doc.create',['archive'=>$archive->id]) }}">문서 추가</a>
         <a class="btn btn-sm btn-outline-secondary" 
-          href="{{ route('archive.retrieve',['id'=>$archive->id]) }}">탐색</a>          
+          href="{{ route('explorer.archive',['id'=>$archive->id]) }}">탐색</a>          
       </div>
     </div>
       @endisset
