@@ -166,7 +166,9 @@ function doAjaxFolderList(){
         var selectorId = "shh-nav-board-list";
         var idPrefix = 'folderNav-item-';
 
-        $.each(data.list, result)
+        $.each(data.list, result);
+        $("span.arch-js-temp").remove();
+
         function result(i, item){
             var depth = item.depth - currentDepth
             var nav = document.getElementById(selectorId)
@@ -186,7 +188,7 @@ function doAjaxFolderList(){
                 data-id="${id}" data-label="${label}">
                     ${label}
                     <span class="arch-indexEditMode-hide badge badge-secondary badge-pill">${count}</span>
-            </a><span style="display:none" id="${idPrefix}${id}"></span>`
+            </a><span style="display:none" id="${idPrefix}${id}" class="arch-js-temp"></span>`
             return html
         }
     }
