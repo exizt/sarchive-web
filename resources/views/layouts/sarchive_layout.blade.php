@@ -33,7 +33,6 @@
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 @stack('layout-styles')
 @stack('layout-scripts')
-<script src="/assets/js/core-func.js"></script>
 <script src="/assets/js/shortcut-key-event.js"></script>
 <script src="/assets/js/archive.js"></script>
 <script>
