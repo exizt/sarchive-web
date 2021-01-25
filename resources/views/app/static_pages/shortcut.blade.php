@@ -11,6 +11,7 @@
 			<li>글수정 : <span class="badge badge-success">E</span></li>
 			<li>검색 포커스 : <span class="badge badge-success">F</span></li>
 			<li>저장 : <span class="badge badge-success">S</span></li>
+			<li>뒤로가기(또는 취소/목록) : <span class="badge badge-success">Z</span></li>
 			</ol>
 		</div>
 	</div>

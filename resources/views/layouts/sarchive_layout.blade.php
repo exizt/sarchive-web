@@ -36,7 +36,9 @@
 <script src="/assets/js/shortcut-key-event.js"></script>
 <script src="/assets/js/archive.js"></script>
 <script>
-document.onkeyup = shortcutKeyEvent;
+//document.onkeyup = shortcutKeyEvent;
+
+window.onkeydown = shortcutKeyEvent
 </script>
 </head>
 <body @isset($bodyParams) @foreach ($bodyParams as $k => $v) data-{{$k}}="{{$v}}" @endforeach @endisset >
