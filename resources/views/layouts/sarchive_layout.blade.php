@@ -17,7 +17,6 @@
 <!--<link rel="stylesheet" href="/assets/lib/bootstrap/4.3.1/css/bootstrap.min.css">-->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA==" crossorigin="anonymous" />
 <link rel="stylesheet" href="/assets/css/site-base.css">
-<link rel="stylesheet" href="/assets/css/site-layouts.css">
 <link rel="stylesheet" href="/assets/modules/scroll-up/css/sh-scrollup.css">
 <link rel="stylesheet" href="/assets/css/archive.css">
 <!-- scripts -->
@@ -25,7 +24,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
 <!-- popper.JS : dropdown of bootstrap 을 위해 필요. (bootstrap 4.0.0 이후로 추가) -->
 <!--<script src="/assets/lib/bootstrap/required/4.3.1/popper/1.14.3/popper.min.js"></script>-->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/popper.min.js" integrity="sha512-eHo1pysFqNmmGhQ8DnYZfBVDlgFSbv3rxS0b/5+Eyvgem/xk0068cceD8GTlJOZsUrtjANIrFhhlwmsL1K3PKg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js" integrity="sha512-ubuT8Z88WxezgSqf3RLuNi5lmjstiJcyezx34yIU2gAHonIi27Na7atqzUZCOoY4CExaoFumzOsFQ2Ch+I/HCw==" crossorigin="anonymous"></script>
 <!--<script src="/assets/lib/bootstrap/4.3.1/js/bootstrap.min.js"></script>-->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js" integrity="sha512-XKa9Hemdy1Ui3KSGgJdgMyYlUg1gM+QhL6cnlyTe2qzMCYm4nAZ1PsVerQzTTXzonUR+dmswHqgJPuwCq1MaAg==" crossorigin="anonymous"></script>
 <script src="/assets/js/site-base.js"></script>
@@ -34,11 +33,12 @@
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 @stack('layout-styles')
 @stack('layout-scripts')
-<script src="/assets/js/core-func.js"></script>
 <script src="/assets/js/shortcut-key-event.js"></script>
 <script src="/assets/js/archive.js"></script>
 <script>
-document.onkeyup = shortcutKeyEvent;
+//document.onkeyup = shortcutKeyEvent;
+
+window.onkeydown = shortcutKeyEvent
 </script>
 </head>
 <body @isset($bodyParams) @foreach ($bodyParams as $k => $v) data-{{$k}}="{{$v}}" @endforeach @endisset >

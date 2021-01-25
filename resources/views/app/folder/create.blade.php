@@ -25,7 +25,7 @@ $(function() {
 				@include($VIEW_PATH.'._form')
 				<div class="d-flex w-100 justify-content-between">
 					<button type="submit" class="btn btn-primary btn-sm site-shortcut-key-s">추가</button>
-					<a class="btn btn-secondary btn-sm site-shortcut-key-c" 
+					<a class="btn btn-secondary btn-sm site-shortcut-key-z" 
 					href="{{ url()->previous() }}" role="button">취소</a>
 				</div>
 			</div>

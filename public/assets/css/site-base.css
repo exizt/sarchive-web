@@ -6,10 +6,6 @@ body {
 	overflow-x: hidden;
 }
 
-button {
-	cursor: pointer;
-}
-
 ::selection {
 	background-color: rgb(225, 51, 0);
 	color: white;
@@ -18,9 +14,4 @@ button {
 ::-moz-selection {
 	background-color: rgb(225, 51, 0);
 	color: white;
-}
-
-
-footer {
-	display: block;
 }

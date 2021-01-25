@@ -53,11 +53,11 @@
     <hr>
     <div class="form-group row">
         <div class="col-md-10 col-md-offset-2">
-            <a class="btn btn-primary btn-sm site-shortcut-key-c" 
+            <a class="btn btn-primary btn-sm site-shortcut-key-z" 
                 href="{{ $actionLinks->list }}" role="button">목록</a>
             <a class="btn btn-outline-info btn-sm site-shortcut-key-e" 
                 href="{{ $actionLinks->edit }}" role="button">편집</a>
-            <a class="btn btn-outline-secondary btn-sm site-shortcut-key-c" 
+            <a class="btn btn-outline-secondary btn-sm" 
                 href="javascript:history.back()" role="button">뒤로</a>
         </div>
     </div>

@@ -32,7 +32,6 @@
 	<div id="layoutBody" class="py-5">
 		@yield('content')
 	</div>
-	<!-- .site-layout-page -->
 	<footer>
 		<div class="container-fluid text-right">
         	<p class="text-muted pt-5">© SH Hong. All rights reserved.</p>
