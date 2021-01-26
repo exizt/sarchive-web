@@ -26,7 +26,7 @@
 					</span>
 				</div>
 			</div>
-			<p class="mb-1 pl-md-3 cz-item-summary">
+			<p class="mb-1 pl-md-3 sarc-item-comments">
 				<small>{{ $item->comments }}</small>
 			</p>
 		</a>

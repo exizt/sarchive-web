@@ -16,7 +16,7 @@
                 <h4 class="mb-1">{{ $item->title }}</h4>
                 <small>{{ $item->created_at->format('Y-m-d') }}</small>
             </div>
-            <p class="mb-1 pl-md-3 cz-item-summary">
+            <p class="mb-1 pl-md-3 sarc-item-comments">
                 <small class="text-muted">{{ $item->summary_var }}</small>
             </p>
             <div class="text-right">
