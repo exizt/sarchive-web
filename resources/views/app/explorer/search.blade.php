@@ -10,7 +10,7 @@
             <div class="d-flex w-100 justify-content-between">
                 <h4 class="mb-1">{{ $item->title }}</h4>
             </div>
-            <p class="mb-1 cz-item-summary">
+            <p class="mb-1 sarc-item-comments">
                 <small class="text-muted">{{ $item->summary_var }}</small>
             </p>
             <div class="d-flex w-100 justify-content-between">

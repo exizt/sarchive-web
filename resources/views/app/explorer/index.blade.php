@@ -38,10 +38,10 @@
                         @endif
                             >
                             <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1">{{ $item->title }}</h5>
+                                <h5 class="sarc-item-label">{{ $item->title }}</h5>
                                 <small>{{ $item->created_at->format('Y-m-d') }}</small>
                             </div>
-                            <p class="mb-1 pl-md-3 cz-item-summary">
+                            <p class="mb-1 pl-md-3 sarc-item-comments">
                                 <small>{{ $item->summary_var }}</small>
                             </p>
                             <div class="text-right">
