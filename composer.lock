@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5209a266f5e010cab02c85a4c1809d69",
+    "content-hash": "17a75e2376c70c4a767f0c13a3231321",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -461,56 +461,6 @@
                 }
             ],
             "time": "2020-12-29T14:50:06+00:00"
-        },
-        {
-            "name": "erusev/parsedown",
-            "version": "1.7.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/erusev/parsedown.git",
-                "reference": "cb17b6477dfff935958ba01325f2e8a2bfa6dab3"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/erusev/parsedown/zipball/cb17b6477dfff935958ba01325f2e8a2bfa6dab3",
-                "reference": "cb17b6477dfff935958ba01325f2e8a2bfa6dab3",
-                "shasum": ""
-            },
-            "require": {
-                "ext-mbstring": "*",
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^4.8.35"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Parsedown": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Emanuil Rusev",
-                    "email": "hello@erusev.com",
-                    "homepage": "http://erusev.com"
-                }
-            ],
-            "description": "Parser for Markdown.",
-            "homepage": "http://parsedown.org",
-            "keywords": [
-                "markdown",
-                "parser"
-            ],
-            "support": {
-                "issues": "https://github.com/erusev/parsedown/issues",
-                "source": "https://github.com/erusev/parsedown/tree/1.7.x"
-            },
-            "time": "2019-12-30T22:54:17+00:00"
         },
         {
             "name": "fideloper/proxy",
@@ -1134,62 +1084,6 @@
             "time": "2020-11-03T19:45:19+00:00"
         },
         {
-            "name": "lavary/laravel-menu",
-            "version": "v1.8.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/lavary/laravel-menu.git",
-                "reference": "8c57284c30e533f46a68dd1b3726cdc096204ceb"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/lavary/laravel-menu/zipball/8c57284c30e533f46a68dd1b3726cdc096204ceb",
-                "reference": "8c57284c30e533f46a68dd1b3726cdc096204ceb",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/support": ">=5.0",
-                "illuminate/view": ">=5.0",
-                "php": ">=5.4.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Lavary\\Menu\\ServiceProvider"
-                    ],
-                    "aliases": {
-                        "Menu": "Lavary\\Menu\\Facade"
-                    }
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Lavary\\Menu\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Lavary",
-                    "email": "mrl.8081@gmail.com"
-                }
-            ],
-            "description": "A quick way to create menus in Laravel 5",
-            "homepage": "https://github.com/lavary/laravel-menu",
-            "keywords": [
-                "laravel"
-            ],
-            "support": {
-                "issues": "https://github.com/lavary/laravel-menu/issues",
-                "source": "https://github.com/lavary/laravel-menu/tree/v1.8.1"
-            },
-            "time": "2021-01-19T16:24:30+00:00"
-        },
-        {
             "name": "league/commonmark",
             "version": "1.5.7",
             "source": {
@@ -1440,113 +1334,6 @@
                 }
             ],
             "time": "2021-01-18T20:58:21+00:00"
-        },
-        {
-            "name": "michelf/php-markdown",
-            "version": "1.9.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/michelf/php-markdown.git",
-                "reference": "c83178d49e372ca967d1a8c77ae4e051b3a3c75c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/michelf/php-markdown/zipball/c83178d49e372ca967d1a8c77ae4e051b3a3c75c",
-                "reference": "c83178d49e372ca967d1a8c77ae4e051b3a3c75c",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": ">=4.3 <5.8"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Michelf\\": "Michelf/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Michel Fortin",
-                    "email": "michel.fortin@michelf.ca",
-                    "homepage": "https://michelf.ca/",
-                    "role": "Developer"
-                },
-                {
-                    "name": "John Gruber",
-                    "homepage": "https://daringfireball.net/"
-                }
-            ],
-            "description": "PHP Markdown",
-            "homepage": "https://michelf.ca/projects/php-markdown/",
-            "keywords": [
-                "markdown"
-            ],
-            "support": {
-                "issues": "https://github.com/michelf/php-markdown/issues",
-                "source": "https://github.com/michelf/php-markdown/tree/1.9.0"
-            },
-            "time": "2019-12-02T02:32:27+00:00"
-        },
-        {
-            "name": "michelf/php-smartypants",
-            "version": "1.8.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/michelf/php-smartypants.git",
-                "reference": "47d17c90a4dfd0ccf1f87e25c65e6c8012415aad"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/michelf/php-smartypants/zipball/47d17c90a4dfd0ccf1f87e25c65e6c8012415aad",
-                "reference": "47d17c90a4dfd0ccf1f87e25c65e6c8012415aad",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "Michelf": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Michel Fortin",
-                    "email": "michel.fortin@michelf.ca",
-                    "homepage": "https://michelf.ca/",
-                    "role": "Developer"
-                },
-                {
-                    "name": "John Gruber",
-                    "homepage": "https://daringfireball.net/"
-                }
-            ],
-            "description": "PHP SmartyPants",
-            "homepage": "https://michelf.ca/projects/php-smartypants/",
-            "keywords": [
-                "dashes",
-                "quotes",
-                "spaces",
-                "typographer",
-                "typography"
-            ],
-            "support": {
-                "issues": "https://github.com/michelf/php-smartypants/issues",
-                "source": "https://github.com/michelf/php-smartypants/tree/1.8.1"
-            },
-            "time": "2016-12-13T01:01:17+00:00"
         },
         {
             "name": "monolog/monolog",

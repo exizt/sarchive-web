@@ -1,3 +1,4 @@
+{{-- /vendor/laravel/framework/src/illuminate/pagination/resources/simple-bootstrap-4.blade.php --}}
 @if ($paginator->hasPages())
     <ul class="pagination">
         {{-- Previous Page Link --}}
