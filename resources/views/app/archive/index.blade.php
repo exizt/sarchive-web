@@ -1,11 +1,11 @@
 @extends('layouts.sarchive_layout')
-@section('title',"아카이브 프로필 관리")
+@section('title',"아카이브 목록 편집")
 @section('content')
 <div class="container py-5">
 	@include('layouts.modules.messages.messages_and_errors_bs4')
 	<div class="row px-0 mx-0">
 		<div class="d-flex w-100 justify-content-between">
-			<h4 class="">아카이브 목록</h4>
+			<h4 class="">아카이브 목록 편집</h4>
 			<small class="text-mute">Page {{ $masterList->currentPage() }} of {{ $masterList->lastPage() }}</small>
 		</div>
 	</div>

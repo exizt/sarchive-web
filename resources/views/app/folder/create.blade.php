@@ -1,5 +1,5 @@
 @extends('layouts.sarchive_layout')
-@section('title',"신규") 
+@section('title',"폴더 신규") 
 @section('content')
 <script>
 $(function() {

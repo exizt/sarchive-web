@@ -1,5 +1,5 @@
 @extends('layouts.sarchive_layout') 
-@section('title',"") 
+@section('title','분류 > '.$category->name) 
 @section('content')
 <div>
 	<div class="mt-4 mb-5">

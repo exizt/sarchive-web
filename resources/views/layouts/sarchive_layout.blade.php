@@ -2,17 +2,20 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-@if (!App::environment('local'))
-<title>@yield('title') :: S아카이브</title>
+@production
+<title>S아카이브@hasSection('title') :: @yield('title') @endif</title>
 @else
-<title>(local) S아카이브</title>
-@endif
+<title>(local) S아카이브@hasSection('title') :: @yield('title') @endif</title>
+@endproduction
 <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
 <meta name="robots" content="noindex, nofollow">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-title" content="S아카이브">
 <link rel="shortcut icon" href="/assets/favicon/favicon-2021.ico" />
+<link rel="icon" href="/assets/favicon/sarchive-favicon-2021-152px-compressed.png" sizes="152x152" />
+<link rel="apple-touch-icon" sizes="152x152" href="/assets/favicon/sarchive-favicon-2021-152px-compressed.png" />
+
 <!-- styles -->
 <!--<link rel="stylesheet" href="/assets/lib/bootstrap/4.3.1/css/bootstrap.min.css">-->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA==" crossorigin="anonymous" />

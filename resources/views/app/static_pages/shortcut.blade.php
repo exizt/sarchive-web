@@ -1,5 +1,5 @@
 @extends('layouts.sarchive_layout') 
-@section('title',"") 
+@section('title',"단축키") 
 @section('content') 
 <div class="container-fluid mt-4 mb-5">
 	<div class="card">

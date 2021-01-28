@@ -1,5 +1,5 @@
 @extends('layouts.sarchive_layout') 
-@section('title',"글 수정 : $item->name") 
+@section('title',"") 
 @section('content')
 <script>
 $(function() {
