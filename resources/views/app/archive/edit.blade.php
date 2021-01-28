@@ -1,5 +1,5 @@
 @extends('layouts.sarchive_layout')
-@section('title',"아카이브 프로필 편집") 
+@section('title',"아카이브 편집") 
 @section('content')
 <script>
 $(function() {

@@ -1,5 +1,4 @@
 @extends('layouts.sarchive_layout', ['layoutMode' => 'first']) 
-@section('title',"") 
 @section('content')
 <div class="container">
   <div class="search-wrap">

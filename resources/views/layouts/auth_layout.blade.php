@@ -2,11 +2,11 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-@if (!App::environment('local'))
-<title>@yield('title') :: S아카이브</title>
+@production
+<title>S아카이브 :: @yield('title')</title>
 @else 
-<title>(local) @yield('title') :: S아카이브</title>
-@endif
+<title>(local) S아카이브 :: @yield('title')</title>
+@endproduction
 <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
 <meta name="robots" content="noindex, nofollow">
 <meta name="csrf-token" content="{{ csrf_token() }}">
