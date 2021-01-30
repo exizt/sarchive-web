@@ -17,7 +17,6 @@
 <link rel="shortcut icon" href="/assets/favicon/favicon-2021.ico" />
 <link rel="icon" href="/assets/favicon/sarchive-favicon-2021-152px-compressed.png" sizes="152x152" />
 <link rel="apple-touch-icon" sizes="152x152" href="/assets/favicon/sarchive-favicon-2021-152px-compressed.png" />
-
 <!-- styles -->
 <!--<link rel="stylesheet" href="/assets/lib/bootstrap/4.3.1/css/bootstrap.min.css">-->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA==" crossorigin="anonymous" />
@@ -41,8 +40,6 @@
 <script src="/assets/js/shortcut-key-event.js"></script>
 <script src="/assets/js/archive.js"></script>
 <script>
-//document.onkeyup = shortcutKeyEvent;
-
 window.onkeydown = shortcutKeyEvent
 </script>
 </head>

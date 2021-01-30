@@ -46,13 +46,12 @@
 </div>
 <script>
 $(function(){
-	$("#changeIndexModeToggle").on("click",function(){
-		changeIndexModeOn()
+	$("#changeIndexModeToggle").on("click",changeIndexModeOn)
+	$("#shh-movemode-cancel").on("click",function(e){
+		e.preventDefault()
+		location.reload();
 	})
-	$("#shh-movemode-cancel").on("click",function(){location.reload();})
-	$("#shh-movemode-save").on("click",function(){
-		saveArchiveSort()
-	})
+	$("#shh-movemode-save").on("click",saveArchiveSort)
 	$(".shh-btn-mode-up").on("click",onClickMoveUp);
 	$(".shh-btn-mode-down").on("click",onClickMoveDown);
 })
@@ -60,8 +59,9 @@ $(function(){
 /**
  * 아카이브 순서 변경사항을 저장
  */
-function saveArchiveSort(){
-	console.log("save");
+function saveArchiveSort(e){
+	e.preventDefault()
+	//console.log("save");
 	var dataList = [];
 	$(".shh-profile-list").each(function(index){
 		var data = {
@@ -72,7 +72,7 @@ function saveArchiveSort(){
 		dataList.push(data)
 	})
 
-	console.log(dataList)
+	//console.log(dataList)
 
 	$.post({
 		url: '/archives/updateSort',
@@ -84,17 +84,20 @@ function saveArchiveSort(){
 		location.reload()
 	})
 }
-function changeIndexModeOn(){
+function changeIndexModeOn(e){
+	e.preventDefault()
 	$(".shh-listmovemode-off").hide()
 	$(".shh-listmovemode-on").show()
 	$(".shh-profile-list").attr("href","#");
 }
 
-function onClickMoveUp(){
+function onClickMoveUp(e){
+	e.preventDefault()
 	moveUp($(this).closest(".shh-profile-list"),".shh-profile-list")
 }
 
-function onClickMoveDown(){
+function onClickMoveDown(e){
+	e.preventDefault()
 	moveDown($(this).closest(".shh-profile-list"),".shh-profile-list")
 }
 

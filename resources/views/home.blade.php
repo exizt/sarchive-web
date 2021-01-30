@@ -1,7 +1,11 @@
 @extends('layouts.sarchive_layout') 
-@section('title','S아카이브')
 @section('content')
 <div class="container py-5">
+	@if(count($masterList) == 0)
+	<div class="text-center">
+		<a class="btn btn-primary" href="/archives/create">새 아카이브 생성하기</a>
+	</div>
+	@endif
 	<div class="list-group">
 		@foreach ($masterList as $item)
 		<a class="list-group-item list-group-item-action flex-column align-items-start" 
@@ -16,8 +20,8 @@
 		</a>
 		@endforeach
 	</div>
-	<div class="text-right">
-		<a href="/archives/" class="badge badge-light">편집</a>
+	<div class="text-right mt-2">
+		<a href="/archives/" class="btn btn-sm">아카이브 편집</a>
 	</div>
 </div>
 @endsection

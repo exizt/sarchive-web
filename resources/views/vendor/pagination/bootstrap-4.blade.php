@@ -1,4 +1,4 @@
-{{-- /vendor/laravel/framework/src/illuminate/pagination/resources/bootstrap-4.blade.php --}}
+{{-- /vendor/laravel/framework/src/illuminate/pagination/resources/views/bootstrap-4.blade.php --}}
 @if ($paginator->hasPages())
     <nav>
         <ul class="pagination">

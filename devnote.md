@@ -266,6 +266,18 @@ Bookmark | 북마크 테이블
   * lft 는 pk 인덱스
 
 
+## View 에 넘기는 변수 
+
+view 에 넘기는 data 형태
+
+* layoutParams : extends 로 호출하는 layout(blade)에서 이용할 변수들.
+* bodyParams : body 태그에 추가할 필요가 있는 변수들. (id는 빼고 간략하게 기술. archive, user, folder, category 같이)
+* paginationParams : 페이지네이션에 사용되는 변수들.
+* links (object) : 버튼 등의 링크에 이용될 주소값들. 
+* parameters : 호출 시 넘겨받았던 변수들 혹은 중요값.
+
+
+
 # 네이밍 룰
 ## 데이터베이스
 
@@ -290,3 +302,9 @@ Bookmark | 북마크 테이블
 * 클래스명, 메소드명 : camelCase
 * php 의 변수 : camelCase
 * 모델에서 테이블의 컬럼과 연관되는 멤버변수는 snake_case 로 한다. (그래야 일괄적 검색이 편리함. 컬럼명이 변경되었을 때 싹 검색할 수 있음)
+
+
+# 리소스
+logo - google material > polymer
+icons/folder.svg - octicons > folder open 24
+icons/archive.svg - octicons > inbox 24
