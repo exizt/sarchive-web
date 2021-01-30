@@ -8,24 +8,23 @@
                 <div class="col-md-9">
                     <div class="row px-0 mx-0">
                         <div class="d-flex w-100 justify-content-between">
-                            @if(isset($parameters['folder']))
                             <div>
-                                <h4 class="">글 목록 (선택된 폴더 : {{ $parameters['folder']->name }})
-                                    <a href="{{ route('folders.edit', [$parameters['folder']->id]) }}" class="btn btn-sm btn-outline-primary">편집</a>
+                                @if(isset($parameters['folder']))
+                                <h4 class=""><span class="sarc-ico-folder sarc-ico"></span>{{ $parameters['folder']->name }}<a href="{{ route('folders.edit', [$parameters['folder']->id]) }}" 
+                                        class="btn btn-sm">편집</a>
                                 </h4>
+                                @else
+                                <h4 class=""><span class="sarc-ico-archive sarc-ico"></span>{{$layoutParams['archiveName'] ?? '아카이브'}}</h4>
+                                @endif
                             </div>
-                            @else
-                            <h4 class="">아카이브</h4>
-                            @endif
-                            <small class="text-mute">Page {{ $masterList->currentPage() }} of {{ $masterList->lastPage() }}</small>
+                            <div class="text-right">
+                                <a href="/folders/create?archive={{ $layoutParams['archiveId'] }}" class="btn btn-sm btn-outline-primary">새 폴더</a>
+                                <a href="/doc/create?archive={{ $layoutParams['archiveId'] }}" class="btn btn-sm btn-outline-primary">새 문서</a>
+                            </div>
                         </div>
                         @if(isset($parameters['folder']))
                         <p class="lead">{{ $parameters['folder']->comment }}</p>
                         @endif
-                    </div>
-                    <div class="text-right">
-                        <a href="/folders/create?archive={{ $layoutParams['archiveId'] }}" class="btn btn-outline-primary">새 폴더</a>
-                        <a href="/doc/create?archive={{ $layoutParams['archiveId'] }}" class="btn btn-outline-primary">새 문서</a>
                     </div>
                     <hr class="mt-1">
                     <div class="list-group">
@@ -60,14 +59,16 @@
                     <h5>폴더</h5>
                     <div class="list-group sarc-layout-nav-folder-list" id="shh-nav-board-list"></div>
                     <div class="list-group pt-3" id="js-folderNav-folderOnly" style="display:none"></div>
-                    <div class="d-flex w-100 justify-content-between">
+                    <div class="d-flex w-100 justify-content-between my-2">
                         <span>
                             <a href="{{ route($ROUTE_ID.'.create') }}" class="btn btn-outline-success btn-sm arch-indexEditMode-show" style="display:none">신규</a>
                         </span>
                         <span>
-                            <a href="#" id="btnIndexEditModeToggle" class="btn btn-outline-success btn-sm arch-indexEditMode-hide">변경</a>
-                            <a href="#" id="btnIndexEditModeCancel" class="btn btn-outline-success btn-sm arch-indexEditMode-show" style="display:none">순서변경 취소</a>
-                            <a href="#" id="btnIndexEditModeSave" class="btn btn-outline-success btn-sm arch-indexEditMode-show" style="display:none">순서변경 저장</a>
+                            <a href="#" id="btnIndexEditModeToggle" class="btn btn-sm arch-indexEditMode-hide">변경</a>
+                            <a href="#" id="btnIndexEditModeCancel" 
+                                class="btn btn-sm btn-outline-success arch-indexEditMode-show" style="display:none">순서변경 취소</a>
+                            <a href="#" id="btnIndexEditModeSave" 
+                                class="btn btn-sm btn-outline-success arch-indexEditMode-show" style="display:none">순서변경 저장</a>
                         </span>
                     </div>
                 </div>

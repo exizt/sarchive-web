@@ -20,6 +20,8 @@
     <div class="d-flex justify-content-between">
         <h4>본문</h4>
         <div>
+            <a class="btn btn-sm btn-outline-info site-shortcut-key-e" 
+                href="{{ $actionLinks->edit }}" role="button">편집</a>
             <a class="btn btn-sm shh-btn-bookmark active {{($bookmark->is_favorite)? 'btn-info':'btn-primary'}}" href="#" role="button" 
                 data-mode="favorite" data-archive="{{$article->id}}" data-value="{{$bookmark->is_favorite}}"><i class="fas fa-star"></i>&nbsp;즐겨찾기</a>
             <a class="btn btn-sm shh-btn-bookmark active {{($bookmark->is_bookmark)? 'btn-info':'btn-primary'}}" href="#" role="button" 
