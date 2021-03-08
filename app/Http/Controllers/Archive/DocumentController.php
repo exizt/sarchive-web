@@ -152,7 +152,7 @@ class DocumentController extends Controller {
          */
         $archiveId = $request->input ( 'archive_id');
         // 내용 관련 파라미터
-        $title = $request->input ( 'title' );
+        $title = $request->input ( 'title') ?? '제목 없음';
         $content = $request->input ( 'content', ' ' );
         // 문서 분류 관련 파라미터
         $folderId = $request->input ( 'folder_id');
@@ -214,7 +214,7 @@ class DocumentController extends Controller {
          * 파라미터
          */
         // 내용 관련 파라미터
-        $title = $request->input ( 'title' );
+        $title = $request->input ( 'title') ?? '제목 없음';
         $content = $request->input ( 'content',' ' );
         // 문서 분류 관련 파라미터
         $folderId = $request->input ( 'folder_id');

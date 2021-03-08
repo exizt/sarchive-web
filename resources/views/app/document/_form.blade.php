@@ -38,7 +38,7 @@ tinymce.init({
 </script>
 <div class="">
 	<div class="form-group">
-		<input name="title" class="form-control" type="text" autofocus id="title" value="{{ $article->title }}" placeholder="제목" aria-label="제목">
+		<input name="title" class="form-control" type="text" autofocus id="title" value="{{ $article->title }}" placeholder="제목 없음" aria-label="제목">
 	</div>
 
 	<div class="form-group">
