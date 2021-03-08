@@ -21,7 +21,7 @@
 <!--<link rel="stylesheet" href="/assets/lib/bootstrap/4.3.1/css/bootstrap.min.css">-->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA==" crossorigin="anonymous" />
 <link rel="stylesheet" href="/assets/css/site-base.css">
-<link rel="stylesheet" href="/assets/modules/scroll-up/css/sh-scrollup.css">
+<link rel="stylesheet" href="/assets/modules/scroll-to-top/scroll-to-top.min.css">
 <link rel="stylesheet" href="/assets/css/archive.css">
 <!-- scripts -->
 <!--<script src="/assets/lib/jquery/jquery-3.2.1.min.js"></script>-->
@@ -33,15 +33,12 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js" integrity="sha512-XKa9Hemdy1Ui3KSGgJdgMyYlUg1gM+QhL6cnlyTe2qzMCYm4nAZ1PsVerQzTTXzonUR+dmswHqgJPuwCq1MaAg==" crossorigin="anonymous"></script>
 <script src="/assets/js/site-base.js"></script>
 <!-- ## semi modules ## -->
-<script src="/assets/modules/scroll-up/sh-scrollup.min.js"></script>
+<script src="/assets/modules/scroll-to-top/scroll-to-top.min.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 @stack('layout-styles')
 @stack('layout-scripts')
-<script src="/assets/js/shortcut-key-event.js"></script>
+<script src="/assets/modules/jshotkey/jshotkey.min.js"></script>
 <script src="/assets/js/archive.js"></script>
-<script>
-window.onkeydown = shortcutKeyEvent
-</script>
 </head>
 <body @isset($bodyParams) @foreach ($bodyParams as $k => $v) data-{{$k}}="{{$v}}" @endforeach @endisset >
   <header>
