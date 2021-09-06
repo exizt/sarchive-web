@@ -1,16 +1,3 @@
-# 개발 환경
-* Laravel 7.0 이상
-* PHP 7.4 이상 (요구사항 7.2.5 이상)
-
-
-Laravel 에서 필요한 PHP 구성
-
-* extension=openssl : 뭐였는지 기억 안 나지만 필요함
-* extension=pdo_mysql : DB 연결을 위해 필요
-* extension=mbstring : 뭐였는지 기억 안 남
-* extension=fileinfo : 파일업로드 기능을 위해 필요한 듯
-
-
 # 빌드&배포
 1. 로컬)
   1. 라이브러리 등 업데이트 `composer update`
@@ -28,6 +15,23 @@ Laravel 에서 필요한 PHP 구성
 
 
 npm 은 아직 활용하지 않는 중. 조만간 활용하게 될 듯 한데. 아직은 보류. 
+
+
+
+
+# 개발 메모
+컨트롤러 추가 시. 
+
+* `php artisan make:controller PhotoController --resource`
+* `php artisan make:controller Admin/PhotoController --resource`
+
+
+
+모델 추가 시
+
+* `php artisan make:model --migration Post`
+* `php artisan make:model --migration Models/Post`
+
 
 
 # 사용되는 URL 목록
@@ -55,7 +59,7 @@ npm 은 아직 활용하지 않는 중. 조만간 활용하게 될 듯 한데. �
 * 검색 기능 개선. 
   * 게시판 별로 검색. 카테고리 별로 검색
 * 테마 설정 가능하게
-* 폰트 설정 가능하게
+* 설정에서 폰트/폰트크기 변경 가능하게.
 
 
 

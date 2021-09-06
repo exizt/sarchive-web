@@ -15,22 +15,15 @@ SArchive 프로젝트
 4. [N] : 새로 글 쓰기
 
 
-# TODO
-
-* 설정에서 폰트/폰트크기 변경 가능하게.
-
-
+# 개발 환경
+* Laravel 7.0 이상
+* PHP 7.4 이상 (요구사항 7.2.5 이상)
 
 
-# 개발 메모
-컨트롤러 추가 시. 
+Laravel 에서 필요한 PHP 구성
 
-* php artisan make:controller PhotoController --resource
-* php artisan make:controller Admin/PhotoController --resource
+* extension=openssl : 뭐였는지 기억 안 나지만 필요함
+* extension=pdo_mysql : DB 연결을 위해 필요
+* extension=mbstring : 뭐였는지 기억 안 남
+* extension=fileinfo : 파일업로드 기능을 위해 필요한 듯
 
-
-
-모델 추가 시
-
-* php artisan make:model --migration Post
-* php artisan make:model --migration Models/Post
