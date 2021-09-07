@@ -5,19 +5,15 @@ services:
     build:
       context: .
       dockerfile: ${APP_DOCKFILE}
-    environment: 
-      - DB_HOST=db
-      - DB_PORT=${MYSQL_PORT}
-      - DB_DATABASE=${DB_DATABASE}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
     ports:
       - "${APP_PORT_EXTERNAL}:${APP_PORT}"
-    depends_on:
-      - db
     volumes:
       - ./web:/app/web
+      - ./web/composer.json:/app/composer.json
+      - ./web/composer.lock:/app/composer.lock
     entrypoint: /bin/bash ./docker-entrypoint.sh
+    depends_on:
+      - db
   db:
     image: mariadb:10.6
     environment: 
@@ -29,4 +25,6 @@ services:
     ports:
       - ${DB_PORT_EXTERNAL}:${DB_PORT}
     volumes:
-      - ./system/db:/var/lib/mysql
+      - maindb:/var/lib/mysql
+volumes:
+  maindb:
