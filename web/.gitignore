@@ -13,10 +13,6 @@ yarn-error.log
 # -------------------------
 # Custom
 
-# trash files by os
-.DS_Store
-Thumbs.db
-
 # vendor files
 /vendor/
 

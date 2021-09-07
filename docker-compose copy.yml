@@ -1,0 +1,32 @@
+# 로컬 환경, 개발 PC에서의 Docker [docker-compose]
+version: "3.9"
+services: 
+  webapp:
+    build:
+      context: .
+      dockerfile: ${APP_DOCKFILE}
+    environment: 
+      - DB_HOST=db
+      - DB_PORT=${MYSQL_PORT}
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "${APP_PORT_EXTERNAL}:${APP_PORT}"
+    depends_on:
+      - db
+    volumes:
+      - ./web:/app/web
+    entrypoint: /bin/bash ./docker-entrypoint.sh
+  db:
+    image: mariadb:10.6
+    environment: 
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_0900_ai_ci
+    ports:
+      - ${DB_PORT_EXTERNAL}:${DB_PORT}
+    volumes:
+      - ./system/db:/var/lib/mysql
