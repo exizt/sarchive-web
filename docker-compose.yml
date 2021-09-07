@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: ${APP_DOCKFILE}
     ports:
-      - "28000:80"
+      - "${APP_PORT_EXTERNAL}:${APP_PORT}"
     volumes:
       - ./web:/app/web
     # - ./sys/logs:/var/log/apache2
