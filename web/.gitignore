@@ -20,9 +20,5 @@ Thumbs.db
 # vendor files
 /vendor/
 
-# IDE files
-/nbproject/
-.idea/*
-
 # Local Folders
 /public/files/

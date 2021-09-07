@@ -1,0 +1,13 @@
+# 로컬 환경, 개발 PC에서의 Docker [docker-compose]
+version: "3.9"
+services: 
+  webapp:
+    build:
+      context: .
+      dockerfile: ${APP_DOCKFILE}
+    ports:
+      - "28000:80"
+    volumes:
+      - ./web:/app/web
+      - ./sys/logs:/var/log/apache2
+    # entrypoint: /bin/bash /app/docker-entrypoint.sh
