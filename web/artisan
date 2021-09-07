@@ -1,6 +1,11 @@
 #!/usr/bin/env php
 <?php
 
+# vendor의 경로
+$cc_vendor_root = getenv('C_VENDOR_ROOT') ? getenv('C_VENDOR_ROOT') : __DIR__.'/../vendor';
+define('C_VENDOR_ROOT', $cc_vendor_root);
+
+# 원래 부분 시작
 define('LARAVEL_START', microtime(true));
 
 /*
@@ -15,7 +20,7 @@ define('LARAVEL_START', microtime(true));
 |
 */
 
-require __DIR__.'/vendor/autoload.php';
+require C_VENDOR_ROOT.'/vendor/autoload.php';
 
 $app = require_once __DIR__.'/bootstrap/app.php';
 

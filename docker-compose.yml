@@ -9,5 +9,5 @@ services:
       - "28000:80"
     volumes:
       - ./web:/app/web
-      - ./sys/logs:/var/log/apache2
-    # entrypoint: /bin/bash /app/docker-entrypoint.sh
+    # - ./sys/logs:/var/log/apache2
+    entrypoint: /bin/bash /app/docker-entrypoint.sh
