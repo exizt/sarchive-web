@@ -45,7 +45,7 @@ COPY ./vhost.conf /etc/apache2/sites-available/000-default.conf
 COPY docker-entrypoint.sh .
 
 # composer 설정 및 실행
-COPY ./web/composer.json .
+# COPY ./web/composer.json .
 # COPY ./web/composer.lock .
 ENV COMPOSER_ALLOW_SUPERUSER 1
 # RUN composer install
