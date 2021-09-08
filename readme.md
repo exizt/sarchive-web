@@ -37,7 +37,11 @@ Laravel 에서 필요한 PHP 구성
         - 도커를 사용 안 할 때에는 필요하지 않다.
     2. 다음의 명령어를 통해서 도커 이미지 및 컨테이너를 생성한다.
     ```console
-    docker-compose --env-file=.local.env up --build --force-recreate -d
+    docker-compose --env-file=.env.local.env up --build --force-recreate -d
+    ```
+    3. DB 볼륨을 삭제할 필요가 있을 때는 다음 명령어를 통해서 볼륨까지 클린 삭제를 한 후에 재생성을 한다.
+    ```console
+    docker-compose --env-file=.env.local.env down -v
     ```
 4. 도커를 사용하지 않을 때
     - web/public 까지가 document_root 가 되도록 웹서버에 설정을 해준다.
