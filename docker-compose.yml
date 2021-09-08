@@ -9,7 +9,6 @@ services:
       - "${APP_PORT_EXTERNAL}:${APP_PORT}"
     volumes:
       - ./web:/app/web
-      - ./web/composer.json:/app/composer.json
+      - ./composer.json:/app/composer.json
       - ./web/composer.lock:/app/composer.lock
-    # - ./sys/logs:/var/log/apache2
     entrypoint: /bin/bash /app/docker-entrypoint.sh

@@ -13,12 +13,6 @@ RUN  apt-get update \
     && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
 
-# DB 연결에 대기시킬 수 있는 기능을 하는 Dockerize 를 이용
-# ENV DOCKERIZE_VERSION v0.6.1
-# RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-#    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-#    && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-
 # composer 설치
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer

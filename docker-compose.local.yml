@@ -9,9 +9,9 @@ services:
       - "${APP_PORT_EXTERNAL}:${APP_PORT}"
     volumes:
       - ./web:/app/web
-      - ./web/composer.json:/app/composer.json
+      - ./composer.json:/app/composer.json
       - ./web/composer.lock:/app/composer.lock
-    entrypoint: /bin/bash ./docker-entrypoint.sh
+    entrypoint: /bin/bash /app/docker-entrypoint.sh
     depends_on:
       - db
   db:
@@ -21,7 +21,7 @@ services:
       - MYSQL_DATABASE=${DB_DATABASE}
       - MYSQL_USER=${DB_USER}
       - MYSQL_PASSWORD=${DB_PASSWORD}
-    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_0900_ai_ci
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     ports:
       - ${DB_PORT_EXTERNAL}:${DB_PORT}
     volumes:
