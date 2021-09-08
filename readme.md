@@ -15,22 +15,34 @@ SArchive 프로젝트
 4. [N] : 새로 글 쓰기
 
 
-# TODO
-
-* 설정에서 폰트/폰트크기 변경 가능하게.
-
-
+# 개발 환경
+* Laravel 7.0 이상
+* PHP 7.4 이상 (요구사항 7.2.5 이상)
 
 
-# 개발 메모
-컨트롤러 추가 시. 
+Laravel 에서 필요한 PHP 구성
 
-* php artisan make:controller PhotoController --resource
-* php artisan make:controller Admin/PhotoController --resource
+* extension=openssl : 뭐였는지 기억 안 나지만 필요함
+* extension=pdo_mysql : DB 연결을 위해 필요
+* extension=mbstring : 뭐였는지 기억 안 남
+* extension=fileinfo : 파일업로드 기능을 위해 필요한 듯
 
 
-
-모델 추가 시
-
-* php artisan make:model --migration Post
-* php artisan make:model --migration Models/Post
+# 셋팅 과정
+1. git 을 내려받는다.
+2. web/.env.example 을 복사해서 web/.env 를 생성한다.
+    - 데이터베이스 연결 및 Secret key 등을 기입한다.
+3. 도커 사용시
+    1. /.local.env.example 을 복사해서 /.local.env 를 생성한다. (도커 컴포저 설정)
+        - 도커를 사용 안 할 때에는 필요하지 않다.
+    2. 다음의 명령어를 통해서 도커 이미지 및 컨테이너를 생성한다.
+    ```console
+    docker-compose --env-file=.env.local.env up --build --force-recreate -d
+    ```
+    3. DB 볼륨을 삭제할 필요가 있을 때는 다음 명령어를 통해서 볼륨까지 클린 삭제를 한 후에 재생성을 한다.
+    ```console
+    docker-compose --env-file=.env.local.env down -v
+    ```
+4. 도커를 사용하지 않을 때
+    - web/public 까지가 document_root 가 되도록 웹서버에 설정을 해준다.
+    - `composer install`을 해준다.

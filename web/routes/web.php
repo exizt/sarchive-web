@@ -1,9 +1,17 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\App;
 
 // Auth
-Auth::routes(['register' => false, 'verify'=> true]);
+if(App::environment('local')){
+    // local 에서는 등록 허용.
+    Auth::routes(['register' => true, 'verify'=> false]);
+} else {
+    // production 등에서는 유저 등록 비허용.
+    Auth::routes(['register' => false, 'verify'=> true]);
+}
+
 // index
 Route::get ( '/', 'Home@index' );
 
