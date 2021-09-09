@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\App;
  * Http 접속을 Https 로 redirect 시키는 클래스.
  * 클라우드 플레어 자체에서 always https 설정이 되어있으면, 이 기능이 필요하지는 않음. (동일한 기능)
  * 가끔 always https 설정이 꺼질 때가 있으므로 그 때를 대비하는 코드.
- * Kernel.php 에서 $middlewareGroups 에 App\Http\Middleware\HttpsProtocol::class, 을 추가시키면 적용된다. 
+ * Kernel.php 에서 $middlewareGroups 에 App\Http\Middleware\HttpsProtocol::class, 을 추가시키면 적용된다.
  * 지금은 귀찮아서 적용시키진 않음. 적용시켰어도 큰 이상 없음.
  */
 class HttpsProtocol {
@@ -23,7 +23,7 @@ class HttpsProtocol {
         'local',
         'testing',
 	];
-	
+
 	/**
 	 * 참고 주소 https://www.lesstif.com/php-and-laravel/https-27984776.html
 	 * http://stackoverflow.com/questions/28402726/laravel-5-redirect-to-https
@@ -48,19 +48,19 @@ class HttpsProtocol {
                 return true;
             }
         }
-     
+
         return false;
     }
- 
+
 	// 제외할 환경인지 확인
-    protected function envPassThrough() 
+    protected function envPassThrough()
     {
         $appEnv = \App::environment();
         foreach ($this->exceptEnv as $except) {
             if ($appEnv === $except)
                 return true;
         }
-        return false;  
+        return false;
 	}
-	
+
 }

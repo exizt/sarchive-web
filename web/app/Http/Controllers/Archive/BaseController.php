@@ -14,7 +14,7 @@ class BaseController extends Controller {
     }
 
     /**
-     * 
+     *
      * @return string[]
      */
     protected function createViewData() {

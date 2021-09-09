@@ -16,7 +16,7 @@ class SACategory extends Model
         'redirect'=>''
     ];
     protected $appends = array (
-        'category_array' 
+        'category_array'
     );
 
     /**

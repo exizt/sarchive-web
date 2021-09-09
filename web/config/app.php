@@ -55,7 +55,7 @@ return [
     'url' => env('APP_URL', 'http://localhost'),
 
     'asset_url' => env('ASSET_URL', null),
-    
+
     /*
     * 로그인을 경유하는 사이트 주소.
     */

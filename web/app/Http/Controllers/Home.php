@@ -27,10 +27,10 @@ class Home extends Controller {
 			->orderBy('index','asc')
 			->orderBy('id','asc')
 			->get();
-		
+
 			$dataSet = $this->createViewData ();
 			$dataSet['masterList'] = $masterList;
-			
+
 			return view ( 'home', $dataSet );
 
 		} else {
@@ -40,7 +40,7 @@ class Home extends Controller {
 		}
 	}
 
-		
+
 	/**
 	 * 글 본문 읽기
 	 *
@@ -48,7 +48,7 @@ class Home extends Controller {
 	 * @return \Illuminate\Http\Response
 	 */
 	public function staticPage(Request $request, $uri) {
-	    
+
 	    // create dataSet
 	    $dataSet = $this->createViewData ();
 		if($request->has('archiveId')){
@@ -59,14 +59,14 @@ class Home extends Controller {
 			case 'shortcut':
 				$blade = 'shortcut';
 				break;
-			
+
 			default:
 				abort(404);
 				break;
 		}
 	    return view ( 'app.static_pages.'.$blade, $dataSet );
 	}
-	
+
 	/**
      *
      * @return string[]

@@ -39,12 +39,12 @@ class DocumentController extends Controller {
 
         // 문서 조회
         $document = SADocument::findOrFail($documentId);
-       
+
         $archiveId = $document->archive_id;
-        
+
         // archiveId 권한 체크 및 조회
         $archive = $this->retrieveAuthArchive($archiveId);
-        
+
         $folder = SAFolder::find($document->folder_id);
         $bookmark = ArchiveBookmark::firstOrNew(['id'=>$documentId]);
 
@@ -76,11 +76,11 @@ class DocumentController extends Controller {
 
     /**
      * 문서 생성
-     * 
-     * archive_id 파라미터를 필수로 한다. 
+     *
+     * archive_id 파라미터를 필수로 한다.
      */
     public function create(Request $request) {
-        
+
         // 유효성 검증
         $validatedData = $request->validate([
             'archive' => 'required|integer'
@@ -94,14 +94,14 @@ class DocumentController extends Controller {
 
         // document 개체 생성
         $article = new SADocument;
-        
+
         // dataSet 생성
         $dataSet = $this->createViewData ();
         $dataSet ['article'] = $article;
         $dataSet ['parameters']['archive_id'] = $archiveId;
         return view ( self::VIEW_PATH . '.create', $dataSet );
     }
-    
+
 
 
     /**
@@ -129,15 +129,15 @@ class DocumentController extends Controller {
 
         $viewData ['actionLinks'] = $actionLinks;
         return view ( self::VIEW_PATH . '.edit', $viewData );
-        
+
 
     }
 
-    
+
     /**
      * 문서 생성 > 저장
      *
-     * @param \Illuminate\Http\Request $request        	
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request) {
@@ -164,19 +164,19 @@ class DocumentController extends Controller {
         // archiveId 권한 체크 및 조회
         $archive = $this->retrieveAuthArchive($archiveId);
 
-        // 데이터 insert	
+        // 데이터 insert
         $article = new SADocument;
         $article->title = $title;
         $article->content = $content;
         $article->archive_id = $archiveId;
-        
+
         if($folderId != null){
             $folder = SAFolder::findOrFail($folderId);
             $article->folder_id = $folderId;
         }
         $article->reference = $reference;
         $article->save ();
-        
+
         // folder 의 문서 수 변경.
         if(isset($folder)){
             $this->updateFolderDocCount($folderId);
@@ -199,17 +199,17 @@ class DocumentController extends Controller {
         return redirect()->route ( self::ROUTE_ID . '.show', $article->id )
         ->with('message', '저장되었습니다.' );
     }
-    
+
 
     /**
      * 문서 편집 > 저장
      *
-     * @param \Illuminate\Http\Request $request        	
-     * @param int $id        	
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id) {
-       
+
         /**
          * 파라미터
          */
@@ -233,7 +233,7 @@ class DocumentController extends Controller {
         $document->title = $title;
         $document->content = $content;
         $document->reference = $reference;
-        
+
         // folderId 의 유효성 체크 및 처리
         $changedFolderIds = array();
         if($folderId != null){
@@ -253,7 +253,7 @@ class DocumentController extends Controller {
                 /// 폴더 변경이 이루어졌을 때
                 // 새로운 folderId가 유효한지 체크
                 $folder = SAFolder::findOrFail($folderId);
-                
+
                 // 값의 변경
                 $document->folder_id = $folderId;
 
@@ -293,11 +293,11 @@ class DocumentController extends Controller {
         }
     }
 
-    
+
     /**
      * 문서 삭제.
      *
-     * @param int $id        	
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id) {
@@ -310,13 +310,13 @@ class DocumentController extends Controller {
 
         // delete 실행
         $article->delete();
-        
+
         // Category x Document 릴레이션에서 기존의 해당하는 것 제거
         SACategoryDocumentRel::where('document_id',$id)->delete();
-        
+
         // folder 의 문서 수 변경.
         $this->updateFolderDocCount($folderId);
-        
+
         $linkParams = $this->buildLinkParamsByUrl(url()->previous());
         $previousListLink = $this->generatePreviousListLink($archive->id, $linkParams);
 
@@ -359,7 +359,7 @@ class DocumentController extends Controller {
         $item->profile_id = $profileId;
         $item->save();
 
-        
+
         $dataSet = array();
         $dataSet ['data'] = [
             'archive' => $archiveId,
@@ -382,7 +382,7 @@ class DocumentController extends Controller {
      */
     private function generatePreviousListLink($archiveId, $linkParams){
         $params = array();
-        
+
         if(isset($linkParams['lfolder'])){
             // 폴더에 의한 최신 게시물
             $explorerRouteId = 'explorer.folder';
@@ -407,7 +407,7 @@ class DocumentController extends Controller {
 
     /**
      * Request를 통해서 링크에 이용될 파라미터 배열을 생성.
-     * 
+     *
      * @return array
      */
     private function buildLinkParams(Request $request){
@@ -428,7 +428,7 @@ class DocumentController extends Controller {
 
     /**
      * URL 문자열을 통해서 링크에 이용될 파라미터 배열을 생성한다.
-     * 
+     *
      * @return array
      */
     private function buildLinkParamsByUrl($url){
@@ -439,7 +439,7 @@ class DocumentController extends Controller {
         $parts = parse_url($url);
         if(!empty($parts['query'])){
             parse_str($parts['query'], $queryArray);
-            
+
             // 허용된 것만 처리
             $matches = array_intersect_key($queryArray, array_flip($allowed_keys));
         }
@@ -470,7 +470,7 @@ class DocumentController extends Controller {
                     ];
                 }
             }
-    
+
             // 대량 할당
             if(count($datas)>0){
                 SACategoryDocumentRel::insert($datas);
@@ -485,7 +485,7 @@ class DocumentController extends Controller {
      * @param int $id 아카이브 Id
      */
     private function retrieveAuthArchive($id){
-        
+
         $this->archive = SAArchive::select(['id','name','route'])
             ->where ( [['user_id', Auth::id() ],['id',$id]])
             ->firstOrFail ();
@@ -493,7 +493,7 @@ class DocumentController extends Controller {
     }
 
 
-        
+
     /**
      * folder 테이블의 doc_count 값을 갱신
      */
@@ -506,7 +506,7 @@ class DocumentController extends Controller {
 
 
     /**
-     * 
+     *
      * @return string[]
      */
     protected function createViewData() {

@@ -32,11 +32,11 @@ class FolderController extends Controller {
 
     /**
      * 문서 생성
-     * 
-     * archive_id 파라미터를 필수로 한다. 
+     *
+     * archive_id 파라미터를 필수로 한다.
      */
     public function create(Request $request) {
-        
+
         /*
         // 유효성 검증
         $validatedData = $request->validate([
@@ -74,7 +74,7 @@ class FolderController extends Controller {
         $dataSet ['cancelButtonLink'] = url()->previous();
         return view ( self::VIEW_PATH . '.create', $dataSet );
     }
-    
+
 
 
     /**
@@ -110,11 +110,11 @@ class FolderController extends Controller {
     }
 
 
-    
+
     /**
      * 문서 생성 > 저장
      *
-     * @param \Illuminate\Http\Request $request        	
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request) {
@@ -134,8 +134,8 @@ class FolderController extends Controller {
 
         // archiveId 권한 체크 및 조회
         $archive = $this->retrieveAuthArchive($archiveId);
-        
-        // 데이터 insert	
+
+        // 데이터 insert
         $folder = new SAFolder;
         $folder->archive_id = $archive->id;
         $folder->name = $name;
@@ -145,9 +145,9 @@ class FolderController extends Controller {
 
         /**
          * System Path 처리
-         * 
+         *
          * 주의 사항
-         * (순서에 주의) 'folder.id' 값을 필요로 하므로 
+         * (순서에 주의) 'folder.id' 값을 필요로 하므로
          * 앞서 저장작업이 마무리되어 있어야 한다.
          */
         if(isset($parentId) && $parentId != 0){
@@ -173,18 +173,18 @@ class FolderController extends Controller {
         return redirect("/folders/{$folder->id}")
             ->with('message', '저장되었습니다.' );
     }
-    
+
 
 
     /**
      * 문서 편집 > 저장
      *
-     * @param \Illuminate\Http\Request $request        	
-     * @param int $id        	
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id) {
-       
+
         /**
          * 파라미터
          */
@@ -215,15 +215,15 @@ class FolderController extends Controller {
                 $folder->system_path = SAFolder::generateSystemPath($folder->id);
                 $folder->parent_id = 0;
                 $folder->depth = 1;
-            
+
                 $isParentChanged = true;
             } else {
                 // parentFolder 조회
                 $parentFolder = SAFolder::findOrFail($parentId);
-                
+
                 // systemPath 처리
                 $folder->system_path = SAFolder::generateSystemPathAppend($folder->id, $parentFolder->system_path);
-    
+
                 // parent_id 변경
                 $folder->parent_id = $parentFolder->id;
                 $folder->depth = $parentFolder->depth + 1;
@@ -231,10 +231,10 @@ class FolderController extends Controller {
                 $isParentChanged = true;
             }
         }
-        
+
         // 저장 처리
         $folder->name = $name;
-        $folder->comments = $comments;        
+        $folder->comments = $comments;
         $folder->save();
 
         /**
@@ -255,9 +255,9 @@ class FolderController extends Controller {
 
         /**
          * 카운트 갱신
-         * 
+         *
          * 기존 것의 parent folder id 의 갱신 (1), 새로 바뀐 folder id 관련 갱신 (2).
-         * 
+         *
          * 주의 사항
          * (순서에 주의) 'system_path'값을 참조로 재조회를 하기 때문에, 앞서 변경저장이
          * 마무리 되어있어야 한다.
@@ -284,23 +284,23 @@ class FolderController extends Controller {
             ->with('message', '저장되었습니다.' );
     }
 
-    
+
 
     /**
      * 문서 삭제.
      *
-     * 
+     *
      * 하위 폴더를 어떻게 처리할지 결정해야 함. 가능하면 하위 폴더가 있는 상태에서는 삭제되지
      * 않도록 하는 것도 방법일 듯함.
-     * 
-     * 하위 폴더가 존재할 때에는 삭제되지 않도록 한다. 
+     *
+     * 하위 폴더가 존재할 때에는 삭제되지 않도록 한다.
      * (하위 폴더까지 탐색하면서 처리하는 것이 다소 부담스러움. 예상되는 것으로는
-     * 하위 폴더를 다른 곳으로 이동시킨다면 하위 폴더의 parent_id 변경, system_path 변경. 
-     * 만약 같이 삭제한다면 해당되는 document들의 folder_id 변경. 
+     * 하위 폴더를 다른 곳으로 이동시킨다면 하위 폴더의 parent_id 변경, system_path 변경.
+     * 만약 같이 삭제한다면 해당되는 document들의 folder_id 변경.
      * 카운트도 다 변경해주어야 함...)
-     * 
+     *
      * 삭제된 폴더의 문서들의 folder_id 는 null 또는 상위 폴더로 변경해줌.
-     * @param int $id        	
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id) {
@@ -323,12 +323,12 @@ class FolderController extends Controller {
 
             // delete 실행
             $folder->delete();
-            
+
             // 상위 folder 의 문서 수 변경.
             if(!empty($tempFolderId)){
                 $this->updateFolderDocCount($folder->parent_id);
             }
-            
+
             // @todo 폴더의 게시물 목록 or 아카이브의 게시물 목록으로 이동
             if(!empty($folder->parent_id)){
                 return redirect('/folders/'.$folder->parent_id)
@@ -351,7 +351,7 @@ class FolderController extends Controller {
         $dataList = $request->input('dataList', array());
 
         if(empty($dataList)) abort(403);
-        
+
         foreach($dataList as $i => $item){
             $folder = SAFolder::findOrFail ( $item['id'] );
             $folder->index = $item['index'];
@@ -373,7 +373,7 @@ class FolderController extends Controller {
      * @param int $id 아카이브 Id
      */
     private function retrieveAuthArchive($id){
-        
+
         $this->archive = SAArchive::select(['id','name','route'])
             ->where ( [['user_id', Auth::id() ],['id',$id]])
             ->firstOrFail ();
@@ -389,7 +389,7 @@ class FolderController extends Controller {
 
         SAFolder::join(DB::raw(
             '(select id, @rownum:=@rownum+1 as rownum
-            from sa_folders 
+            from sa_folders
             where parent_id = ?
             and archive_id = ?
             order by `index`) as t2'),'t2.id','=','sa_folders.id')
@@ -398,7 +398,7 @@ class FolderController extends Controller {
     }
 
     /**
-     * 
+     *
      * @return string[]
      */
     protected function createViewData() {

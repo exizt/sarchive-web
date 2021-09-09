@@ -33,7 +33,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('archives', 'Archive\ArchiveController', ['except'=>['show']]);
     Route::post('archives/updateSort', 'Archive\ArchiveController@updateSort')->name('archives.updateSort');
     Route::resource('doc', 'Archive\DocumentController', ['except'=>['index']]);
-    
+
     Route::post('folders/updateSort', 'Archive\FolderController@updateSort')->name('folders.updateSort');
     Route::resource('folders', 'Archive\FolderController', ['except'=>['show','index']]);
     Route::post('archives/ajax_mark', 'Archive\DocumentController@doAjax_mark');

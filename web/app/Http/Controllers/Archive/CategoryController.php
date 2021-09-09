@@ -48,9 +48,9 @@ class CategoryController extends Controller {
         return view ( self::VIEW_PATH . '.index', $dataSet );
 
     }
-    
 
-    
+
+
     /**
      * 카테고리 편집
      *
@@ -65,7 +65,7 @@ class CategoryController extends Controller {
         //
         //$category = SACategory::firstOrNew (['profile_id'=>$archiveId,'name'=>$categoryName]);
         $category = SACategory::find($categoryId);
-        
+
         // create dataSet
         $dataSet = $this->createViewData ();
         $dataSet ['item'] = $category;
@@ -73,29 +73,29 @@ class CategoryController extends Controller {
         //$dataSet ['parameters']['profile'] = $archiveId;
         //$dataSet ['parameters']['categoryId'] = $categoryId;
         return view ( self::VIEW_PATH . '.edit', $dataSet );
-        
+
     }
 
     /**
      * 카테고리 편집 > 저장
      *
-     * @param \Illuminate\Http\Request $request        	
-     * @param int $id        	
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $archiveId, $categoryId) {
 
         $archive = SAArchive::find($archiveId);
-        
+
         /**
          * 파라미터
          */
         $comments = $request->input ('comments');
         $category = $request->input ('category');
-        
+
         // 카테고리 데이터 조회
         $item = SACategory::findOrFail ($categoryId);
-        
+
         // archiveId 권한 체크 및 조회
         $archive = $this->retrieveAuthArchive($item->archive_id);
 
@@ -104,7 +104,7 @@ class CategoryController extends Controller {
         $item->comments = $comments;
         $item->category = $category;
         $item->save ();
-        
+
         // 카테고리끼리의 릴레이션을 갱신
         if($beforeCategory != $category){
             $this->updateCategoryRel($archiveId, $item->name, $item->category_array);
@@ -118,12 +118,12 @@ class CategoryController extends Controller {
         return redirect ()->route ( 'explorer.category', ['archive'=>$archiveId,'category'=>urlencode($item->name)])
         ->with('message', '저장되었습니다.' );
     }
-    
-    
+
+
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $id        	
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($archiveId, $id) {
@@ -136,7 +136,7 @@ class CategoryController extends Controller {
 
         // 삭제 진행
         $item->delete();
-        
+
         // 카테고리 릴레이션 정보 삭제
         SACategoryRel::where('archive_id',$archiveId)
             ->where('child_category_name',$item->name)
@@ -161,7 +161,7 @@ class CategoryController extends Controller {
         SACategoryRel::where('archive_id',$archiveId)
             ->where('child_category_name',$currentName)
             ->delete();
-        
+
         if(count($categoryNames) > 0){
             // insert 할 데이터 생성
             $datas = array();
@@ -183,13 +183,13 @@ class CategoryController extends Controller {
         }
     }
 
-    
+
     /**
      * id를 통한 archive 조회 및 권한 체크
      * @param int $id 아카이브 Id
      */
     private function retrieveAuthArchive($id){
-        
+
         $this->archive = SAArchive::select(['id','name','route'])
             ->where ( [['user_id', Auth::id() ],['id',$id]])
             ->firstOrFail ();
@@ -198,7 +198,7 @@ class CategoryController extends Controller {
 
 
     /**
-     * 
+     *
      * @return string[]
      */
     protected function createViewData() {
@@ -218,5 +218,5 @@ class CategoryController extends Controller {
         $data ['bodyParams'] = $bodyParams;
         return $data;
     }
-        
+
 }

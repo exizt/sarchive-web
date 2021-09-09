@@ -9,14 +9,14 @@ use Illuminate\Support\Facades\Auth;
 class AdminController extends Controller
 {
 	//protected const VIEW_PATH = 'admin.folder-control';
-    
+
     /**
      * 생성자
      */
 	public function __construct() {
 		$this->middleware ( 'auth' );
 	}
-	
+
     /**
      * 폴더 목록 조회
      */

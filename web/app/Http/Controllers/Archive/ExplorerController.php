@@ -35,10 +35,10 @@ class ExplorerController extends BaseController {
         $this->middleware ( 'auth' )->except(['doAjax_getFolderNav','doAjax_getHeaderNav']);
     }
 
-    
+
     /**
      * 'archive_id' 기준으로 문서 조회
-     * 
+     *
      */
     public function showDocsByArchive(Request $request, $archiveId){
         // 파라미터
@@ -51,7 +51,7 @@ class ExplorerController extends BaseController {
         $qry = SADocument::select($this->docColumns)
             ->where ( 'archive_id',$archiveId )
             ->with ('folder');
-            
+
         if($is_only) $qry = $qry->whereNull('folder_id');
 
         $masterList = $qry->orderBy ( 'created_at', 'desc' )
@@ -67,7 +67,7 @@ class ExplorerController extends BaseController {
 
     /**
      * 'folder_id'기준으로 문서 조회
-     * 
+     *
      */
     public function showDocsByFolder(Request $request, $folderId) {
 
@@ -104,7 +104,7 @@ class ExplorerController extends BaseController {
             ->orderBy ( 'created_at', 'desc' )
             ->paginate(15);
         }
-        
+
         // dataSet 생성
         $dataSet = $this->createViewData ();
         $dataSet ['masterList'] = $masterList;
@@ -113,10 +113,10 @@ class ExplorerController extends BaseController {
         if($is_only) $dataSet ['paginationParams']['only'] = true;
         return view ( self::VIEW_PATH . '.index', $dataSet );
     }
-    
 
 
-    
+
+
     /**
      * 카테고리에 해당하는 문서 목록 및 카테고리 정보
      *
@@ -124,7 +124,7 @@ class ExplorerController extends BaseController {
     public function showDocsByCategory(Request $request, $archiveId, $encodedName) {
         // 카테고리명
         $categoryName = urldecode($encodedName);
-        
+
         // archiveId 권한 체크 및 조회
         $archive = $this->retrieveAuthArchive($archiveId);
 
@@ -176,11 +176,11 @@ class ExplorerController extends BaseController {
         //$archiveId = $request->input('archiveId');
         $word = $request->input('q','');
 
-        
+
         // archiveId 권한 체크 및 조회
         $archive = $this->retrieveAuthArchive($archiveId);
 
-        
+
         if(mb_strlen($word) < 2){
             echo '검색어가 너무 짧음.';
         } else {
@@ -198,9 +198,9 @@ class ExplorerController extends BaseController {
             return view ( self::VIEW_PATH . '.search', $dataSet );
         }
     }
-    
 
-    
+
+
 
     public function folderSelector(Request $request){
         $archiveId = $request->input('archive');
@@ -286,7 +286,7 @@ class ExplorerController extends BaseController {
      */
     public function doAjax_getFolderNav(Request $request){
         $mode = 'folder';
-        
+
 
         if($request->has('folder_id') && !empty($request->input('folder_id'))){
             // 유효성 검증
@@ -326,7 +326,7 @@ class ExplorerController extends BaseController {
 
 
             // 하위 폴더 목록
-            $masterList = DB::select("select 
+            $masterList = DB::select("select
                                 p1.parent_id as parent_id,
                                 p1.id,
                                 p1.name,
@@ -334,24 +334,24 @@ class ExplorerController extends BaseController {
                                 p1.depth,
                                 p1.system_path
             from        sa_folders p1
-            left join   sa_folders p2 on p2.id = p1.parent_id 
-            left join   sa_folders p3 on p3.id = p2.parent_id 
-            left join   sa_folders p4 on p4.id = p3.parent_id  
-            left join   sa_folders p5 on p5.id = p4.parent_id  
+            left join   sa_folders p2 on p2.id = p1.parent_id
+            left join   sa_folders p3 on p3.id = p2.parent_id
+            left join   sa_folders p4 on p4.id = p3.parent_id
+            left join   sa_folders p5 on p5.id = p4.parent_id
             left join   sa_folders p6 on p6.id = p5.parent_id
-            where       ? in (p1.parent_id, 
-                        p2.parent_id, 
-                        p3.parent_id, 
-                        p4.parent_id, 
-                        p5.parent_id, 
+            where       ? in (p1.parent_id,
+                        p2.parent_id,
+                        p3.parent_id,
+                        p4.parent_id,
+                        p5.parent_id,
                         p6.parent_id)
             order by    p1.depth, p1.index;",[$folderId]);
-            
-            
+
+
 
         } else {
             // 하위 폴더 목록
-            $masterList = DB::select("select 
+            $masterList = DB::select("select
                                 p1.parent_id as parent_id,
                                 p1.id,
                                 p1.name,
@@ -359,10 +359,10 @@ class ExplorerController extends BaseController {
                                 p1.depth,
                                 p1.system_path
             from        sa_folders p1
-            left join   sa_folders p2 on p2.id = p1.parent_id 
-            left join   sa_folders p3 on p3.id = p2.parent_id 
-            left join   sa_folders p4 on p4.id = p3.parent_id  
-            left join   sa_folders p5 on p5.id = p4.parent_id  
+            left join   sa_folders p2 on p2.id = p1.parent_id
+            left join   sa_folders p3 on p3.id = p2.parent_id
+            left join   sa_folders p4 on p4.id = p3.parent_id
+            left join   sa_folders p5 on p5.id = p4.parent_id
             left join   sa_folders p6 on p6.id = p5.parent_id
             where       p1.archive_id = ?
             order by    p1.depth, p1.index;",[$archiveId]);
@@ -384,7 +384,7 @@ class ExplorerController extends BaseController {
      * @param int $id 아카이브 Id
      */
     private function retrieveAuthArchive($id){
-        
+
         $this->archive = SAArchive::select(['id','name','route'])
             ->where ( [['user_id', Auth::id() ],['id',$id]])
             ->firstOrFail ();
@@ -393,7 +393,7 @@ class ExplorerController extends BaseController {
 
 
     /**
-     * 
+     *
      * @return string[]
      */
     protected function createViewData() {
@@ -427,7 +427,7 @@ class ExplorerController extends BaseController {
     protected function makePreviousListLink(Request $request, $profileId)
     {
         $previous = url()->previous();
-        
+
         $routeLink = route ( self::ROUTE_ID . '.index', ['profile'=> $profileId]);
 
         return (strtok($previous,'?') == $routeLink) ? $previous : $routeLink;
@@ -441,7 +441,7 @@ class ExplorerController extends BaseController {
     protected function makePreviousShowLink(Request $request, $profileId, $archiveId)
     {
         $previous = url()->previous();
-        
+
         $routeLink = route ( self::ROUTE_ID . '.show', ['profile'=> $profileId, 'archive'=>$archiveId]);
 
         return (strtok($previous,'?') == $routeLink) ? $previous : $routeLink;
@@ -462,15 +462,15 @@ class ExplorerController extends BaseController {
         // 바로 이전 주소가 list 형태의 index 경로라면, flash session 에 저장.
         $request->session()->reflash();
         $request->session()->keep([$session_previousName]);
-        
+
         $previous = url()->previous();
         $previous_identifier = strtok($previous,'?');
-        
+
         // 해당 패턴과 일치하거나 index 의 주소인 경우에 previous 세션에 저장
         if($previous_identifier == route ( self::ROUTE_ID . '.index', ['profile'=>1])){
             $request->session()->flash($session_previousName, $previous);
         }
-        
+
         //session 에 해당 값이 있으면 세션 값 사용. 없으면 목록 주소로 대체.
         return ($request->session()->get($session_previousName,'') != '') ?
         $request->session()->get($session_previousName,'') : route ( self::ROUTE_ID . '.index', ['profile'=>1]);
