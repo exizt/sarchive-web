@@ -1,6 +1,6 @@
-@extends('layouts.sarchive_layout') 
-@section('title',"$article->title") 
-@section('content') 
+@extends('layouts.sarchive_layout')
+@section('title',"$article->title")
+@section('content')
 {{-- prism : 코드 syntaxhighlighter 종류 중 하나 --}}
 <!--<link rel="stylesheet" type="text/css" href="/assets/lib/prism/prism.css">-->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism-okaidia.min.css" integrity="sha512-mIs9kKbaw6JZFfSuo+MovjU+Ntggfoj8RwAmJbVXQ5mkAX5LlgETQEweFPI18humSPHymTb5iikEOKWF7I8ncQ==" crossorigin="anonymous" />
@@ -9,10 +9,10 @@
     <h5>위치</h5>
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/archives/{{$archive->id}}/latest">{{ $archive->name }}</a></li> 
+            <li class="breadcrumb-item"><a href="/archives/{{$archive->id}}/latest">{{ $archive->name }}</a></li>
             @isset ($folder->paths)
             @foreach ($folder->paths as $item)
-            <li class="breadcrumb-item"><a href="/folders/{{$item->id}}">{{ $item->name }}</a></li> 
+            <li class="breadcrumb-item"><a href="/folders/{{$item->id}}">{{ $item->name }}</a></li>
             @endforeach
             @endisset
         </ol>
@@ -20,11 +20,11 @@
     <div class="d-flex justify-content-between">
         <h4>본문</h4>
         <div>
-            <a class="btn btn-sm btn-outline-info site-shortcut-key-e" 
+            <a class="btn btn-sm btn-outline-info site-shortcut-key-e"
                 href="{{ $actionLinks->edit }}" role="button">편집</a>
-            <a class="btn btn-sm shh-btn-bookmark active {{($bookmark->is_favorite)? 'btn-info':'btn-primary'}}" href="#" role="button" 
+            <a class="btn btn-sm shh-btn-bookmark active {{($bookmark->is_favorite)? 'btn-info':'btn-primary'}}" href="#" role="button"
                 data-mode="favorite" data-archive="{{$article->id}}" data-value="{{$bookmark->is_favorite}}"><i class="fas fa-star"></i>&nbsp;즐겨찾기</a>
-            <a class="btn btn-sm shh-btn-bookmark active {{($bookmark->is_bookmark)? 'btn-info':'btn-primary'}}" href="#" role="button" 
+            <a class="btn btn-sm shh-btn-bookmark active {{($bookmark->is_bookmark)? 'btn-info':'btn-primary'}}" href="#" role="button"
                 data-mode="bookmark" data-archive="{{$article->id}}" data-value="{{$bookmark->is_bookmark}}"><i class="fas fa-bookmark"></i>&nbsp;북마크</a>
         </div>
     </div>
@@ -55,11 +55,11 @@
     <hr>
     <div class="form-group row">
         <div class="col-md-10 col-md-offset-2">
-            <a class="btn btn-primary btn-sm site-shortcut-key-z" 
+            <a class="btn btn-primary btn-sm site-shortcut-key-z"
                 href="{{ $actionLinks->list }}" role="button">목록</a>
-            <a class="btn btn-outline-info btn-sm site-shortcut-key-e" 
+            <a class="btn btn-outline-info btn-sm site-shortcut-key-e"
                 href="{{ $actionLinks->edit }}" role="button">편집</a>
-            <a class="btn btn-outline-secondary btn-sm" 
+            <a class="btn btn-outline-secondary btn-sm"
                 href="javascript:history.back()" role="button">뒤로</a>
         </div>
     </div>

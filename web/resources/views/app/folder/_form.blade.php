@@ -1,20 +1,20 @@
 <div class="">
     <div class="form-group">
         <label for="frm-item-name">폴더명</label>
-        <input name="name" class="form-control" type="text" autofocus id="frm-item-name" 
+        <input name="name" class="form-control" type="text" autofocus id="frm-item-name"
             value="{{ $item->name }}" placeholder="명칭" aria-label="명칭">
     </div>
 
     <div class="form-group">
         <label for="frm-item-text">요약 설명</label>
-        <input name="comments" type="text" id="frm-item-text" class="form-control" 
+        <input name="comments" type="text" id="frm-item-text" class="form-control"
             value="{{ $item->comments }}" placeholder="" aria-label="">
     </div>
 
 
     <div class="form-group">
         <label for="folderName">폴더 선택</label>
-        <input id="folderName" class="form-control" type="text" placeholder="" readonly 
+        <input id="folderName" class="form-control" type="text" placeholder="" readonly
             @isset($parentFolder) value="{{ $parentFolder->name }}" @endisset>
         <input name="parent_id" type="hidden" id="parent_id" @isset($parentFolder) value="{{ $parentFolder->id }}" @endisset>
     </div>
@@ -52,7 +52,7 @@
         })
         bindFolderSelectorDialog()
     });
-    
+
     function bindFolderSelectorDialog(){
         var folder_id_sel = "parent_id"
         var folder_name_sel = "folderName"

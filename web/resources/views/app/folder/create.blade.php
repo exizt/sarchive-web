@@ -1,11 +1,11 @@
 @extends('layouts.sarchive_layout')
-@section('title',"폴더 신규") 
+@section('title',"폴더 신규")
 @section('content')
 <script>
 $(function() {
 	$('form').on('keyup keypress', function(e) {
 		var keyCode = e.keyCode || e.which;
-		  if (keyCode === 13) { 
+		  if (keyCode === 13) {
 		    e.preventDefault();
 		    return false;
 		}
@@ -13,8 +13,8 @@ $(function() {
 });
 </script>
 <div class="container py-5">
-	@include('layouts.modules.messages.messages_and_errors_bs4')	
-	<form class="form-horizontal" role="form" method="POST" 
+	@include('layouts.modules.messages.messages_and_errors_bs4')
+	<form class="form-horizontal" role="form" method="POST"
 		action="{{ route($ROUTE_ID.'.store') }}">
 		<input type="hidden" name="_token" value="{{ csrf_token() }}">
 		<input type="hidden" name="archive_id" value="{{ $parameters['archive_id'] }}">
@@ -25,7 +25,7 @@ $(function() {
 				@include($VIEW_PATH.'._form')
 				<div class="d-flex w-100 justify-content-between">
 					<button type="submit" class="btn btn-primary btn-sm site-shortcut-key-s">추가</button>
-					<a class="btn btn-secondary btn-sm site-shortcut-key-z" 
+					<a class="btn btn-secondary btn-sm site-shortcut-key-z"
 					href="{{ url()->previous() }}" role="button">취소</a>
 				</div>
 			</div>

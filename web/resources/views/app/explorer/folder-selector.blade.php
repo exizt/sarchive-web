@@ -17,7 +17,7 @@
   var _jstreeSelector = '#jstree_demo_div';
   jsTreeHandler()
 
-  
+
   function jsTreeHandler(){
     var jsTree = $(_jstreeSelector);
     var excludedIds = getExcludedIds()
@@ -27,7 +27,7 @@
         "check_callback" : true,
       }
     });
-      
+
     var pFolderIdSel = getFolderIdSelectorOfParent()
     var pFolderNameSel = getFolderNameSelectorOfParent()
     jsTree.on('changed.jstree', function(e, data){
@@ -49,7 +49,7 @@
         }
       }
     });
-    
+
     /**
      * 최상단 노드 조회
      */
@@ -74,7 +74,7 @@
         cb.call(this, ret);
       })
     }
-    
+
     /**
      * 자식 노드 조회
      */
@@ -96,7 +96,7 @@
         $(_jstreeSelector).jstree(true).open_node(parentId)
       })
     }
-    
+
     /**
      * 폴더 목록 Ajax 조회
      */
@@ -106,7 +106,7 @@
           callback(data)
         })
     }
-    
+
     /**
      * 노드 추가
      */
@@ -116,7 +116,7 @@
       if(!sel.length) { return false; }
       sel = sel[0];
       //sel = ref.create_node(sel, {"type":"file"});
-      
+
       //create_node ([par, node, pos, callback, is_loaded])
       ref.create_node(sel, node)
     }
@@ -135,7 +135,7 @@
   }
 
   /**
-   * 
+   *
    */
   function getArchiveId(){
     //return $("body").data("archive")
@@ -143,7 +143,7 @@
   }
 
   /**
-   * 
+   *
    */
   function getFolderIdSelectorOfParent(){
     var s = document.body.dataset.folderIdOfParent
@@ -151,7 +151,7 @@
   }
 
   /**
-   * 
+   *
    */
   function getFolderNameSelectorOfParent(){
     var s =  document.body.dataset.folderNameOfParent
@@ -167,7 +167,7 @@
     //console.log(typeof excludedStr)
     //console.log("1,3,5".split(","))
     if(typeof excludedStr !== "undefined" && excludedStr != ""){
-      // 
+      //
       return `${excludedStr}`.split(",")
     } else {
       return undefined

@@ -1,5 +1,5 @@
-@extends('layouts.sarchive_layout') 
-@section('title',"") 
+@extends('layouts.sarchive_layout')
+@section('title',"")
 @section('content')
 <div>
 	<div class="row px-0 mx-0">
@@ -11,7 +11,7 @@
 	<hr class="mt-1">
 	<div class="list-group">
 		@foreach ($masterList as $item)
-		<a class="list-group-item list-group-item-action flex-column align-items-start" 
+		<a class="list-group-item list-group-item-action flex-column align-items-start"
 		href="{{ route($ROUTE_ID.'.show', ['archiveId'=> $item->archive_id, 'category'=> $item->name]) }}">
 			<div class="d-flex w-100 justify-content-between">
 				<h5 class="mb-1">{{ $item->name }}</h5>

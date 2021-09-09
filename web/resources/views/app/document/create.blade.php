@@ -1,11 +1,11 @@
-@extends('layouts.sarchive_layout') 
-@section('title',"글 작성") 
+@extends('layouts.sarchive_layout')
+@section('title',"글 작성")
 @section('content')
 <script>
 $(function() {
 	$('form').on('keyup keypress', function(e) {
 		var keyCode = e.keyCode || e.which;
-		  if (keyCode === 13) { 
+		  if (keyCode === 13) {
 		    e.preventDefault();
 		    return false;
 		}
