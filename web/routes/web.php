@@ -1,16 +1,19 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
 
-// Auth
-if(App::environment('local')){
-    // local 에서는 등록 허용.
-    Auth::routes(['register' => true, 'verify'=> false]);
-} else {
-    // production 등에서는 유저 등록 비허용.
-    Auth::routes(['register' => false, 'verify'=> true]);
-}
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
 
 // index
 Route::get ( '/', 'Home@index' );
@@ -49,3 +52,5 @@ Route::middleware(['auth'])->name('admin.')->prefix('admin')->group(function(){
     Route::post('folderMgmt/updateList', 'Admin\ArchiveFolderMgmt@updateList')->name('folderMgmt.updateList');
     Route::view('advanced','admin.advanced',['ROUTE_ID'=>'advanced']);
 });
+
+require __DIR__.'/auth.php';
