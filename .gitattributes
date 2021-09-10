@@ -12,4 +12,4 @@
 artisan text eol=lf
 *.htaccess text eol=lf
 *.robots text eol=lf
-composer.lock binary
+# composer.lock binary
