@@ -34,7 +34,10 @@
 	</div>
 	<hr>
 	<div class="d-flex w-100 justify-content-between">
-		<a href="{{ route($ROUTE_ID.'.create') }}" class="btn btn-outline-success btn-sm">신규</a>
+        <div>
+            <a href="{{ route($ROUTE_ID.'.create') }}" class="btn btn-outline-success btn-sm">신규</a>
+            <a href="/" class="btn btn-outline-secondary btn-sm">아카이브 선택으로 돌아가기</a>
+        </div>
 		<span>
 			<a href="#" id="changeIndexModeToggle" class="btn btn-outline-success btn-sm shh-listmovemode-off">순서변경</a>
 			<a href="#" id="shh-movemode-cancel" class="btn btn-outline-success btn-sm shh-listmovemode-on" style="display:none">순서변경 취소</a>

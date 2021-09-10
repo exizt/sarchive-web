@@ -1,8 +1,12 @@
+<h4>환경 설정</h4>
 <ul class="list-group">
+    <a href="/admin"
+	class="list-group-item text-decoration-none @if ($current == '') active @endif"
+	>설정</a>
 	<a href="/admin/folderMgmt"
-	class="list-group-item @if ($current == 'folder-control') active @endif"
+	class="list-group-item text-decoration-none @if ($current == 'folder-control') active @endif"
 	>폴더 설정</a>
-	<a href="/admin/advanced"
-	class="list-group-item @if ($current == 'advanced') active @endif"
-	>고급 기능</a>
+    <a href="/admin/ver"
+	class="list-group-item text-decoration-none @if ($current == 'ver') active @endif"
+	>버전 정보</a>
 </ul>

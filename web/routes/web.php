@@ -47,6 +47,7 @@ Route::middleware(['auth'])->group(function () {
 });
 Route::middleware(['auth'])->name('admin.')->prefix('admin')->group(function(){
     Route::get('/', 'Admin\AdminController@index');
+    Route::get('/ver', 'Admin\AdminController@view_version');
     Route::resource('folderMgmt', 'Admin\ArchiveFolderMgmt', ['except'=>['show','create','edit','store','update','destroy']]);
     Route::get('folderMgmt/index_ajax', 'Admin\ArchiveFolderMgmt@index_ajax')->name('folderMgmt.indexAjax');
     Route::post('folderMgmt/updateList', 'Admin\ArchiveFolderMgmt@updateList')->name('folderMgmt.updateList');

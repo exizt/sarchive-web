@@ -69,18 +69,14 @@
               <ul class="navbar-nav">
                   <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink_My" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ Auth::user()->name }}</a>
                       <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink_My">
-                          <h6 class="dropdown-header">기능</h6>
                           @isset($layoutParams['archiveId'])
                           <a class="dropdown-item site-shortcut-key-n site-shortcut-key-a" href="{{ route('doc.create',['archive'=>$layoutParams['archiveId']]) }}">글쓰기</a>
                           @endisset
+                          <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="/">아카이브 변경</a>
                           <a class="dropdown-item" href="/static/shortcut">단축키 일람</a>
                           <div class="dropdown-divider"></div>
-                          <h6 class="dropdown-header">아카이브</h6>
-                          <a class="dropdown-item" href="/">아카이브 변경</a>
-                          <div class="dropdown-divider"></div>
-                          <h6 class="dropdown-header">관리</h6>
                           <a class="dropdown-item" href="/admin">설정</a>
-                          <div class="dropdown-divider"></div>
                           <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();"><i
                               class="fas fa-sign-out-alt" aria-hidden="true"></i>&nbsp;Logout</a>
                           <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">{{ csrf_field() }}</form>
