@@ -1,6 +1,6 @@
 <script src="/assets/lib/tinymce/tinymce.min.js"></script>
 <script>
-tinymce.init({ 
+tinymce.init({
 	selector:'textarea',
 	height:500,
 	menubar: false,
@@ -56,14 +56,14 @@ tinymce.init({
 		<input name="category" type="text" id="article-category" class="form-control" value="{{ $article->category }}" placeholder="" aria-label="">
 	</div>
 
-		
+
 	<div class="form-group">
 		<label for="articleReference">원문 출처</label>
 		&nbsp;<span class="badge badge-secondary shh-evt-append-ref" data-value="나">내가 작성함</span>
 		&nbsp;<span class="badge badge-secondary shh-evt-append-ref" data-value="펌">펌글</span>
 		&nbsp;<span class="badge badge-secondary shh-evt-append-ref" data-value="">비우기</span>
 		<input name="reference" type="text" id="articleReference" class="form-control" value="{{ $article->reference }}" placeholder="" aria-label="">
-	</div>	
+	</div>
 </div>
 <div class="modal fade" id="modalChoiceFolder" tabIndex="-1">
 	<div class="modal-dialog">

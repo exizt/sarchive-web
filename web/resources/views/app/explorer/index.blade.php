@@ -1,5 +1,5 @@
-@extends('layouts.sarchive_layout') 
-@section('title',"") 
+@extends('layouts.sarchive_layout')
+@section('title',"")
 @section('content')
 <div>
     <div class="mt-4 mb-5">
@@ -10,7 +10,7 @@
                         <div class="d-flex w-100 justify-content-between">
                             <div>
                                 @if(isset($parameters['folder']))
-                                <h4 class=""><span class="sarc-ico-folder sarc-ico"></span>{{ $parameters['folder']->name }}<a href="{{ route('folders.edit', [$parameters['folder']->id]) }}" 
+                                <h4 class=""><span class="sarc-ico-folder sarc-ico"></span>{{ $parameters['folder']->name }}<a href="{{ route('folders.edit', [$parameters['folder']->id]) }}"
                                         class="btn btn-sm">편집</a>
                                 </h4>
                                 @else
@@ -29,10 +29,10 @@
                     <hr class="mt-1">
                     <div class="list-group">
                         @foreach ($masterList as $item)
-                        <a class="list-group-item list-group-item-action flex-column align-items-start" 
+                        <a class="list-group-item list-group-item-action flex-column align-items-start"
                         @if(isset($parameters['folder']))
                             href="{{ "/doc/{$item->id}?lfolder={$parameters['folder']->id}" }}"
-                        @else 
+                        @else
                             href="{{ "/doc/{$item->id}" }}"
                         @endif
                             >
@@ -65,9 +65,9 @@
                         </span>
                         <span>
                             <a href="#" id="btnIndexEditModeToggle" class="btn btn-sm arch-indexEditMode-hide">변경</a>
-                            <a href="#" id="btnIndexEditModeCancel" 
+                            <a href="#" id="btnIndexEditModeCancel"
                                 class="btn btn-sm btn-outline-success arch-indexEditMode-show" style="display:none">순서변경 취소</a>
-                            <a href="#" id="btnIndexEditModeSave" 
+                            <a href="#" id="btnIndexEditModeSave"
                                 class="btn btn-sm btn-outline-success arch-indexEditMode-show" style="display:none">순서변경 저장</a>
                         </span>
                     </div>
@@ -86,7 +86,7 @@
     function bindIndexMode(){
         var listItemClassName = "arch-indexEditMode-listitem";
         var listItemSelector = "."+listItemClassName;
-        
+
         $("#btnIndexEditModeToggle").on("click",changeIndexEditModeOn)
         $("#btnIndexEditModeCancel").on("click",function(){location.reload();})
         $("#btnIndexEditModeSave").on("click",saveArchiveSort)
@@ -131,7 +131,7 @@
                 dataList.push(data)
             })
             console.log(dataList)
-    
+
             ajaxSave(dataList)
         }
 

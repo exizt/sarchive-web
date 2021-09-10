@@ -15,9 +15,9 @@ trait FullTextSearch
         // removing symbols used by MySQL
         $reservedSymbols = ['-', '+', '<', '>', '@', '(', ')', '~'];
         $term = str_replace($reservedSymbols, '', $term);
-        
+
         $words = explode(' ', $term);
-        
+
         foreach($words as $key => $word) {
             /*
              * applying + operator (required word) only big words
@@ -27,12 +27,12 @@ trait FullTextSearch
                 $words[$key] = '+' . $word . '*';
             }
         }
-        
+
         $searchTerm = implode( ' ', $words);
-        
+
         return $searchTerm;
     }
-    
+
     /**
      * Scope a query that matches a full text search of term.
      *
@@ -43,9 +43,9 @@ trait FullTextSearch
     public function scopeSearch($query, $term)
     {
         $columns = implode(',',$this->searchable);
-        
+
         $query->whereRaw("MATCH ({$columns}) AGAINST (? IN BOOLEAN MODE)" , $this->fullTextWildcards($term));
-        
+
         return $query;
     }
 }

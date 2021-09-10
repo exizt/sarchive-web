@@ -1,5 +1,5 @@
-@extends('layouts.sarchive_layout', ['layoutMode' => 'admin', 'currentMenu'=>'advanced']) 
-@section('title',"글 작성") 
+@extends('layouts.sarchive_layout', ['layoutMode' => 'admin', 'currentMenu'=>'advanced'])
+@section('title',"글 작성")
 @section('content')
 <div>
 	<h3>고급 기능</h3>

@@ -1,4 +1,4 @@
-@extends('layouts.sarchive_layout', ['layoutMode' => 'admin', 'currentMenu'=>'folder-control']) 
+@extends('layouts.sarchive_layout', ['layoutMode' => 'admin', 'currentMenu'=>'folder-control'])
 @section('title',"아카이브 카테고리 관리")
 @section('content')
 <div>
@@ -17,7 +17,7 @@
 		<li class="nav-item"><a class="nav-link" href="#" data-profile="{{$item->id}}">{{$item->name}}</a></li>
 		@endforeach
 	</ul>
-	
+
 	<div id="tree-container" class="mt-1 mb-3"></div>
 	<!--<button id="shh-btn-save" class="btn btn-sm btn-primary disabled">저장</button>-->
 	<button id="shh-btn-create" class="btn btn-sm btn-outline-success">게시판 추가</button>
@@ -35,7 +35,7 @@ var _deletedIds = new Array()
 $(function () {
 	$("#navTab a").first().addClass("active");
 	_selectedArchiveId = $("#navTab a").first().data("profile")
-	
+
 	createJSTree();
 	$('#navTab a').on('click', function (e) {
 		e.preventDefault()
@@ -52,7 +52,7 @@ $(function () {
 	$("#shh-btn-save-test").on("click",function(){
         saveJSTree(false)
 	});
-	
+
 	$("#shh-btn-create").on("click",jstree_create)
 	$("#shh-btn-rename").on("click",jstree_rename)
 	$("#shh-btn-delete").on("click",jstree_delete)
@@ -93,8 +93,8 @@ $(function () {
  */
 function saveJSTree(executeFlag){
 
-	var jsonNodes = $(_jstreeSelector).jstree(true).get_json('#', { 
-		flat: true, no_state: true, no_li_attr:true, no_data:true, 
+	var jsonNodes = $(_jstreeSelector).jstree(true).get_json('#', {
+		flat: true, no_state: true, no_li_attr:true, no_data:true,
 		no_a_attr:true })
 	//var jsonData = JSON.stringify(jsonNodes)
 	var dataSet = {};
@@ -133,7 +133,7 @@ function jstree_delete() {
 };
 
 /**
- * 
+ *
  */
 function doSave(dataSet){
 	var s;
@@ -143,7 +143,7 @@ function doSave(dataSet){
 		beforeSend: function(){
 			s = showAlertMessage("waiting...",'warning');
 		},
-		data: { 
+		data: {
 			archive_id : _selectedArchiveId,
 			deleted_list : dataSet.deleted,
 			list_data: dataSet.jsonNodes
@@ -221,12 +221,12 @@ function createJSTree(){
 			"multiple" : false
         },
 		"plugins" : [ "dnd", "types", "state", "contextmenu", ],
-		"types" : {     
+		"types" : {
 			"#" : {
 				"max_children" : 1
 			}
 		},
-    }); 
+    });
 }
 
 

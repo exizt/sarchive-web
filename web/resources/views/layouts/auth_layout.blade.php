@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 @production
 <title>S아카이브 :: @yield('title')</title>
-@else 
+@else
 <title>(local) S아카이브 :: @yield('title')</title>
 @endproduction
 <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />

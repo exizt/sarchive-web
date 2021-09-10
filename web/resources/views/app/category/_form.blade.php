@@ -1,6 +1,6 @@
 <script src="/assets/lib/tinymce/tinymce.min.js"></script>
 <script>
-tinymce.init({ 
+tinymce.init({
 	selector:'textarea',
 	height:500,
 	menubar: false,
@@ -21,7 +21,7 @@ tinymce.init({
 <div class="">
 	<div class="form-group">
 		<label for="item-content">분류 설명</label>
-		<textarea name="comments" class="form-control" rows="10" 
+		<textarea name="comments" class="form-control" rows="10"
 			id="item-content" placeholder="내용">{{ htmlentities($item->comments) }}</textarea>
 	</div>
 

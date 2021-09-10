@@ -12,14 +12,14 @@ use App\Models\SArchive\SAFolder;
 class ArchiveFolderMgmt extends Controller
 {
 	protected const VIEW_PATH = 'admin.folder-control';
-    
+
     /**
      * 생성자
      */
 	public function __construct() {
 		$this->middleware ( 'auth' );
 	}
-	
+
     /**
      * 폴더 목록 조회
      */
@@ -30,7 +30,7 @@ class ArchiveFolderMgmt extends Controller
         $archiveList = SAArchive::select(['id','name','comments','is_default','created_at'])
         ->where('user_id',$userId)
         ->orderBy('created_at','asc')->get();
-        
+
         $dataSet = $this->createViewData ();
         $dataSet['archiveList'] = $archiveList;
         return view ( self::VIEW_PATH . '.index', $dataSet );
@@ -44,12 +44,12 @@ class ArchiveFolderMgmt extends Controller
         // 파라미터
         $archiveId = $request->input('archive_id');
         $userId = Auth::id();
-        
+
         // Archive 정보 조회 및 권한 체크
         $archive = SAArchive::select(['id','name'])
             ->where ( [['user_id', $userId ],['id',$archiveId]])
             ->firstOrFail ();
-                
+
         /*
         $dataSet ['boards'] = DB::select("select cate.name as name,
                 node.board_id as id,
@@ -90,7 +90,7 @@ class ArchiveFolderMgmt extends Controller
 
         //신규 노드들의 목록. (key='임시id(j로시작)', value=새로사용될id)
         $changedIdList = array();
-        
+
         //depth 와 path 를 다루기 위한 배열
         $depthPathList = array();
 
@@ -118,10 +118,10 @@ class ArchiveFolderMgmt extends Controller
                     $item['parent'] = '0';
                     $item['depth'] = 1;
                     $item['path'][] = ['text'=>$item['text'],'id'=>$item['id']];
-                
+
                 } else {
                     ///... 루트 외의 경우
-                    
+
                     $t_parent = $item['parent'];
                     $item['depth'] = $depthPathList[$t_parent]['depth'] + 1;
                     //$item['path'] = $depthPathList[$t_parent]['path'].' > '.$item['text'];
@@ -144,7 +144,7 @@ class ArchiveFolderMgmt extends Controller
             if($item['id'][0] == 'j'){
                 /**
                  * 신규 노드의 경우.
-                 * 
+                 *
                  * insert 구문을 실행한다 (laravel의 create메서드)
                  */
                 $archiveFolder = SAFolder::create([
@@ -159,7 +159,7 @@ class ArchiveFolderMgmt extends Controller
                 // 신규 생성된 id 를 changedIdList 에 추가함.
                 $folderId = $archiveFolder->id;
                 $changedIdList[$item['id']] = $folderId;
-               
+
             } else {
                 /**
                  * 신규 노드가 아닌 경우
@@ -222,13 +222,13 @@ class ArchiveFolderMgmt extends Controller
     	$dataSet ['parameters'] = array();
     	return $dataSet;
     }
-    
+
 
     /**
      * 프로시저 실행
-     * 
+     *
      * system_path 를 생성하는 프로시저 호출.
-     * 
+     *
      * 예전 방식은 left, right 로 트리형태를 구현하는 방식이었었음.. 현재는 변경함.
      */
     private function updateListTreeTable($archiveId){

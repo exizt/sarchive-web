@@ -1,5 +1,5 @@
-@extends('layouts.sarchive_layout', ['layoutMode' => 'admin']) 
-@section('title',"글 작성") 
+@extends('layouts.sarchive_layout', ['layoutMode' => 'admin'])
+@section('title',"글 작성")
 @section('content')
 <div>
 	<h4>SArchive 설정</h4>

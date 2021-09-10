@@ -1,5 +1,5 @@
 @extends('layouts.auth_layout')
-@section('title',"로그인")  
+@section('title',"로그인")
 @section('content')
 <div class="container">
     <div class="row justify-content-center">

@@ -1,5 +1,5 @@
-@extends('layouts.sarchive_layout') 
-@section('title',"검색 결과") 
+@extends('layouts.sarchive_layout')
+@section('title',"검색 결과")
 @section('content')
 <div class="container">
     <div class="row px-0 mx-0 mt-5">
@@ -10,7 +10,7 @@
     </div>
     <div class="list-group">
         @foreach ($masterList as $item)
-        <a class="list-group-item list-group-item-action flex-column align-items-start" 
+        <a class="list-group-item list-group-item-action flex-column align-items-start"
             href="{{ "/doc/{$item->id}" }}">
             <div class="d-flex w-100 justify-content-between">
                 <h4 class="mb-1">{{ $item->title }}</h4>

@@ -1,5 +1,5 @@
-@extends('layouts.sarchive_layout') 
-@section('title','분류 > '.$category->name) 
+@extends('layouts.sarchive_layout')
+@section('title','분류 > '.$category->name)
 @section('content')
 <div>
 	<div class="mt-4 mb-5">
@@ -8,8 +8,8 @@
 				<div class="d-flex w-100 justify-content-between">
 					<h4 class="">분류 : {{ $category->name }}
 						&nbsp;&nbsp;&nbsp;
-					<a class="btn btn-outline-info btn-sm" 
-						href="{{ route('category.edit',['archive'=>$archive->id,'category'=>$category->id]) }}" 
+					<a class="btn btn-outline-info btn-sm"
+						href="{{ route('category.edit',['archive'=>$archive->id,'category'=>$category->id]) }}"
 						role="button">편집</a>
 				</h4>
 				<small class="text-mute">Page {{ $masterList->currentPage() }}/{{ $masterList->lastPage() }}</small>
@@ -28,12 +28,12 @@
 				</div>
 				@endforeach
 			</div>
-			
-			@endif					
+
+			@endif
 			<h5>여기에 속하는 문서</h5>
 			<div class="list-group">
-				@foreach ($masterList as $item) 
-				<a class="list-group-item list-group-item-action flex-column align-items-start" 
+				@foreach ($masterList as $item)
+				<a class="list-group-item list-group-item-action flex-column align-items-start"
 					href="/doc/{{ $item->id }}?lcategory={{ urlencode($category->name) }}">
 					<div class="d-flex w-100 justify-content-between">
 						<h5 class="mb-1">{{ $item->title }}</h5>

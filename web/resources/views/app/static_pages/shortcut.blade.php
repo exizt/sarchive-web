@@ -1,6 +1,6 @@
-@extends('layouts.sarchive_layout') 
-@section('title',"단축키") 
-@section('content') 
+@extends('layouts.sarchive_layout')
+@section('title',"단축키")
+@section('content')
 <div class="container-fluid mt-4 mb-5">
 	<div class="card">
 		<div class="card-body"><h3>단축키</h3>

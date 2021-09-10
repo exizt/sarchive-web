@@ -14,10 +14,10 @@ class SADocument extends Model
     use SoftDeletes;
     // FullTextSearch 기능을 이용
     use FullTextSearch;
-    
+
     // 테이블명
     protected $table = 'sa_documents';
-    
+
     //protected $fillable = ['title', 'content','reference','category','archive_id_weak'];
     // 데이터 기본값
     protected $attributes = [
@@ -26,7 +26,7 @@ class SADocument extends Model
         'reference'=>'',
         'category'=>''];
     protected $appends = array (
-        'category_array' 
+        'category_array'
     );
     protected $perPage = 15;
 
@@ -34,7 +34,7 @@ class SADocument extends Model
      * FullText 검색에 해당하는 컬럼 지정
      */
     protected $searchable = ['title','content'];
-    
+
     /**
      * content 변경이 일어날 때 summary_var 컬럼도 같이 생성 변경함
      */
@@ -42,7 +42,7 @@ class SADocument extends Model
         $this->attributes['content'] = $value;
         $this->attributes['summary_var'] = $this->generateSummary($value,255);
     }
-    
+
     /**
      * summary 생성
      */
@@ -53,7 +53,7 @@ class SADocument extends Model
         } else {
             $text = $content;
         }
-        
+
         $text = strip_tags($text);
         $text = str_replace("\r\n",' ',$text);
         $text = str_replace("\n",' ',$text);
@@ -61,7 +61,7 @@ class SADocument extends Model
         $text = str_replace("\t",' ',$text);
         $text = str_replace("&nbsp;",' ',$text);
         $text = preg_replace('!\s+!', ' ', $text);
-        
+
         return mb_substr($text, 0, $char_length);
     }
 

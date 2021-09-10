@@ -5,9 +5,9 @@
 @if(!App::environment('production'))
   <title>(local) S아카이브</title>
 @else
-  @hasSection('title') 
+  @hasSection('title')
     <title>@yield('title') :: S아카이브</title>
-  @else 
+  @else
   <title>S아카이브</title>
   @endif
 @endif

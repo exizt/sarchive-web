@@ -1,11 +1,11 @@
-@extends('layouts.sarchive_layout') 
-@section('title',"글 수정 : $article->title") 
+@extends('layouts.sarchive_layout')
+@section('title',"글 수정 : $article->title")
 @section('content')
 <script>
 $(function() {
 	$('form').on('keyup keypress', function(e) {
 		var keyCode = e.keyCode || e.which;
-		  if (keyCode === 13) { 
+		  if (keyCode === 13) {
 		    e.preventDefault();
 		    return false;
 		}
@@ -27,7 +27,7 @@ $(function() {
 					<div>
 						<button type="submit" class="btn btn-primary btn-sm site-shortcut-key-s" name="action" value="finished">저장</button>
 						<button type="submit" class="btn btn-outline-success btn-sm" name="action" value="continue">저장 후 계속 편집</button>
-						<a class="btn btn-outline-secondary btn-sm site-shortcut-key-z" 
+						<a class="btn btn-outline-secondary btn-sm site-shortcut-key-z"
 							href="{{ $actionLinks->cancel }}" role="button">취소</a>
 					</div>
 					<button type="button" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#modal-delete">삭제</button>

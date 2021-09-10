@@ -13,7 +13,7 @@ class SAFolder extends Model
     protected $fillable = ['archive_id','name','comments', 'parent_id',
         'index','depth'];
 
-        
+
     /**
      * Archive 테이블 조인 조회
      */
@@ -88,7 +88,7 @@ class SAFolder extends Model
      * folderId 기준으로 doc_count 와 doc_count_all 을 갱신
      */
     public static function updateDocCountAll($folderId){
-        
+
         /**
          * folderId 기준으로 doc_count 갱신
          */
@@ -101,12 +101,12 @@ class SAFolder extends Model
 
         /**
          * folderId 기준으로 상위폴더(기준 폴더 포함)를 탐색하면서 doc_count_all 갱신
-         * 
-         * 현재 폴더의 system_path 를 / 기준으로 나누면 제각기 상위 노드의 id이다. 
+         *
+         * 현재 폴더의 system_path 를 / 기준으로 나누면 제각기 상위 노드의 id이다.
          * 이것을 기준으로 상위 폴더들(자신도 포함)의 doc_count_all을 갱신한다.
          */
         /* 쿼리
-        update sa_folders 
+        update sa_folders
           inner join (select id, name, system_path, (select count(*) from sa_documents as doc inner join sa_folders as p1 on doc.folder_id = p1.id
           where left(p1.system_path, length(sa_folders.system_path)) = sa_folders.system_path) as count
           from sa_folders) as d
@@ -115,7 +115,7 @@ class SAFolder extends Model
         */
         $paths = $folder->paths_array();
         if(count($paths) > 1){
-            SAFolder::join(DB::raw('(select id, name, system_path, 
+            SAFolder::join(DB::raw('(select id, name, system_path,
                     (select count(*) from sa_documents as doc inner join sa_folders as p1 on doc.folder_id = p1.id
                     where left(p1.system_path, length(sa_folders.system_path)) = sa_folders.system_path) as count
                 from sa_folders) as d'),'d.id','=','sa_folders.id')

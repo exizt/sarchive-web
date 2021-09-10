@@ -64,10 +64,10 @@ class ArchiveController extends BaseController {
 
         $dataSet = $this->createViewData ();
         $dataSet['masterList'] = $masterList;
-        
+
         return view ( self::VIEW_PATH . '.index', $dataSet );
     }
-   
+
     /**
      * Show the form for creating a new resource.
      *
@@ -80,8 +80,8 @@ class ArchiveController extends BaseController {
         $dataSet ['item'] = $item;
         return view ( self::VIEW_PATH . '.create', $dataSet );
     }
-    
-    
+
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -120,13 +120,13 @@ class ArchiveController extends BaseController {
     	$request->validate([
     	    'name' => 'required|min:2',
     	]);
-        
-        // 파라미터 
+
+        // 파라미터
         $name = $request->input ( 'name' );
         $comments = $request->input ( 'comments' , '');
         $is_default = (bool)$request->input( 'is_default' , false);
         $userId = Auth::id();
-        
+
         // 처리 진행
         $item = new SAArchive;
         $item->name = $name;
@@ -160,7 +160,7 @@ class ArchiveController extends BaseController {
             'name' => 'required|min:2'
         ];
         $this->validate($request, $rules);
-        
+
         // 파라미터
         $name = $request->input ( 'name' );
         $comments = $request->input ( 'comments' , '');
@@ -169,7 +169,7 @@ class ArchiveController extends BaseController {
 
     	// 있는 값인지 id 체크
         $item = SAArchive::findOrFail ( $id );
-    	
+
     	// saving
         $item->name = $name;
         $item->comments = $comments;
@@ -181,14 +181,14 @@ class ArchiveController extends BaseController {
         }
         $item->is_default = $is_default;
     	$item->save ();
-	
+
         return redirect ()->route ( self::ROUTE_ID . '.edit', $id )
         ->with ('message', '변경이 완료되었습니다.' );
     }
 
     /**
      * 아카이브 삭제
-     * 
+     *
      * @todo 분류 이동
      *
      * @param  int  $id
@@ -220,23 +220,23 @@ class ArchiveController extends BaseController {
         ]);
 
         // 1-2-3. 분류 를 이동해줘야 함. 기존에 없는 경우에만 이동.
-        
+
 
         // 삭제 실행
         $archive->delete();
-        
+
         return redirect()->route(self::ROUTE_ID.'.index')->with('message','삭제를 완료하였습니다.');
     }
 
     /**
      * 아카이브의 순서 변경 처리
-     * 
+     *
      */
     public function updateSort(Request $request){
         $dataList = $request->input('dataList', array());
 
         foreach($dataList as $i => $item){
-            
+
             $archive = SAArchive::findOrFail ( $item['id'] );
             $archive->index = $item['index'];
             $archive->save();
@@ -257,7 +257,7 @@ class ArchiveController extends BaseController {
      * @param int $id 아카이브 Id
      */
     private function retrieveAuthArchive($id){
-        
+
         $this->archive = SAArchive::select(['id','name','route'])
             ->where ( [['user_id', Auth::id() ],['id',$id]])
             ->firstOrFail ();
@@ -266,7 +266,7 @@ class ArchiveController extends BaseController {
 
 
     /**
-     * 
+     *
      * @return string[]
      */
     protected function createViewData() {
@@ -300,7 +300,7 @@ class ArchiveController extends BaseController {
     protected function makePreviousListLink(Request $request, $profileId)
     {
         $previous = url()->previous();
-        
+
         $routeLink = route ( self::ROUTE_ID . '.index', ['profile'=> $profileId]);
 
         return (strtok($previous,'?') == $routeLink) ? $previous : $routeLink;
@@ -314,7 +314,7 @@ class ArchiveController extends BaseController {
     protected function makePreviousShowLink(Request $request, $profileId, $archiveId)
     {
         $previous = url()->previous();
-        
+
         $routeLink = route ( self::ROUTE_ID . '.show', ['profile'=> $profileId, 'archive'=>$archiveId]);
 
         return (strtok($previous,'?') == $routeLink) ? $previous : $routeLink;
@@ -335,15 +335,15 @@ class ArchiveController extends BaseController {
         // 바로 이전 주소가 list 형태의 index 경로라면, flash session 에 저장.
         $request->session()->reflash();
         $request->session()->keep([$session_previousName]);
-        
+
         $previous = url()->previous();
         $previous_identifier = strtok($previous,'?');
-        
+
         // 해당 패턴과 일치하거나 index 의 주소인 경우에 previous 세션에 저장
         if($previous_identifier == route ( self::ROUTE_ID . '.index', ['profile'=>1])){
             $request->session()->flash($session_previousName, $previous);
         }
-        
+
         //session 에 해당 값이 있으면 세션 값 사용. 없으면 목록 주소로 대체.
         return ($request->session()->get($session_previousName,'') != '') ?
         $request->session()->get($session_previousName,'') : route ( self::ROUTE_ID . '.index', ['profile'=>1]);

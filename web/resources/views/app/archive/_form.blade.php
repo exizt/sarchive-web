@@ -1,7 +1,7 @@
 <div class="">
 	<div class="form-group">
 		<label for="frm-item-name">아카이브 명칭</label>
-		<input name="name" class="form-control" type="text" autofocus id="frm-item-name" 
+		<input name="name" class="form-control" type="text" autofocus id="frm-item-name"
 			value="{{ $item->name }}" placeholder="명칭" aria-label="명칭">
 		<small class="text-mute">(최초 생성시에 루트 카테고리명이 됩니다.)</small>
 	</div>
