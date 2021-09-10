@@ -142,7 +142,7 @@ class ArchiveController extends BaseController {
         $item->user_id = $userId;
         $item->save();
 
-        return redirect ()->route ( self::ROUTE_ID . '.edit', $item->id )
+        return redirect ()->route ( self::ROUTE_ID . '.index')
            ->with('message', '카테고리를 생성하였습니다.');
     }
 
@@ -182,8 +182,14 @@ class ArchiveController extends BaseController {
         $item->is_default = $is_default;
     	$item->save ();
 
-        return redirect ()->route ( self::ROUTE_ID . '.edit', $id )
-        ->with ('message', '변경이 완료되었습니다.' );
+        $return_message = '변경이 완료되었습니다.';
+        if ($request->action === 'continue') {
+            return redirect ()->route ( self::ROUTE_ID . '.edit', $id )
+            ->with ('message', $return_message );
+        } else {
+            return redirect ()->route ( self::ROUTE_ID. '.index' )
+            ->with('message', $return_message );
+        }
     }
 
     /**
