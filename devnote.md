@@ -1,22 +1,57 @@
 # 빌드&배포
-1. 로컬)
-  1. 라이브러리 등 업데이트 `composer update`
-  2. `git push`
-    1. '소스트리'로 커밋
-    2. 소스트리 > 깃 플로우 > 릴리즈 : 'v~~'
-    3. config/_app.php 에서 버전 정보 수정 후 커밋
-    4. 소스트리 > 깃 플로우 > 릴리즈 마무리
-    5. 'push' 실행
-2. 원격) `update` 스크립트 실행 (아래의 내용을 하나로 모은 스크립트)
+## 다음 버전 배포시
+1. 소스트리 gitflow 를 이용
+2. 릴리즈 : 'v~~' (예: 'v1.0.0)
+3. config/_app.php 에서 버전 정보 수정 후 커밋
+4. 소스트리 > 깃 플로우 > 릴리즈 마무리
+5. 'push' 실행
+
+
+라이브러리 업데이트
+1. 원격 서버가 php 7.3이므로, 로컬 환경과 다르기 때문에, 동일하게 맞춘 docker container 내부에서 다음의 명령어를 수행
+2. `composer update`
+3. composer.lock 파일이 갱신이 된다. 
+
+
+## 원격 서버에 설치
+원격에 설치
+1. `git clone git@github.com:exizt/sarchive-web.git sarchive-web`
+2. `cd web`
+3. `composer install --optimize-autoloader --no-dev`
+4. web/.env 설정
+5. `php artisan config:cache` : 'config 설정' 캐시 갱신
+6. `php artisan route:cache` : 'route 설정' 캐시 갱신
+7. `php artisan migrate` : 테이블 마이그레이션
+8. `chown -R apache:apache storage` : 특정 폴더의 퍼미션 조정 (blade가 캐시를 사용해야하기 때문)
+
+
+원격에서 업데이트 받기
+1. 원격) `update` 스크립트 실행 (아래의 내용을 하나로 모은 스크립트)
   1. `git pull` : git 내려받기
   2. `composer install --optimize-autoloader --no-dev` : composer.lock을 토대로 설치.
   3. `php artisan config:cache` : 'config 설정' 캐시 갱신
   4. `php artisan route:cache` : 'route 설정' 캐시 갱신
-
+2. 필요시 테이블 마이그레이션 : `php artisan migrate`
 
 npm 은 아직 활용하지 않는 중. 조만간 활용하게 될 듯 한데. 아직은 보류. 
 
 
+## 배포시 발생 가능한 케이스
+`SQLSTATE[HY000] [1045] Access denied for user 'forge'@'127.0.0.1' (using password: NO)`
+* env 설정이 안 되어있거나, config:cache 를 재생성 해야한다. 
+* `web/.env`에 설정을 해주고,
+* `php artsian config:cache`를 해준다.
+
+
+net::ERR_HTTP_RESPONSE_CODE_FAILURE (500 오류)
+* views 캐싱이 안 되서 발생할 수 있다.
+* `chown -R apache:apache storage`
+
+
+# 소스 특징
+* 파일 첨부 기능을 구현하지 않았기 때문에, 원격 서버에 올라간 것과 git 의 코드는 동일하다.
+* `.env`만 수정을 해주면 된다. 
+* 다른 점은 데이터베이스 뿐이므로. `.env`와 `데이터베이스`의 백업만 하면 된다.
 
 
 # 개발 메모
