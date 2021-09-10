@@ -40,7 +40,6 @@ class Home extends Controller {
 		}
 	}
 
-
 	/**
 	 * 글 본문 읽기
 	 *
