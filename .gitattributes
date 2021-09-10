@@ -12,4 +12,8 @@
 artisan text eol=lf
 *.htaccess text eol=lf
 *.robots text eol=lf
+.env.example text eol=lf
+*.yml text eol=lf
+.htaccess text eol=lf
+*.lock text eol=lf
 # composer.lock binary
