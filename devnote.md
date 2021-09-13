@@ -54,6 +54,15 @@ net::ERR_HTTP_RESPONSE_CODE_FAILURE (500 오류)
 * `chown -R apache:apache storage`
 
 
+# 개발 IDE에서 vendor 이용하기
+다음을 실행해서 vendor 를 셋팅해준다.
+
+`composer install --no-scripts` 
+
+옵션 설명
+* composer.lock을 기준으로 vendor를 셋팅한다.
+* scripts를 통해서 bootstrap/cache/packages.php, bootstrap/cache/services.php, .env 등이 생성되거나 변경될 수 있으므로 'no scripts'옵션을 주어서 실행하도록 한다.
+
 
 # 개발 메모
 컨트롤러 추가 시. 
