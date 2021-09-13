@@ -1,5 +1,11 @@
+# 원격 서버에서의 유의점
+* 파일 첨부 기능을 구현하지 않았기 때문에, 원격 서버에 올라간 것과 git 의 코드는 동일하다.
+* `.env`만 수정을 해주면 된다. 
+* 다른 점은 데이터베이스 뿐이므로. `.env`와 `데이터베이스`의 백업만 하면 된다.
+
+
 # 빌드&배포
-## 다음 버전 배포시
+## 다음 릴리즈 배포시
 1. 소스트리 gitflow 를 이용
 2. 릴리즈 : 'v~~' (예: 'v1.0.0)
 3. config/_app.php 에서 버전 정보 수정 후 커밋
@@ -15,8 +21,8 @@
 
 ## 원격 서버에 설치
 원격에 설치
-1. `git clone git@github.com:exizt/sarchive-web.git sarchive-web`
-2. `cd web`
+1. `git clone --depth 1 --single-branch --branch master git@github.com:exizt/sarchive-web.git sarchive-web`
+2. `cd sarchive-web/web`
 3. `composer install --optimize-autoloader --no-dev`
 4. web/.env 설정
 5. `php artisan config:cache` : 'config 설정' 캐시 갱신
@@ -47,11 +53,6 @@ net::ERR_HTTP_RESPONSE_CODE_FAILURE (500 오류)
 * views 캐싱이 안 되서 발생할 수 있다.
 * `chown -R apache:apache storage`
 
-
-# 소스 특징
-* 파일 첨부 기능을 구현하지 않았기 때문에, 원격 서버에 올라간 것과 git 의 코드는 동일하다.
-* `.env`만 수정을 해주면 된다. 
-* 다른 점은 데이터베이스 뿐이므로. `.env`와 `데이터베이스`의 백업만 하면 된다.
 
 
 # 개발 메모

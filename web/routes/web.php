@@ -1,8 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\App;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,8 +22,12 @@ Route::get('ajax/folder_nav', 'Archive\ExplorerController@doAjax_getFolderNav');
 Route::get('ajax/folderList', 'Archive\ExplorerController@doAjax_getChildFolder');
 
 // SArchive ----------------------------
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
+
+    // static page
     Route::get('static/{uri}', 'Home@staticPage');
+
+    // archives
     Route::get('archives/{id}', 'Archive\ArchiveController@first')->name('archive.first')->where('id', '[0-9]+');
     Route::get('archives/{archive}/search', 'Archive\ExplorerController@search')->name('search')->where('archive', '[0-9]+');
     Route::get('archives/{id}/latest', 'Archive\ExplorerController@showDocsByArchive')->name('explorer.archive')->where('id', '[0-9]+');
@@ -45,7 +47,7 @@ Route::middleware(['auth'])->group(function () {
 
     //Route::get('category/{name?}', 'Archive\CategoryController@show')->where('category','(.*)');
 });
-Route::middleware(['auth'])->name('admin.')->prefix('admin')->group(function(){
+Route::middleware(['auth', 'verified'])->name('admin.')->prefix('admin')->group(function(){
     Route::get('/', 'Admin\AdminController@index');
     Route::get('/ver', 'Admin\AdminController@view_version');
     Route::resource('folderMgmt', 'Admin\ArchiveFolderMgmt', ['except'=>['show','create','edit','store','update','destroy']]);

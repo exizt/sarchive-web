@@ -15,12 +15,8 @@ if [ -f composer.json ]; then
             rm -f /app/web/bootstrap/cache/packages.php
             rm -f /app/web/bootstrap/cache/services.php
         fi
-        # 전역 설치
+        # vendor 폴더 생성. composer.lock 을 참조하여 생성됨.
         composer install
-
-        # 전역 설치된 요소를 사용할 수 있도록.
-        # export PATH="~/.composer/vendor/bin:$PATH"
-        # export PATH="~/.composer/bin:$PATH"
 
         # 처음 구동일 것이라고 가정하고. 여기서 서버 네임 지정하는 부분 추가.
         echo "ServerName localhost" >> /etc/apache2/apache2.conf
@@ -38,6 +34,7 @@ dockerize -wait tcp://db:3306 -timeout 20s
 
 php web/artisan migrate
 
+php web/artisan db:seed --class=UserTableSeeder
 
 # 서버 실행
 echo "Apache server is running..."

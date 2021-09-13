@@ -11,6 +11,7 @@
         <li class="list-group-item d-flex justify-content-between align-items-center">Apache <small>{{ $apache_ver }}</small></li>
         <li class="list-group-item d-flex justify-content-between align-items-center">임의 패스워드 생성 (26) <small>{{ $new_password_26 }}</small></li>
         <li class="list-group-item d-flex justify-content-between align-items-center">임의 패스워드 생성 (31) <small>{{ $new_password_31 }}</small></li>
+        <li class="list-group-item d-flex justify-content-between align-items-center">해쉬 패스워드<small>{{ $new_password_hash }}</small></li>
 	</ul>
 </div>
 @endsection

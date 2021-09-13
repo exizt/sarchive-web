@@ -7,7 +7,7 @@ if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
 }
 
 # vendor의 ROOT 경로
-$cc_vendor_root = getenv('C_VENDOR_ROOT') ? getenv('C_VENDOR_ROOT') : __DIR__.'/..';
+$cc_vendor_root = getenv('C_VENDOR_ROOT') ?: __DIR__.'/..';
 define('C_VENDOR_ROOT', $cc_vendor_root);
 
 # 원래 부분 시작

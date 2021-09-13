@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
@@ -42,6 +42,7 @@ class AdminController extends Controller
         $data['apache_ver'] = $this->getApacheVersion();
         $data['new_password_26'] = $this->generateNewPassword(26);
         $data['new_password_31'] = $this->generateNewPassword(31);
+        $data['new_password_hash'] = Hash::make(Str::random(40));
         return view ( 'admin.versions',$data );
     }
 
