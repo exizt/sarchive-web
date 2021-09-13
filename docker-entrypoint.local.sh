@@ -34,6 +34,7 @@ dockerize -wait tcp://db:3306 -timeout 20s
 
 php web/artisan migrate
 
+php web/artisan db:seed --class=UserTableSeeder
 
 # 서버 실행
 echo "Apache server is running..."
