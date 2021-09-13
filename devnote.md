@@ -34,9 +34,10 @@
 원격에서 업데이트 받기
 1. 원격) `update` 스크립트 실행 (아래의 내용을 하나로 모은 스크립트)
   1. `git pull` : git 내려받기
-  2. `composer install --optimize-autoloader --no-dev` : composer.lock을 토대로 설치.
-  3. `php artisan config:cache` : 'config 설정' 캐시 갱신
-  4. `php artisan route:cache` : 'route 설정' 캐시 갱신
+  2. `cd web`
+  3. `composer install --optimize-autoloader --no-dev` : composer.lock을 토대로 설치.
+  4. `php artisan config:cache` : 'config 설정' 캐시 갱신
+  5. `php artisan route:cache` : 'route 설정' 캐시 갱신
 2. 필요시 테이블 마이그레이션 : `php artisan migrate`
 
 npm 은 아직 활용하지 않는 중. 조만간 활용하게 될 듯 한데. 아직은 보류. 
