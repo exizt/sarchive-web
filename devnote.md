@@ -32,7 +32,7 @@
 
 
 원격에서 업데이트 받기
-1. 원격) `update` 스크립트 실행 (아래의 내용을 하나로 모은 스크립트)
+1. 원격) `./prod-update.sh 1` 스크립트 실행 (아래의 내용을 하나로 모은 스크립트)
   1. `git pull` : git 내려받기
   2. `cd web`
   3. `composer install --optimize-autoloader --no-dev` : composer.lock을 토대로 설치.
@@ -55,10 +55,20 @@ net::ERR_HTTP_RESPONSE_CODE_FAILURE (500 오류)
 * `chown -R apache:apache storage`
 
 
-# 개발 IDE에서 vendor 이용하기
-다음을 실행해서 vendor 를 셋팅해준다.
+# Composer
+## 개발 IDE에서 vendor 이용하기
+개발 환경에서 web/vendor 를 생성하고 싶을 때에는 다음의 명령어를 실행한다.
+```
+composer install --no-scripts
+```
 
-`composer install --no-scripts` 
+composer.lock을 업데이트하고 싶다면, 도커 컨테이너에서 composer update 를 수행하도록 한다.
+이유는 scripts 가 실행되면서 bootstrap/cache 를 손대게 되는데, 복잡하게 꼬일여지가 있기 때문이다. 거기다 composer.lock 도 바뀌게 되니까 이래저래 복잡.
+
+
+원칙을 정리해보자면,
+* composer update 는 '도커 컨테이너'에서 한다. (composer.lock 이 갱신되고, bootstrap/cache에 영향을 준다)
+* web/vendor가 필요하다면 호스트에서 'composer install --no-scripts'를 한다.
 
 옵션 설명
 * composer.lock을 기준으로 vendor를 셋팅한다.
