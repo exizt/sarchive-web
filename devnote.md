@@ -109,17 +109,6 @@ composer.lock을 업데이트하고 싶다면, 도커 컨테이너에서 compose
     * /archives/1/category/{카테고리명}
 
 
-# Todo
-* 게시판 삭제 시에 기존 게시물이 어디로 이동할지... 
-* 북마크 목록.
-* 검색 기능 개선. 
-  * 게시판 별로 검색. 카테고리 별로 검색
-* 테마 설정 가능하게
-* 설정에서 폰트/폰트크기 변경 가능하게.
-* 카테고리 기능을 그냥 없애도 될 거 같은데?
-* 페이지 기능도 없애도 될 거 같고.
-
-
 # 개념 및 단위
 ## 기본 개념 단위
 
@@ -366,6 +355,6 @@ view 에 넘기는 data 형태
 
 
 # 리소스
-logo - google material > polymer
-icons/folder.svg - octicons > folder open 24
-icons/archive.svg - octicons > inbox 24
+- logo : google material > polymer
+- icons/folder.svg : octicons > folder open 24
+- icons/archive.svg : octicons > inbox 24
