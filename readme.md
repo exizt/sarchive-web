@@ -59,7 +59,7 @@ Laravel 에서 필요한 PHP 구성
 ## 3.1. 데이터베이스 백업
 바로 접근이 가능할 경우.
 ```
-mysqldump -uroot -p SERV_SARCHIVE > sarchive_dump.20220207.sql
+mysqldump --routines --triggers -uroot -p SERV_SARCHIVE > sarchive_dump.20220207.sql
 ```
 
 
@@ -67,7 +67,7 @@ mysqldump -uroot -p SERV_SARCHIVE > sarchive_dump.20220207.sql
 ```
 docker exec -it sarchive_db_1 /bin/bash
 cd (백업할 파일을 둘 경로)
-mysqldump -uroot -p SITE_CHOSIM_LARAVEL > sarchive_dump.20220206.sql
+mysqldump --routines --triggers -uroot -p SERV_SARCHIVE > sarchive_dump.20220206.sql
 ```
 
 
