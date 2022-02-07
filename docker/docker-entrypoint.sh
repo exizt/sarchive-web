@@ -1,6 +1,12 @@
 #! /bin/bash
 
-cd /app
+# /app 경로가 없으면 이상이 있는 것이므로 그냥 종료.
+if ! [ -d /app ]; then
+	echo "not found /app"
+	exit 1
+fi
+
+cd /app/web
 
 # 필요한 패키지 및 초반 셋팅
 if [ -f composer.json ]; then
@@ -26,7 +32,6 @@ else
 fi
 
 
-
 # db 서버를 기다리기
 echo "wait db server"
 dockerize -wait tcp://db:3306 -timeout 20s
@@ -34,7 +39,7 @@ dockerize -wait tcp://db:3306 -timeout 20s
 
 php web/artisan migrate
 
-php web/artisan db:seed --class=UserTableSeeder
+# php web/artisan db:seed --class=UserTableSeeder
 
 # 서버 실행
 echo "Apache server is running..."
