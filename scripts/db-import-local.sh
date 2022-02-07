@@ -14,4 +14,4 @@ if [ "$#" -lt 1 ]; then
 fi
 
 # 백업본 import 처리
-mysql -uroot --password=$MYSQL_PASSWORD $DB_DATABASE < $1
+mysql -uroot --password=${MYSQL_ROOT_PASSWORD} ${MYSQL_DATABASE} < $1
