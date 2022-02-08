@@ -37,9 +37,6 @@ EXPOSE 80
 # 도커에서 dforground 옵션으로 동작시킬 것이기 때문에 서비스에서는 종료.
 RUN service apache2 stop
 
-# 웹 어플리케이션 지정 (bind mount 로 변경함)
-# COPY ./vhost.conf /etc/apache2/sites-available/000-default.conf
-
 # entrypoint.sh 복사
 COPY docker-entrypoint.sh .
 
