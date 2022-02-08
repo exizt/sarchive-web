@@ -1,5 +1,8 @@
 <?php
 
+// 이거 귀찮아서 상수화 함 (2020-02-09)
+if(!defined('AUTHDB_CONNECTION_ID')) { define('AUTHDB_CONNECTION_ID', 'shared_auth_db'); }
+
 /*
 |--------------------------------------------------------------------------
 | Create The Application
