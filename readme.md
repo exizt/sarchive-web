@@ -1,7 +1,9 @@
 # 1. SArchive Project 개요
-
+- **소스 아카이브 프로젝트**
 - 매우 오래된 소스코드나 오래된 IT 정보, 오래 보관하기 위한 노트 및 문서들을 보관하기 위한 프로젝트.
-- 개발 문서 : https://swiki.asv.kr/wiki/개발:SARChive_프로젝트
+- 링크
+    - 개발 문서 : https://swiki.asv.kr/wiki/개발:SARChive_프로젝트
+    - Github : https://github.com/exizt/sarchive-web
 
 
 ## 1.2. 개발 환경
@@ -17,11 +19,12 @@ Laravel 에서 필요한 PHP 구성
 
 
 # 2. 셋팅
-## 2.1 도커 - 개발 환경 셋팅 과정
+## 2.1. 도커 & 개발 환경
+### 2.1.1. 도커 & 개발 환경 - 셋팅 과정
 1. 깃 클론 및 간단 설정
     ```console
     # 깃 클론
-    git clone git@github.com:exizt/sarchive-web.git
+    git clone git@github.com:exizt/sarchive-web.git sarchive-web
 
     # 깃 설정 (퍼미션모드 false)
     cd sarchive-web && git config core.filemode false
@@ -53,6 +56,33 @@ Laravel 에서 필요한 PHP 구성
 6. 데이터베이스 테이블 import (아래 참조)
 7. 웹 접속 (http://localhost:30082)
 
+
+## 2.2. 공통 도커 컨테이너 & 프로덕션
+### 2.2.1. 셋팅 과정 - 공통 도커 컨테이너 & 프로덕션
+1. 깃 클론 및 간단 설정
+    ```console
+    # 깃 클론
+    git clone--depth 1 --single-branch --branch master git@github.com:exizt/sarchive-web.git sarchive-web
+
+    # 깃 설정 (퍼미션모드 false)
+    cd sarchive-web && git config core.filemode false
+    
+    # 스크립트 권한 부여
+    chmod 774 ./scripts/*
+    ```
+2. 라라벨 설정
+    - `web/.env.local.example`을 복사해서 `web/.env` 생성 후 값 입력.
+    - 데이터베이스 연결 정보 등을 기입.
+3. 캐시 설정 등
+    ```console
+    ./scripts/prod-init.sh 1
+    ```
+    - 라라벨 폴더 및 파일 퍼미션 부여 등을 하는 스크립트.
+
+### 2.2.2. 업데이트 과정 - 공통 도커 컨테이너 & 프로덕션
+```console
+./scripts/prod-update.sh 1
+```
 
 
 # 3. 데이터베이스
@@ -127,13 +157,4 @@ sudo docker exec -it sarchive_webapp_1 composer update
 - 설정에서 폰트/폰트크기 변경 가능하게.
 - 카테고리 기능을 그냥 없애도 될 거 같은데?
 - 페이지 기능도 없애도 될 거 같고.
-
-
-# 사이트 내의 단축키
-alt + shift
-- [F] : 검색
-- [Z] : 뒤로가기
-- [E] : (일반적으로) 편집
-- [S] : (일반적으로) 저장
-- [N] : 새로 글 쓰기
 

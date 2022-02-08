@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 # /app 경로가 없으면 이상이 있는 것이므로 그냥 종료.
 if ! [ -d /app ]; then
@@ -31,15 +31,12 @@ else
     echo "composer.json not exists"
 fi
 
-
 # db 서버를 기다리기
 echo "wait db server"
 dockerize -wait tcp://db:3306 -timeout 20s
-# dockerize -wait tcp://data-api:5000 -timeout 20s
 
-php web/artisan migrate
-
-# php web/artisan db:seed --class=UserTableSeeder
+# php artisan migrate
+# php artisan db:seed --class=UserTableSeeder
 
 # 서버 실행
 echo "Apache server is running..."
