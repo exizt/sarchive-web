@@ -62,7 +62,7 @@ Laravel 에서 필요한 PHP 구성
 1. 깃 클론 및 간단 설정
     ```console
     # 깃 클론
-    git clone--depth 1 --single-branch --branch master git@github.com:exizt/sarchive-web.git sarchive-web
+    git clone --depth 1 --single-branch --branch master git@github.com:exizt/sarchive-web.git sarchive-web
 
     # 깃 설정 (퍼미션모드 false)
     cd sarchive-web && git config core.filemode false
