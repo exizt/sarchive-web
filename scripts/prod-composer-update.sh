@@ -1,8 +1,7 @@
 #!/bin/bash
-#
-# prod-composer-update.sh
-#
 # ----------------------------------------------------------------------
+# [ prod-composer-update.sh ]
+# 
 # (프로덕션 환경에서) laravel composer 및 캐시 처리
 #
 # Copyright 2022 shoon
