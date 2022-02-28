@@ -4,13 +4,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
-	//protected const VIEW_PATH = 'admin.folder-control';
-
     /**
      * 생성자
      */
@@ -37,18 +33,16 @@ class AdminController extends Controller
     {
         $data = array();
         $data['source_ver'] = config('_app.version');
+        $data['laravel_ver'] = app()->version();
         $data['php_ver'] = $this->getPHPversion();
-        $data['mysql_ver'] = $this->getMySQLVersion();
-        $data['apache_ver'] = $this->getApacheVersion();
-        $data['new_password_26'] = $this->generateNewPassword(26);
-        $data['new_password_31'] = $this->generateNewPassword(31);
-        $data['new_password_hash'] = Hash::make(Str::random(40));
+        $data['db_ver'] = $this->getDBVersion();
+        $data['wss_ver'] = $this->getWebServerSoftwareVersion();
         return view ( 'admin.versions',$data );
     }
 
 
     /**
-     * get PHP version
+     * PHP 버전 조회
      */
     private function getPHPversion(){
         if(function_exists('phpversion')){
@@ -58,31 +52,11 @@ class AdminController extends Controller
     }
 
     /**
-     * get MySQL version
+     * Apache, Nginx 버전 조회
      */
-    private function getMySQLVersion() {
-        $results = DB::select( DB::raw("select version()") );
-        $mysql_version =  $results[0]->{'version()'};
+    private function getWebServerSoftwareVersion(){
+        $version = '';
 
-        if(strlen($mysql_version)<=2){
-            // 기대치 이하의 결과인 경우에, 다음을 수행
-            $output = shell_exec('mysql -V');
-            if(!is_null($output)){
-                $strings = '';
-                preg_match('@[0-9]+\.[0-9]+\.[0-9]+@', $output, $strings);
-                return $strings[0];
-            } else {
-                return '?';
-            }
-        }
-        return $mysql_version;
-    }
-
-
-    /**
-     * get Apache Version
-     */
-    private function getApacheVersion(){
         if(function_exists('apache_get_version')){
             $version = apache_get_version();
             //preg_match('@[0-9]+\.[0-9]+\.[0-9]+@', $output, $strings);
@@ -90,40 +64,38 @@ class AdminController extends Controller
 
             //$_SERVER['SERVER_SOFTWARE'];
 
-            //별로 기대치 이하의 값을 가져오면 2번째 방법을 시도.
-            if(strlen($version)<=2 || strtolower($version) == 'server'){
-                $output = shell_exec('httpd -v');
-                if(!is_null($output)){
-                    $strings = '';
-                    preg_match('@[0-9]+\.[0-9]+\.[0-9]+@', $output, $strings);
-                    return $strings[0];
-                }
+            // 만족할 만한 값일 때에 반환
+            if(strlen($version) > 5 && strtolower($version) != 'server' && strtolower($version) != 'apache'){
+                return $version;
             }
-            return $version;
+        }
+
+        // 위에서 만족할 만한 값이 아닌 경우 httpd나 apache2 명령어를 통해서 버전값을 조회
+        $output = shell_exec('httpd -v');
+
+        if(is_null($output)){
+            $output = shell_exec('apache2 -v');
+        }
+        if(is_null($output)){
+            $output = shell_exec('nginx -v 2>&1');
+        }
+        if(!is_null($output)){
+            $strings = '';
+            // preg_match('@[0-9]+\.[0-9]+\.[0-9]+@', $output, $strings);
+            preg_match('/[a-zA-Z\/]+[0-9]+\.[0-9]+\.[0-9]+[a-zA-Z\s\(\)]*$/m', $output, $strings);
+            return $strings[0];
         }
         return '?';
     }
 
     /**
-     * 무작위 암호를 생성하기 위한 함수.
-     * MySQL 등의 암호를 생성하기에 유용함.
-     * MySQL 5.7 버전 기준으로 MaxLength 는 32 char
-     * @param number $length
-     * @return string|mixed
+     * MySQL/MariaDB 버전 조회
      */
-    private function generateNewPassword($length=5){
-        // $rand = Str::random($length);
-        // return $rand;
-        // 위 방식은 특수문자가 없어서...
-
-        $seed = str_split('abcdefghijklmnopqrstuvwxyz'
-            .'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-            .'0123456789!@#$%^&*()'); // and any other characters
-        shuffle($seed); // probably optional since array_is randomized; this may be redundant
-        $rand = '';
-        foreach (array_rand($seed, $length) as $k) $rand .= $seed[$k];
-
-        return $rand;
+    private function getDBVersion(){
+        $results = DB::select( DB::raw("select version() as version") );
+        $version =  $results[0]->version;
+        
+        return $version;
     }
 
     /**
