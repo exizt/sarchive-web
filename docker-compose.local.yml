@@ -1,16 +1,19 @@
-# 로컬 환경, 개발 PC에서의 Docker [docker-compose]
+# 로컬 환경, 개발 PC에서의 Docker (프로덕션용이 아님)
 version: "3.9"
 services: 
   webapp:
     build:
-      context: .
-      dockerfile: ${APP_DOCKFILE}
+      context: ./docker
+      dockerfile: Dockerfile
     ports:
       - "${APP_PORT_EXTERNAL}:${APP_PORT}"
     volumes:
       - ./web:/app/web
-      - ./composer.json:/app/composer.json
-      - ./web/composer.lock:/app/composer.lock
+      - ./docker/vhost.conf:/etc/apache2/sites-available/000-default.conf
+      - ./docker/logs:/var/log/apache2
+      - ./scripts:/app/scripts
+      # - ./composer.json:/app/composer.json
+      # - ./web/composer.lock:/app/composer.lock
     entrypoint: /bin/bash /app/docker-entrypoint.sh
     depends_on:
       - db
@@ -26,5 +29,6 @@ services:
       - ${DB_PORT_EXTERNAL}:${DB_PORT}
     volumes:
       - maindb:/var/lib/mysql
+      - ./scripts:/app/scripts
 volumes:
   maindb:
