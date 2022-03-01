@@ -2,15 +2,12 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-@if(!App::environment('production'))
-  <title>(local) S아카이브</title>
-@else
-  @hasSection('title')
-    <title>@yield('title') :: S아카이브</title>
-  @else
-  <title>S아카이브</title>
-  @endif
+<title>
+@if (App::environment('local')) (local) 
+@elseif (App::environment('staging')) (dev) 
 @endif
+@hasSection('title') @yield('title') - @endif S아카이브
+</title>
 <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width" />
 <meta name="robots" content="noindex, nofollow">
 <meta name="csrf-token" content="{{ csrf_token() }}">

@@ -211,7 +211,7 @@ sudo docker exec -i mariadb-106_mariadb_1 mysql -uroot -p SERV_SARCHIVE < ./scri
 ```shell
 # 구문
 sudo docker exec -it (컨테이너명) /bin/bash
-mysql -uroot -p (디비명)) < (백업 파일 경로)
+mysql -uroot -p (디비명) < (백업 파일 경로)
 
 # (로컬) 예시
 sudo docker exec -it sarchive_db_1 /bin/bash
