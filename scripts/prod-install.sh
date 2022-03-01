@@ -39,5 +39,4 @@ sudo docker exec -it $1 "${SCRIPT_PATH}/prod-composer-update.sh"
 # bash ./prod-composer-update.sh
 
 # 스토리지 심볼릭 링크 생성
-# sudo php artisan storage:link
 # sudo docker exec -it $1 bash -c "cd ${SCRIPT_PATH}/../web && php artisan storage:link"

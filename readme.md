@@ -7,7 +7,7 @@
     - 로컬 : http://localhost:30082
     - Dev : http://dev-sarchive.asv.kr
 
-## 1.2. 개발 환경
+## 1.2. 동작 환경
 * PHP 7.4 이상
 * Laravel 8.0 이상
 
@@ -53,7 +53,7 @@ Laravel 에서 필요한 PHP 구성
         ```
     - DB 볼륨을 삭제할 필요가 있을 시에는 다음 명령어를 선행하여 클린 삭제해준다.
         ```shell
-        sudo docker-compose --env-file=.env.local down -v
+        sudo docker-compose --env-file=./docker/.env.local down -v
         ```
 5. 필요시 `APP_KEY` 갱신
     ```shell
@@ -81,7 +81,7 @@ sudo docker start sarchive_db_1 sarchive_webapp_1
 
     # 깃 설정 (퍼미션모드 false)
     cd sarchive-web && git config core.filemode false
-    
+
     # 스크립트 권한 부여
     chmod 774 ./scripts/*
     ```
@@ -90,6 +90,7 @@ sudo docker start sarchive_db_1 sarchive_webapp_1
     - 데이터베이스 연결 정보 등을 기입.
 3. 캐시 설정 등
     ```shell
+    # 구문
     sudo ./scripts/prod-init.sh (컨테이너명)
 
     # 예시)

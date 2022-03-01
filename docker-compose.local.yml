@@ -12,7 +12,7 @@ services:
       - ./docker/vhost.conf:/etc/apache2/sites-available/000-default.conf
       - ./docker/logs:/var/log/apache2
       - ./scripts:/app/scripts
-      # - ./composer.json:/app/composer.json
+      # - ./web/composer.json:/app/composer.json
       # - ./web/composer.lock:/app/composer.lock
     entrypoint: /bin/bash /app/docker-entrypoint.sh
     depends_on:
