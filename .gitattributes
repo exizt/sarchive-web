@@ -1,19 +1,4 @@
 # Set the default behavior, in case people don't have core.autocrlf set.
 * text=auto
 *.sh text eol=lf
-*.php text eol=lf
-*.gitignore text eol=lf
-*.editorconfig text eol=lf
-*.json text eol=lf
-*.xml text eol=lf
-*.js text eol=lf
-*.css text eol=lf
-*.gitattributes text eol=lf
-artisan text eol=lf
-*.htaccess text eol=lf
-*.robots text eol=lf
-.env.example text eol=lf
-*.yml text eol=lf
-.htaccess text eol=lf
-*.lock text eol=lf
-# composer.lock binary
+composer.lock binary
