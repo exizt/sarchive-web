@@ -36,6 +36,7 @@ return [
     'connections' => [
         'mysql' => [
             'driver' => 'mysql',
+            'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
             'database' => env('DB_DATABASE', 'forge'),
@@ -52,15 +53,15 @@ return [
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
-        AUTHDB_CONNECTION_ID => [
+        G_AUTHDB_CONNECTION_ID => [
             'driver' => 'mysql',
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
-            'database' => env('AUTHDB_DATABASE', 'SITE_CHOSIM_LARAVEL'),
-            'username' => env('DB_USERNAME', 'homestead'),
-            'password' => env('DB_PASSWORD', 'secret'),
-            'charset' => env('AUTHDB_CHARSET', 'utf8'),
-            'collation' => env('AUTHDB_COLLATION', 'utf8_general_ci'),
+            'database' => env('AUTHDB_DATABASE', 'forge'),
+            'username' => env('DB_USERNAME', 'forge'),
+            'password' => env('DB_PASSWORD', ''),
+            'charset' => env('AUTHDB_CHARSET', 'utf8mb4'),
+            'collation' => env('AUTHDB_COLLATION', 'utf8mb4_unicode_ci'),
             'prefix' => '',
             'strict' => false,
             'engine' => null,

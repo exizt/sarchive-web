@@ -1,7 +1,15 @@
 <?php
 
-// 이거 귀찮아서 상수화 함 (2020-02-09)
-if(!defined('AUTHDB_CONNECTION_ID')) { define('AUTHDB_CONNECTION_ID', 'shared_auth_db'); }
+/*
+|--------------------------------------------------------------------------
+| 귀찮아서 여기서 상수화하는 것들 (2022-02-09)
+|--------------------------------------------------------------------------
+*/
+// 인증 센터의 DB 커넥션을 내부적으로 가리키는 명칭
+if(!defined('G_AUTHDB_CONNECTION_ID')) { define('G_AUTHDB_CONNECTION_ID', 'shared_auth_db'); }
+
+// 스토리지의 퍼블릭 심볼릭 링크 경로
+if(!defined('G_STORAGE_PUBLIC_LINK')) { define('G_STORAGE_PUBLIC_LINK', 'd'); }
 
 /*
 |--------------------------------------------------------------------------
