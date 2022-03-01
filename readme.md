@@ -229,16 +229,13 @@ mysql -uroot -p SERV_SARCHIVE < /srv/db/shared/sarchive_dump.20220206.sql
 sudo docker exec -it sarchive_webapp_1 php artisan (명령어)
 ```
 
-컨트롤러 추가 시. 
-
+리소스 컨트롤러 추가
 * `php artisan make:controller PhotoController --resource`
 * `php artisan make:controller Admin/PhotoController --resource`
 
 
 모델 추가 시
-
 * `php artisan make:model --migration Post`
-* `php artisan make:model --migration Models/Post`
 
 
 ## 5.2. Composer
