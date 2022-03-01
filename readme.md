@@ -6,9 +6,10 @@
     - Github : https://github.com/exizt/sarchive-web
     - 로컬 : http://localhost:30082
     - Dev : http://dev-sarchive.asv.kr
+    - Prod : https://sarchive.asv.kr
 
 ## 1.2. 동작 환경
-* PHP 7.4 이상
+* PHP 8.0 이상
 * Laravel 8.0 이상
 
 
@@ -16,7 +17,6 @@ Laravel 에서 필요한 PHP 구성
 * extension=openssl : 뭐였는지 기억 안 나지만 필요함
 * extension=pdo_mysql : DB 연결을 위해 필요
 * extension=mbstring : 뭐였는지 기억 안 남
-* extension=fileinfo : 파일업로드 기능을 위해 필요한 듯
 
 
 참고
@@ -91,14 +91,14 @@ sudo docker start sarchive_db_1 sarchive_webapp_1
 3. 캐시 설정 등
     ```shell
     # 구문
-    sudo ./scripts/prod-init.sh (컨테이너명)
+    sudo ./scripts/prod-install.sh (컨테이너명)
 
     # 예시)
     sudo ./scripts/prod-install.sh php_laravel_web_1
     ```
     - 라라벨 폴더 소유권 부여, composer 셋팅, 스토리지 심볼릭 링크 생성 등을 처리함
 4. 데이터베이스 import (아래 참조)
-5. 웹 접속 (예시: http://dev-chosim.asv.kr:31080)
+5. 웹 접속 (예시: http://dev-sarchive.asv.kr)
 
 
 ## 3.2. 업데이트 과정
@@ -225,22 +225,40 @@ mysql -uroot -p SERV_SARCHIVE < /srv/db/shared/sarchive_dump.20220206.sql
 
 # 5. 사용법
 ## 5.1. Artisan
-```
+(로컬 환경에서)
+```shell
+# 구문
 sudo docker exec -it sarchive_webapp_1 php artisan (명령어)
+
+# 예시 (스토리지 심볼릭 링크 생성)
+sudo docker exec -it sarchive_webapp_1 php artisan storage:link
 ```
 
-리소스 컨트롤러 추가
-* `php artisan make:controller PhotoController --resource`
-* `php artisan make:controller Admin/PhotoController --resource`
 
+(프로덕션 환경에서)
+```shell
+# 구문
+sudo docker exec -it (컨테이너명) bash -c "cd $(pwd) && artisan (명령어)"
 
-모델 추가 시
-* `php artisan make:model --migration Post`
+# 예시
+sudo docker exec -it php_laravel_web_1 bash -c "cd $(pwd) && artisan (명령어)"
+```
 
 
 ## 5.2. Composer
-```
+(로컬 환경에서)
+```shell
 sudo docker exec -it sarchive_webapp_1 composer update
+```
+
+
+(프로덕션 환경에서)
+```shell
+# 구문
+sudo docker exec -it (컨테이너명) bash -c "cd $(pwd) && composer (명령어)"
+
+# 예시
+sudo docker exec -it php_laravel_web_1 bash -c "cd $(pwd) && composer update"
 ```
 
 
