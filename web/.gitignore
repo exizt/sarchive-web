@@ -13,3 +13,13 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
+
+# -------------------------
+# Custom
+
+# storage directory
+/storage/*
+!/storage/app
+!/storage/framework
+!/storage/logs
+
