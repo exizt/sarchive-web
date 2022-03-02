@@ -36,7 +36,7 @@ Laravel 에서 필요한 PHP 구성
     cd sarchive-web && git config core.filemode false
     
     # 스크립트 권한 부여
-    chmod 774 ./scripts/*
+    chmod 774 ./scripts/*.sh
 
     # 라라벨 폴더 및 파일 퍼미션 부여
     ./scripts/laravel-permission.sh
@@ -83,7 +83,7 @@ sudo docker start sarchive_db_1 sarchive_webapp_1
     cd sarchive-web && git config core.filemode false
 
     # 스크립트 권한 부여
-    chmod 774 ./scripts/*
+    chmod 774 ./scripts/*.sh
     ```
 2. 라라벨 설정
     - `web/.env.prod.example`을 복사해서 `web/.env` 생성 후 값 입력.
