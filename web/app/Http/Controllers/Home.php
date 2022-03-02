@@ -36,6 +36,7 @@ class Home extends Controller {
 		} else {
 			//... 로그인 상태가 아닐 때.
 			// 로그인 화면으로 이동
+			// return view ( 'welcome' );
 			return redirect ( '/login' );
 		}
 	}
