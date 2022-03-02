@@ -33,6 +33,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('folder-selector', 'Archive\ExplorerController@folderSelector');
 
     Route::resource('archives', 'Archive\ArchiveController', ['except'=>['show']]);
+    Route::get('archives/editaleIndex', 'Archive\ArchiveController@editableIndex')->name('archives.editableIndex');
     Route::post('archives/updateSort', 'Archive\ArchiveController@updateSort')->name('archives.updateSort');
     Route::resource('doc', 'Archive\DocumentController', ['except'=>['index']]);
 

@@ -1,30 +1,18 @@
 @extends('layouts.sarchive_layout')
-@section('title',"아카이브 목록 편집")
 @section('content')
 <div class="container py-5">
-	@include('layouts.modules.messages.messages_and_errors_bs4')
-	<div class="row px-0 mx-0">
-		<div class="d-flex w-100 justify-content-between">
-			<h4 class="">아카이브 목록 편집</h4>
-			<small class="text-mute">Page {{ $masterList->currentPage() }} of {{ $masterList->lastPage() }}</small>
-		</div>
+	@if(count($masterList) == 0)
+	<div class="text-center">
+		<a class="btn btn-primary" href="{{ route($ROUTE_ID.'.create') }}">새 아카이브 생성하기</a>
 	</div>
-	<hr class="mt-1">
+	@endif
 	<div class="list-group">
 		@foreach ($masterList as $item)
-		<a class="list-group-item list-group-item-action flex-column align-items-start shh-profile-list" href="{{ route($ROUTE_ID.'.edit',$item->id) }}"
-			data-archive-id="{{$item->id}}" data-name="{{$item->name}}">
+		<a class="list-group-item list-group-item-action flex-column align-items-start"
+			href="{{ route('archive.first',$item->id) }}">
 			<div class="d-flex w-100 justify-content-between">
-				<h5 class="">{{ $item->name }}@if ($item->is_default) &nbsp;&nbsp;&nbsp;<span class="badge badge-success pull-right">기본</span> @endif </h5>
-				<div>
-					<span class="shh-listmovemode-off">
-						<small>{{ $item->created_at->format('Y-m-d') }}</small>
-					</span>
-					<span class="shh-listmovemode-on" style="display:none">
-						<button type="button" class="btn btn-primary btn-sm shh-btn-mode-up">▲</button>
-						<button type="button" class="btn btn-primary btn-sm shh-btn-mode-down">▼</button>
-					</span>
-				</div>
+				<h5 class="mb-1">{{ $item->name }}</h5>
+				<small>{{ $item->created_at->format('Y-m-d') }}</small>
 			</div>
 			<p class="mb-1 pl-md-3 sarc-item-comments">
 				<small>{{ $item->comments }}</small>
@@ -32,93 +20,8 @@
 		</a>
 		@endforeach
 	</div>
-	<hr>
-	<div class="d-flex w-100 justify-content-between">
-        <div>
-            <a href="{{ route($ROUTE_ID.'.create') }}" class="btn btn-outline-success btn-sm">신규</a>
-            <a href="/" class="btn btn-outline-secondary btn-sm">아카이브 선택으로 돌아가기</a>
-        </div>
-		<span>
-			<a href="#" id="changeIndexModeToggle" class="btn btn-outline-success btn-sm shh-listmovemode-off">순서변경</a>
-			<a href="#" id="shh-movemode-cancel" class="btn btn-outline-success btn-sm shh-listmovemode-on" style="display:none">순서변경 취소</a>
-			<a href="#" id="shh-movemode-save" class="btn btn-outline-success btn-sm shh-listmovemode-on" style="display:none">순서변경 저장</a>
-		</span>
+	<div class="text-right mt-2">
+		<a href="{{ route($ROUTE_ID.'.editableIndex') }}" class="btn btn-sm">아카이브 편집</a>
 	</div>
-	<hr>
-	<div class="text-xs-center">{{ $masterList->links() }}</div>
 </div>
-<script>
-$(function(){
-	$("#changeIndexModeToggle").on("click",changeIndexModeOn)
-	$("#shh-movemode-cancel").on("click",function(e){
-		e.preventDefault()
-		location.reload();
-	})
-	$("#shh-movemode-save").on("click",saveArchiveSort)
-	$(".shh-btn-mode-up").on("click",onClickMoveUp);
-	$(".shh-btn-mode-down").on("click",onClickMoveDown);
-})
-
-/**
- * 아카이브 순서 변경사항을 저장
- */
-function saveArchiveSort(e){
-	e.preventDefault()
-	//console.log("save");
-	var dataList = [];
-	$(".shh-profile-list").each(function(index){
-		var data = {
-			id : $(this).data("archiveId"),
-			name : $(this).data("name"),
-			index : index
-		};
-		dataList.push(data)
-	})
-
-	//console.log(dataList)
-
-	$.post({
-		url: '/archives/updateSort',
-		data: {
-			'dataList': dataList
-		}
-	})
-	.done(function(data){
-		location.reload()
-	})
-}
-function changeIndexModeOn(e){
-	e.preventDefault()
-	$(".shh-listmovemode-off").hide()
-	$(".shh-listmovemode-on").show()
-	$(".shh-profile-list").attr("href","#");
-}
-
-function onClickMoveUp(e){
-	e.preventDefault()
-	moveUp($(this).closest(".shh-profile-list"),".shh-profile-list")
-}
-
-function onClickMoveDown(e){
-	e.preventDefault()
-	moveDown($(this).closest(".shh-profile-list"),".shh-profile-list")
-}
-
-function moveUp($current,sel){
-	var hook = $current.prev(sel)
-	if(hook.length){
-		var elementToMove = $current.detach();
-		hook.before(elementToMove);
-	}
-}
-
-function moveDown($current,sel){
-	var hook = $current.next(sel)
-	if(hook.length){
-		var elementToMove = $current.detach();
-		hook.after(elementToMove);
-	}
-}
-
-</script>
 @endsection
