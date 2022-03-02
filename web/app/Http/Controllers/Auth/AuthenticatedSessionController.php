@@ -49,6 +49,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        // 로그아웃 시 login으로 리다이렉트
+        return redirect('/login');
+        // return redirect('/');
     }
 }

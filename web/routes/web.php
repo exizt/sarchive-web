@@ -1,10 +1,17 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
-
-// index
-Route::get ( '/', 'Home@index' );
+// 대문 페이지
+// Route::get ( '/', 'Home@index' );
+Route::get('/', function () {
+    if(Auth::check()){
+        return redirect('/archives');
+    } else {
+        abort(404);
+    }
+});
 
 // ajax
 Route::get('ajax/header_nav', 'Archive\ExplorerController@doAjax_getHeaderNav');
