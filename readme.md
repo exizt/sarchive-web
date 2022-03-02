@@ -6,9 +6,10 @@
     - Github : https://github.com/exizt/sarchive-web
     - 로컬 : http://localhost:30082
     - Dev : http://dev-sarchive.asv.kr
+    - Prod : https://sarchive.asv.kr
 
 ## 1.2. 동작 환경
-* PHP 7.4 이상
+* PHP 8.0 이상
 * Laravel 8.0 이상
 
 
@@ -16,7 +17,6 @@ Laravel 에서 필요한 PHP 구성
 * extension=openssl : 뭐였는지 기억 안 나지만 필요함
 * extension=pdo_mysql : DB 연결을 위해 필요
 * extension=mbstring : 뭐였는지 기억 안 남
-* extension=fileinfo : 파일업로드 기능을 위해 필요한 듯
 
 
 참고
@@ -91,14 +91,14 @@ sudo docker start sarchive_db_1 sarchive_webapp_1
 3. 캐시 설정 등
     ```shell
     # 구문
-    sudo ./scripts/prod-init.sh (컨테이너명)
+    sudo ./scripts/prod-install.sh (컨테이너명)
 
     # 예시)
     sudo ./scripts/prod-install.sh php_laravel_web_1
     ```
     - 라라벨 폴더 소유권 부여, composer 셋팅, 스토리지 심볼릭 링크 생성 등을 처리함
 4. 데이터베이스 import (아래 참조)
-5. 웹 접속 (예시: http://dev-chosim.asv.kr:31080)
+5. 웹 접속 (예시: http://dev-sarchive.asv.kr)
 
 
 ## 3.2. 업데이트 과정
@@ -225,14 +225,40 @@ mysql -uroot -p SERV_SARCHIVE < /srv/db/shared/sarchive_dump.20220206.sql
 
 # 5. 사용법
 ## 5.1. Artisan
-```
+(로컬 환경에서)
+```shell
+# 구문
 sudo docker exec -it sarchive_webapp_1 php artisan (명령어)
+
+# 예시 (스토리지 심볼릭 링크 생성)
+sudo docker exec -it sarchive_webapp_1 php artisan storage:link
+```
+
+
+(프로덕션 환경에서)
+```shell
+# 구문
+sudo docker exec -it (컨테이너명) bash -c "cd $(pwd) && artisan (명령어)"
+
+# 예시
+sudo docker exec -it php_laravel_web_1 bash -c "cd $(pwd) && artisan (명령어)"
 ```
 
 
 ## 5.2. Composer
-```
+(로컬 환경에서)
+```shell
 sudo docker exec -it sarchive_webapp_1 composer update
+```
+
+
+(프로덕션 환경에서)
+```shell
+# 구문
+sudo docker exec -it (컨테이너명) bash -c "cd $(pwd) && composer (명령어)"
+
+# 예시
+sudo docker exec -it php_laravel_web_1 bash -c "cd $(pwd) && composer update"
 ```
 
 
@@ -268,3 +294,51 @@ sudo docker exec -it sarchive_db_1 /bin/bash
 1. 설정 백업 : `.env`
 2. 데이터베이스 백업
 3. 파일 첨부 기능은 이용하지 않음.
+
+
+# 7. 문제 해결
+## `SQLSTATE[HY000] [1045] Access denied`
+`SQLSTATE[HY000] [1045] Access denied for user 'forge'@'127.0.0.1' (using password: NO)`
+* 원인
+    - 데이터베이스 설정이 안 되어있거나 인식이 안 되는 상황
+* 해결
+    - `.env`에 데이터베이스 설정을 확인해보고, 프로덕션에서는 추가로 `php artisan config:cache`를 해준다. 
+
+
+## `net::ERR_HTTP_RESPONSE_CODE_FAILURE (500 오류)`
+net::ERR_HTTP_RESPONSE_CODE_FAILURE (500 오류)
+* views 캐싱이 안 되서 발생할 수 있다.
+* `chown -R apache:apache storage`
+
+
+# 8. 기획, 구성
+## 8.1. 사용되는 URL 목록
+* / : 아카이브 선택 화면
+* /archives/{아카이브id} : 아카이브의 문서 조회
+* 문서
+    * /doc/{문서id}
+    * /doc/create
+    * /doc/{문서id}/edit
+* 폴더, 카테고리, 탐색기
+    * 폴더
+        * /folders/{폴더id}
+        * /folders/{폴더id}?only=1
+    * 탐색기
+        * /explorer/{아카이브id}/{폴더경로} : 폴더 탐색기
+    * 검색기
+        * /archives/{아카이브id}/search : 검색기
+    * 카테고리
+        * /archives/1/category/{카테고리명}
+
+## 8.2. 코드 구성
+컨트롤러
+* Admin/ : 관리자 모드 관련
+* Archive/ : 아카이브 관련
+* Auth/ : 라라벨에서 추가된 인증 관련
+
+view
+* `admin/` : 관리자 모드 관련
+* `app/`
+* _`auth/`_ : 라라벨에서 추가된 인증 관련
+* _`components/`_ : 라라벨에서 추가된 컴포넌트들
+* `layouts/` : 레이아웃 구성

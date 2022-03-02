@@ -3,13 +3,10 @@
 namespace App\Http\Controllers\Archive;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 use App\Models\SArchive\SAArchive;
 use App\Models\SArchive\SAFolder;
 use App\Models\SArchive\SADocument;
-use App\Models\ArchiveBookmark;
 
 
 class ArchiveController extends BaseController {
@@ -32,7 +29,7 @@ class ArchiveController extends BaseController {
 
 
     /**
-     * 첫 페이지
+     * 해당 아카이브의 메인 페이지. (문서 추가, 검색 등의 버튼이 나타남)
      */
     public function first(Request $request, $archiveId){
         // archiveId 권한 체크 및 조회
@@ -45,14 +42,12 @@ class ArchiveController extends BaseController {
     }
 
 
-
-        /**
+    /**
      * Archive 카테고리 목록을 출력한다.
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
     {
-
         $userId = Auth::id();
 
         $masterList = SAArchive::select(['id','name','comments','is_default','created_at'])
@@ -67,6 +62,30 @@ class ArchiveController extends BaseController {
 
         return view ( self::VIEW_PATH . '.index', $dataSet );
     }
+
+
+    /**
+     * 편집 가능한 Archive 카테고리 목록을 출력한다.
+     * @return \Illuminate\Http\Response
+     */
+    public function editableIndex(Request $request)
+    {
+
+        $userId = Auth::id();
+
+        $masterList = SAArchive::select(['id','name','comments','is_default','created_at'])
+        ->where('user_id',$userId)
+        ->orderBy('index','asc')
+        ->orderBy('id','asc')
+        ->paginate(20);
+
+
+        $dataSet = $this->createViewData ();
+        $dataSet['masterList'] = $masterList;
+
+        return view ( self::VIEW_PATH . '.index_editable', $dataSet );
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -142,7 +161,7 @@ class ArchiveController extends BaseController {
         $item->user_id = $userId;
         $item->save();
 
-        return redirect ()->route ( self::ROUTE_ID . '.index')
+        return redirect ()->route ( self::ROUTE_ID . '.editableIndex')
            ->with('message', '카테고리를 생성하였습니다.');
     }
 
@@ -187,7 +206,7 @@ class ArchiveController extends BaseController {
             return redirect ()->route ( self::ROUTE_ID . '.edit', $id )
             ->with ('message', $return_message );
         } else {
-            return redirect ()->route ( self::ROUTE_ID. '.index' )
+            return redirect ()->route ( self::ROUTE_ID. '.editableIndex' )
             ->with('message', $return_message );
         }
     }
@@ -231,7 +250,7 @@ class ArchiveController extends BaseController {
         // 삭제 실행
         $archive->delete();
 
-        return redirect()->route(self::ROUTE_ID.'.index')->with('message','삭제를 완료하였습니다.');
+        return redirect()->route(self::ROUTE_ID.'.editableIndex')->with('message','삭제를 완료하였습니다.');
     }
 
     /**

@@ -1,4 +1,4 @@
-# 로컬 환경, 개발 PC에서의 Docker (프로덕션용이 아님)
+# 로컬 환경에서의 Docker (프로덕션용이 아님)
 version: "3.9"
 services: 
   webapp:
