@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
 // 대문 페이지
-// Route::get ( '/', 'Home@index' );
 Route::get('/', function () {
     if(Auth::check()){
         return redirect('/archives');
@@ -13,13 +12,15 @@ Route::get('/', function () {
     }
 });
 
+
 // ajax
 Route::get('ajax/header_nav', 'Archive\ExplorerController@doAjax_getHeaderNav');
 Route::get('ajax/folder_nav', 'Archive\ExplorerController@doAjax_getFolderNav');
 Route::get('ajax/folderList', 'Archive\ExplorerController@doAjax_getChildFolder');
 
-// SArchive ----------------------------
-Route::middleware(['auth', 'verified'])->group(function () {
+
+// SArchive 서비스
+Route::middleware(['auth.404', 'verified'])->group(function () {
 
     // static page
     Route::get('static/{uri}', 'Home@staticPage');
@@ -45,7 +46,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //Route::get('category/{name?}', 'Archive\CategoryController@show')->where('category','(.*)');
 });
-Route::middleware(['auth', 'verified'])->name('admin.')->prefix('admin')->group(function(){
+
+
+// 관리자 모드
+Route::middleware(['auth.404', 'verified'])->name('admin.')->prefix('admin')->group(function(){
     Route::get('/', 'Admin\AdminController@index');
     Route::get('/ver', 'Admin\AdminController@view_version');
     Route::resource('folderMgmt', 'Admin\ArchiveFolderMgmt', ['except'=>['show','create','edit','store','update','destroy']]);
