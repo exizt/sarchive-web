@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
+
 // 대문 페이지
 Route::get('/', function () {
     if(Auth::check()){
@@ -50,8 +51,8 @@ Route::middleware(['auth.404', 'verified'])->group(function () {
 
 // 관리자 모드
 Route::middleware(['auth.404', 'verified'])->name('admin.')->prefix('admin')->group(function(){
-    Route::get('/', 'Admin\AdminController@index');
-    Route::get('/ver', 'Admin\AdminController@view_version');
+    Route::get('/', 'Admin\MainAdminController@index');
+    Route::get('version', 'Admin\MainAdminController@viewVersion');
     Route::resource('folderMgmt', 'Admin\ArchiveFolderMgmt', ['except'=>['show','create','edit','store','update','destroy']]);
     Route::get('folderMgmt/index_ajax', 'Admin\ArchiveFolderMgmt@index_ajax')->name('folderMgmt.indexAjax');
     Route::post('folderMgmt/updateList', 'Admin\ArchiveFolderMgmt@updateList')->name('folderMgmt.updateList');

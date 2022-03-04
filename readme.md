@@ -107,7 +107,7 @@ git 업데이트
 # 구문
 ./scripts/prod-update.sh (컨테이너명)
 
-# 예시)
+# (프로덕션) 예시
 su - shoon
 cd /srv/www/php/sarchive.serv/sarchive-web
 ./scripts/prod-update.sh php_laravel_web_1
@@ -129,7 +129,10 @@ cd /srv/www/php/sarchive.serv/sarchive-web
 # 구문
 mysqldump --routines --triggers -uroot -p (디비명) > (백업될 파일명)
 
-# 예시
+# (로컬) 예시
+mysqldump --routines --triggers -uroot -p sarchive > sarchive_dump.local.20220207.sql
+
+# (프로덕션) 예시
 mysqldump --routines --triggers -uroot -p SERV_SARCHIVE > sarchive_dump.20220207.sql
 ```
 

@@ -6,7 +6,7 @@
 	<a href="/admin/folderMgmt"
 	class="list-group-item text-decoration-none @if ($current == 'folder-control') active @endif"
 	>폴더 설정</a>
-    <a href="/admin/ver"
-	class="list-group-item text-decoration-none @if ($current == 'ver') active @endif"
+    <a href="/admin/version"
+	class="list-group-item text-decoration-none @if ($current == 'version') active @endif"
 	>버전 정보</a>
 </ul>
