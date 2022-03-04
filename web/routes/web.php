@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
+
 // 대문 페이지
 Route::get('/', function () {
     if(Auth::check()){

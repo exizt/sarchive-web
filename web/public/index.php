@@ -1,12 +1,5 @@
 <?php
-/**
- * cloudflare 아이피 처리
- */
-if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
-	$_SERVER["REMOTE_ADDR"] = $_SERVER["HTTP_CF_CONNECTING_IP"];
-}
 
-# 원래 부분 시작
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
 
