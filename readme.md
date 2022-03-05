@@ -97,8 +97,13 @@ sudo docker start sarchive_db_1 sarchive_webapp_1
     sudo ./scripts/prod-install.sh php_laravel_web_1
     ```
     - 라라벨 폴더 소유권 부여, composer 셋팅, 스토리지 심볼릭 링크 생성 등을 처리함
-4. 데이터베이스 import (아래 참조)
-5. 웹 접속 (예시: http://dev-sarchive.asv.kr)
+4. 필요시 `APP_KEY` 갱신
+    ```shell
+    # 예시)
+    sudo docker exec -it php_laravel_web_1 bash -c "cd $(pwd) && cd web && php artisan key:generate && php artisan config:cache && php artisan route:cache"
+    ```
+5. 데이터베이스 import (아래 참조)
+6. 웹 접속 (예시: http://dev-sarchive.asv.kr)
 
 
 ## 3.2. 업데이트 과정
@@ -241,10 +246,10 @@ sudo docker exec -it sarchive_webapp_1 php artisan storage:link
 (프로덕션 환경에서)
 ```shell
 # 구문
-sudo docker exec -it (컨테이너명) bash -c "cd $(pwd) && artisan (명령어)"
+sudo docker exec -it (컨테이너명) bash -c "cd $(pwd) && php artisan (명령어)"
 
 # 예시
-sudo docker exec -it php_laravel_web_1 bash -c "cd $(pwd) && artisan (명령어)"
+sudo docker exec -it php_laravel_web_1 bash -c "cd $(pwd) && php artisan key:generate"
 ```
 
 
