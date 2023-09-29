@@ -304,23 +304,8 @@ sudo docker exec -it sarchive_db_1 /bin/bash
 3. 파일 첨부 기능은 이용하지 않음.
 
 
-# 7. 문제 해결
-## `SQLSTATE[HY000] [1045] Access denied`
-`SQLSTATE[HY000] [1045] Access denied for user 'forge'@'127.0.0.1' (using password: NO)`
-* 원인
-    - 데이터베이스 설정이 안 되어있거나 인식이 안 되는 상황
-* 해결
-    - `.env`에 데이터베이스 설정을 확인해보고, 프로덕션에서는 추가로 `php artisan config:cache`를 해준다. 
-
-
-## `net::ERR_HTTP_RESPONSE_CODE_FAILURE (500 오류)`
-net::ERR_HTTP_RESPONSE_CODE_FAILURE (500 오류)
-* views 캐싱이 안 되서 발생할 수 있다.
-* `chown -R apache:apache storage`
-
-
-# 8. 기획, 구성
-## 8.1. 사용되는 URL 목록
+# 기획, 구성
+## 사용되는 URL 목록
 * / : 아카이브 선택 화면
 * /archives/{아카이브id} : 아카이브의 문서 조회
 * 문서
@@ -338,7 +323,7 @@ net::ERR_HTTP_RESPONSE_CODE_FAILURE (500 오류)
     * 카테고리
         * /archives/1/category/{카테고리명}
 
-## 8.2. 코드 구성
+## 코드 구성
 컨트롤러
 * Admin/ : 관리자 모드 관련
 * Archive/ : 아카이브 관련
