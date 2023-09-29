@@ -1,4 +1,5 @@
-# 1. SArchive Project 개요
+# 개요
+SArchive Project 개요
 - **소스 아카이브 프로젝트**
 - 내용 : 매우 오래된 소스코드나 오래된 IT 정보, 오래 보관하기 위한 노트 및 문서들을 보관하기 위한 프로젝트.
 - 링크
@@ -8,7 +9,7 @@
     - Dev : http://dev-sarchive.asv.kr
     - Prod : https://sarchive.asv.kr
 
-## 1.2. 동작 환경
+## 동작 환경
 * PHP 8.0 이상
 * Laravel 8.0 이상
 
