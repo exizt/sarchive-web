@@ -14,9 +14,7 @@ Thumbs.db
 
 # project files
 logs/
-
-# docker env
-/docker/.env.local
+.env.local
 
 # sql
 /scripts/*.sql
