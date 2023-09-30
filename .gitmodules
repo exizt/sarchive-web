@@ -1,0 +1,4 @@
+[submodule "larabasekit"]
+	path = larabasekit
+	url = git@github.com:exizt/larabasekit.git
+	branch = main
