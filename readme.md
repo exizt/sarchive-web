@@ -1,6 +1,5 @@
 # 개요
-SArchive Project 개요
-- **소스 아카이브 프로젝트**
+SArchive Project (소스 아카이브 프로젝트)
 - 내용 : 매우 오래된 소스코드나 오래된 IT 정보, 오래 보관하기 위한 노트 및 문서들을 보관하기 위한 프로젝트.
 - 링크
     - 개발 문서 : https://swiki.asv.kr/wiki/개발:SARChive_프로젝트
@@ -9,12 +8,8 @@ SArchive Project 개요
     - Dev : http://dev-sarchive.asv.kr
     - Prod : https://sarchive.asv.kr
 
-## 동작 환경
-* PHP 8.0 이상
-* Laravel 8.0 이상
 
-
-Laravel 에서 필요한 PHP 구성
+이 프로젝트에서 필요로 하는 PHP 익스텐션
 * extension=openssl : 뭐였는지 기억 안 나지만 필요함
 * extension=pdo_mysql : DB 연결을 위해 필요
 * extension=mbstring : 뭐였는지 기억 안 남
@@ -26,8 +21,8 @@ Laravel 에서 필요한 PHP 구성
 * 파일 첨부 기능 사용하지 않음.
 
 
-# 2. 로컬 개발 환경
-## 2.1. 최초 셋팅 과정
+# 로컬 개발 환경
+## 셋팅
 1. 깃 클론 및 간단 설정
     ```shell
     # 깃 클론
@@ -42,39 +37,36 @@ Laravel 에서 필요한 PHP 구성
     # 라라벨 폴더 및 파일 퍼미션 부여
     ./scripts/laravel-permission.sh
     ```
-2. 도커 환경 변수 설정하기
-    - `docker/.env.local.example`을 복사해서 `docker/.env.local` 생성 후 값 입력. (디비 암호, 포트 등)
-3. 라라벨 설정
+2. 라라벨 설정
     - `web/.env.local.example`을 복사해서 `web/.env` 생성 후 값 입력.
     - 데이터베이스 연결 정보 등을 기입.
+3. 도커 컨테이너 설정
+    - `larabasekit/docker/.env.local.example`을 복사해서 `.env.local` 생성 후 값 입력. (디비 암호, 포트 등)
 4. 도커 컨테이너 생성
-    - 다음의 명령어 실행
-        ```shell
-        sudo docker-compose --env-file=./docker/.env.local up --build --force-recreate -d
-        ```
-    - DB 볼륨을 삭제할 필요가 있을 시에는 다음 명령어를 선행하여 클린 삭제해준다.
-        ```shell
-        sudo docker-compose --env-file=./docker/.env.local down -v
-        ```
+    ```shell
+    sudo docker-compose --env-file=.env.local --project-directory=. up --build --force-recreate -d
+    ```
 5. 필요시 `APP_KEY` 갱신
     ```shell
-    sudo docker exec -it sarchive_webapp_1 php artisan key:generate
+    sudo docker exec -it sarchive_web_1 php artisan key:generate
     ```
 6. 데이터베이스 테이블 import (아래 참조)
 7. 웹 접속 (http://localhost:30082)
 
 
-## 2.2. 도커 컨테이너 시작
+## 도커 컨테이너 시작
 도커 컨테이너 생성은 되었으나, 재부팅 등으로 컨테이너를 시작해야할 때
 ```shell
-sudo docker start sarchive_db_1 sarchive_webapp_1
+sudo docker start sarchive_db_1 sarchive_web_1
 ```
 
 
-# 3. 프로덕션 환경 (공통 컨테이너)
-웹용 도커 컨테이너를 하나로 이용하고 있을 때에 대한 내용입니다. (개별로 컨테이너를 구성했다면 로컬 개발환경과 차이가 없음.)
+# 프로덕션, Staging 환경 (공통 컨테이너)
+웹용 도커 컨테이너를 하나로 이용하고 있을 때에 대한 내용입니다. (개별로 컨테이너를 구성했다면 로컬 개발환경과 차이가 없음)
 
-## 3.1. 최초 셋팅 과정
+## 셋팅
+> 아무것도 없는 상태에서 프로젝트를 내려받고 셋팅하는 과정.
+
 1. 깃 클론 및 간단 설정
     ```shell
     # 깃 클론
@@ -90,17 +82,15 @@ sudo docker start sarchive_db_1 sarchive_webapp_1
     - `web/.env.prod.example`을 복사해서 `web/.env` 생성 후 값 입력.
     - 데이터베이스 연결 정보 등을 기입.
 3. 캐시 설정 등
-    ```shell
-    # 구문
-    sudo ./scripts/prod-install.sh (컨테이너명)
-
-    # 예시)
-    sudo ./scripts/prod-install.sh php_laravel_web_1
-    ```
-    - 라라벨 폴더 소유권 부여, composer 셋팅, 스토리지 심볼릭 링크 생성 등을 처리함
+    - 구문: `sudo ./larabasekit/scripts/prod-install.sh (컨테이너명)`
+    - 예시:
+        ```shell
+        sudo ./larabasekit/scripts/prod-install.sh php_laravel_web_1
+        ```
+    - 설명: 라라벨 폴더 소유권 부여, composer 셋팅, 스토리지 심볼릭 링크 생성 등을 처리함
 4. 필요시 `APP_KEY` 갱신
     ```shell
-    # 예시)
+    # 예시
     sudo docker exec -it php_laravel_web_1 bash -c "cd $(pwd) && cd web && php artisan key:generate && php artisan config:cache && php artisan route:cache"
     ```
 5. 데이터베이스 import (아래 참조)
@@ -109,15 +99,13 @@ sudo docker start sarchive_db_1 sarchive_webapp_1
 
 ## 3.2. 업데이트 과정
 git 업데이트
-```shell
-# 구문
-./scripts/prod-update.sh (컨테이너명)
+- 구문: `./larabasekit/scripts/prod-update.sh (컨테이너명)`
+- 예시: 
+    ```shell
+    su - shoon
 
-# (프로덕션) 예시
-su - shoon
-cd /srv/www/php/sarchive.serv/sarchive-web
-./scripts/prod-update.sh php_laravel_web_1
-```
+    ./larabasekit/scripts/prod-update.sh php_laravel_web_1
+    ```
 
 스크립트에 기입되어있는 필요한 진행 과정은 다음과 같음.
 1. `git pull` : git 내려받기
@@ -128,8 +116,8 @@ cd /srv/www/php/sarchive.serv/sarchive-web
 6. `php artisan route:cache` : 'route 설정' 캐시 갱신
 
 
-# 4. 데이터베이스
-## 4.1. 데이터베이스 백업
+# 데이터베이스
+## 데이터베이스 백업
 바로 접근이 가능할 경우.
 ```shell
 # 구문
@@ -182,7 +170,7 @@ mysqldump --routines --triggers -uroot -p SERV_SARCHIVE > /srv/db/shared/sarchiv
 ```
 
 
-## 4.2. 데이터베이스 올리기
+## 데이터베이스 올리기
 바로 접근이 가능할 경우.
 ```shell
 # 구문
@@ -237,10 +225,10 @@ mysql -uroot -p SERV_SARCHIVE < /srv/db/shared/sarchive_dump.20220206.sql
 (로컬 환경에서)
 ```shell
 # 구문
-sudo docker exec -it sarchive_webapp_1 php artisan (명령어)
+sudo docker exec -it sarchive_web_1 php artisan (명령어)
 
 # 예시 (스토리지 심볼릭 링크 생성)
-sudo docker exec -it sarchive_webapp_1 php artisan storage:link
+sudo docker exec -it sarchive_web_1 php artisan storage:link
 ```
 
 
@@ -257,7 +245,7 @@ sudo docker exec -it php_laravel_web_1 bash -c "cd $(pwd) && php artisan key:gen
 ## 5.2. Composer
 (로컬 환경에서)
 ```shell
-sudo docker exec -it sarchive_webapp_1 composer update
+sudo docker exec -it sarchive_web_1 composer update
 ```
 
 
@@ -279,7 +267,7 @@ sudo docker start (컨테이너명1) (컨테이너명2)
 
 ### 5.3.2. 도커 컨테이너 접속
 ```shell
-sudo docker exec -it sarchive_webapp_1 /bin/bash
+sudo docker exec -it sarchive_web_1 /bin/bash
 sudo docker exec -it sarchive_db_1 /bin/bash
 ```
 
