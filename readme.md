@@ -41,7 +41,7 @@ SArchive Project (소스 아카이브 프로젝트)
     - `web/.env.local.example`을 복사해서 `web/.env` 생성 후 값 입력.
     - 데이터베이스 연결 정보 등을 기입.
 3. 도커 컨테이너 설정
-    - `larabasekit/docker/.env.local.example`을 복사해서 `.env.local` 생성 후 값 입력. (디비 암호, 포트 등)
+    - `.env.local.sample`을 복사해서 `.env.local` 생성 후 값 입력. (디비 암호, 포트 등)
 4. 도커 컨테이너 생성
     ```shell
     sudo docker-compose --env-file=.env.local --project-directory=. up --build --force-recreate -d
@@ -51,7 +51,7 @@ SArchive Project (소스 아카이브 프로젝트)
     sudo docker exec -it sarchive_web_1 php artisan key:generate
     ```
 6. 데이터베이스 테이블 import (아래 참조)
-7. 웹 접속 (http://localhost:30082)
+7. 웹 접속
 
 
 ## 도커 컨테이너 시작
@@ -94,7 +94,7 @@ sudo docker start sarchive_db_1 sarchive_web_1
     sudo docker exec -it php_laravel_web_1 bash -c "cd $(pwd) && cd web && php artisan key:generate && php artisan config:cache && php artisan route:cache"
     ```
 5. 데이터베이스 import (아래 참조)
-6. 웹 접속 (예시: http://dev-sarchive.asv.kr)
+6. 웹 접속
 
 
 ## 3.2. 업데이트 과정
@@ -276,15 +276,7 @@ sudo docker exec -it sarchive_db_1 /bin/bash
 ## 6.1. 릴리즈 배포 및 버전 관리
 배포 및 버전 관리 과정
 1. `web/config/_app.php`에서 버전 정보 수정 후 커밋
-2. (`gitflow`기능을 이용해서 브랜치 관리)
-3. 소스트리의 경우
-    1. 소스트리 > 깃 플로우 > 릴리즈 > 릴리즈 명칭 : 예 `v22.99`
-    2. 소스트리 > 깃 플로우 > 릴리즈 마무리
-    3. Push
-4. SmartGit의 경우
-    1. Git-Flow > Start Release > Release Name : `v22.99` 입력 후 'Start' 클릭
-    2. Git-Flow > Finish Release.. > 
-
+2. 버전은 `v23.1` (연도, 숫자)의 형식으로 함.
 
 ## 6.2. 백업 관리
 배포 환경에서 백업해야 하는 항목
