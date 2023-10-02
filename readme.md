@@ -20,19 +20,13 @@ SArchive Project (소스 아카이브 프로젝트)
 * composer는 사용함.
 * 파일 첨부 기능 사용하지 않음.
 
-
-# 로컬 개발 환경
-## 셋팅
+# 셋팅하기
+## 로컬 환경
+### 셋팅
 1. 깃 클론 및 간단 설정
     ```shell
     # 깃 클론
-    git clone git@github.com:exizt/sarchive-web.git sarchive-web
-
-    # 깃 설정 (퍼미션모드 false)
-    cd sarchive-web && git config core.filemode false
-    
-    # 스크립트 권한 부여
-    chmod 774 ./scripts/*.sh
+    git clone --recurse-submodules -j8 git@github.com:exizt/sarchive-web.git sarchive-web && cd sarchive-web
 
     # 라라벨 폴더 및 파일 퍼미션 부여
     ./scripts/laravel-permission.sh
@@ -41,42 +35,45 @@ SArchive Project (소스 아카이브 프로젝트)
     - `web/.env.local.example`을 복사해서 `web/.env` 생성 후 값 입력.
     - 데이터베이스 연결 정보 등을 기입.
 3. 도커 컨테이너 설정
-    - `.env.local.sample`을 복사해서 `.env.local` 생성 후 값 입력. (디비 암호, 포트 등)
+    - `/.env.local.sample`을 복사해서 `/.env.local` 생성 후 값 입력. (디비 암호, 포트 등)
 4. 도커 컨테이너 생성
     ```shell
     sudo docker-compose --env-file=.env.local --project-directory=. up --build --force-recreate -d
     ```
 5. 필요시 `APP_KEY` 갱신
     ```shell
-    sudo docker exec -it sarchive_web_1 php artisan key:generate
+    sudo docker-compose --env-file=.env.local --project-directory=. exec web php artisan key:generate
     ```
 6. 데이터베이스 테이블 import (아래 참조)
 7. 웹 접속
 
+작업의 편의를 위해 다음의 심볼릭 링크를 생성한다.
+```shell
+ln -s ./larabasekit/scripts/dev/cmd-web.sh web.sh
+```
 
-## 도커 컨테이너 시작
+
+### 도커 컨테이너 시작
 도커 컨테이너 생성은 되었으나, 재부팅 등으로 컨테이너를 시작해야할 때
+```shell
+sudo docker-compose --env-file=.env.local --project-directory=. start
+```
+
 ```shell
 sudo docker start sarchive_db_1 sarchive_web_1
 ```
 
 
-# 프로덕션, Staging 환경 (공통 컨테이너)
+## 프로덕션, Staging 환경 (공통 컨테이너)
 웹용 도커 컨테이너를 하나로 이용하고 있을 때에 대한 내용입니다. (개별로 컨테이너를 구성했다면 로컬 개발환경과 차이가 없음)
 
-## 셋팅
+### 셋팅
 > 아무것도 없는 상태에서 프로젝트를 내려받고 셋팅하는 과정.
 
 1. 깃 클론 및 간단 설정
     ```shell
     # 깃 클론
     git clone --depth 1 --single-branch --branch master git@github.com:exizt/sarchive-web.git sarchive-web
-
-    # 깃 설정 (퍼미션모드 false)
-    cd sarchive-web && git config core.filemode false
-
-    # 스크립트 권한 부여
-    chmod 774 ./scripts/*.sh
     ```
 2. 라라벨 설정
     - `web/.env.prod.example`을 복사해서 `web/.env` 생성 후 값 입력.
@@ -93,11 +90,12 @@ sudo docker start sarchive_db_1 sarchive_web_1
     # 예시
     sudo docker exec -it php_laravel_web_1 bash -c "cd $(pwd) && cd web && php artisan key:generate && php artisan config:cache && php artisan route:cache"
     ```
-5. 데이터베이스 import (아래 참조)
-6. 웹 접속
+5. `storage`에 파일 업로드를 사용중일 경우, 업로드된 파일 복사.
+    `web/storage/app`에 있는 파일을 FTP로 업로드
+6. 데이터베이스 import (아래 참조)
+7. 웹 접속
 
-
-## 3.2. 업데이트 과정
+### 업데이트 과정
 git 업데이트
 - 구문: `./larabasekit/scripts/prod-update.sh (컨테이너명)`
 - 예시: 
@@ -117,111 +115,22 @@ git 업데이트
 
 
 # 데이터베이스
-## 데이터베이스 백업
-바로 접근이 가능할 경우.
+(로컬 환경) 데이터베이스 백업
 ```shell
-# 구문
-mysqldump --routines --triggers -uroot -p (디비명) > (백업될 파일명)
-
-# (로컬) 예시
-mysqldump --routines --triggers -uroot -p sarchive > sarchive_dump.local.20220207.sql
-
-# (프로덕션) 예시
-mysqldump --routines --triggers -uroot -p SERV_SARCHIVE > sarchive_dump.20220207.sql
+sudo docker-compose --env-file=.env.local --project-directory=. exec db sh -c 'exec mariadb-dump --routines -uroot -p"${MARIADB_ROOT_PASSWORD}" ${MARIADB_DATABASE}' > ./scripts/db_dump.local.$(date +%Y%m%d).sql
 ```
 
-
-(로컬) 방법1. 스크립트 이용 (경로는 마운팅 볼륨 기준)
+(로컬 환경) 데이터베이스 올리기
 ```shell
-# 구문
-sudo docker exec -it (컨테이너명) /app/scripts/db-export-local.sh (백업될 파일명)
-
-# 예시
-sudo docker exec -it sarchive_db_1 /app/scripts/db-export-local.sh /app/scripts/sarchive_dump.local.20220228.sql
+sudo docker-compose --env-file=.env.local --project-directory=. exec db sh -c 'exec mariadb -uroot -p"${MARIADB_ROOT_PASSWORD}" ${MARIADB_DATABASE}' < (백업_파일경로)
 ```
 
+> 프로덕션 환경에 관련해서는 `larabasekit/readme.md`를 참조할 것.
 
-(로컬, 프로덕션) 방법2. 도커 컨테이너 이용 (경로는 호스트 기준)
-```shell
-# 구문
-sudo docker exec -i (컨테이너명) mysqldump --routines --triggers -uroot -p (디비명) > (백업될 파일 경로-호스트 기준)
+<br>
 
-# (로컬) 예시
-sudo docker exec -i sarchive_db_1 mysqldump --routines --triggers -uroot -p sarchive > ./scripts/sarchive_dump.local.20220210.sql
-
-# (프로덕션) 예시
-sudo docker exec -i mariadb-106_mariadb_1 mysqldump --routines --triggers -uroot -p SERV_SARCHIVE > ./scripts/sarchive_dump.20220206.sql
-```
-
-
-(로컬, 프로덕션) 방법3. 도커 컨테이너 이용. 일반적인 방법
-```shell
-# 구문
-sudo docker exec -it (컨테이너명) /bin/bash
-mysqldump --routines --triggers -uroot -p (디비명) > (백업될 파일경로)
-
-# (로컬) 예시
-sudo docker exec -it sarchive_db_1 /bin/bash
-mysqldump --routines --triggers -uroot -p sarchive > /app/scripts/sarchive_dump.20220206.sql
-
-# (프로덕션) 예시
-sudo docker exec -it mariadb-106_mariadb_1 /bin/bash
-mysqldump --routines --triggers -uroot -p SERV_SARCHIVE > /srv/db/shared/sarchive_dump.20220206.sql
-```
-
-
-## 데이터베이스 올리기
-바로 접근이 가능할 경우.
-```shell
-# 구문
-mysql -uroot -p (디비명) < (백업 파일명)
-
-# 예시
-mysql -uroot -p SERV_SARCHIVE < sarchive_dump.20220206.sql
-```
-
-
-(로컬) 방법1. 스크립트 이용 (경로는 마운팅 볼륨 기준)
-```shell
-# 구문
-sudo docker exec -it (컨테이너명) /app/scripts/db-import-local.sh (백업 파일명)
-
-# 예시
-sudo docker exec -it sarchive_db_1 /app/scripts/db-import-local.sh /app/scripts/sarchive_dump.local.20220206.sql
-```
-
-
-(로컬, 프로덕션) 방법2. 도커 컨테이너 이용 (경로는 호스트 기준)
-```shell
-# 구문
-sudo docker exec -i (컨테이너명) mysql -uroot -p (디비명) < (백업 파일명)
-
-# (로컬) 예시
-sudo docker exec -i sarchive_db_1 mysql -uroot -p sarchive < ./scripts/sarchive_dump.local.20220206.sql
-
-# (프로덕션) 예시
-sudo docker exec -i mariadb-106_mariadb_1 mysql -uroot -p SERV_SARCHIVE < ./scripts/sarchive_dump.20220206.sql
-```
-
-
-(로컬, 프로덕션) 방법3. 도커 컨테이너 이용. 일반적인 방법
-```shell
-# 구문
-sudo docker exec -it (컨테이너명) /bin/bash
-mysql -uroot -p (디비명) < (백업 파일 경로)
-
-# (로컬) 예시
-sudo docker exec -it sarchive_db_1 /bin/bash
-mysql -uroot -p sarchive < /app/scripts/sarchive_dump.20220206.sql
-
-# (프로덕션) 예시
-sudo docker exec -it mariadb-106_mariadb_1 /bin/bash
-mysql -uroot -p SERV_SARCHIVE < /srv/db/shared/sarchive_dump.20220206.sql
-```
-
-
-# 5. 사용법
-## 5.1. Artisan
+# 사용법
+## Artisan
 (로컬 환경에서)
 ```shell
 # 구문
@@ -242,7 +151,7 @@ sudo docker exec -it php_laravel_web_1 bash -c "cd $(pwd) && php artisan key:gen
 ```
 
 
-## 5.2. Composer
+## Composer
 (로컬 환경에서)
 ```shell
 sudo docker exec -it sarchive_web_1 composer update
@@ -259,60 +168,27 @@ sudo docker exec -it php_laravel_web_1 bash -c "cd $(pwd) && composer update"
 ```
 
 
-## 5.3. Docker
-### 5.3.1. 도커 컨테이너 시작
+## Docker
+### 도커 컨테이너 시작
+(로컬 환경) `docker-compose`를 이용한 방식.
 ```shell
-sudo docker start (컨테이너명1) (컨테이너명2)
+sudo docker-compose --env-file=.env.local --project-directory=. start
 ```
 
-### 5.3.2. 도커 컨테이너 접속
+### 도커 컨테이너 접속
+(로컬 환경) `docker-compose`를 이용한 방식.
 ```shell
-sudo docker exec -it sarchive_web_1 /bin/bash
-sudo docker exec -it sarchive_db_1 /bin/bash
+sudo docker-compose --env-file=.env.local --project-directory=. exec web /bin/bash
 ```
 
-
-# 6. 관리
-## 6.1. 릴리즈 배포 및 버전 관리
+# 관리
+## 릴리즈 배포 및 버전 관리
 배포 및 버전 관리 과정
 1. `web/config/_app.php`에서 버전 정보 수정 후 커밋
-2. 버전은 `v23.1` (연도, 숫자)의 형식으로 함.
+2. 버전은 `v23.1` (`v`+`연도.`+`증분숫자`)의 형식으로 함.
 
-## 6.2. 백업 관리
+## 백업 관리
 배포 환경에서 백업해야 하는 항목
 1. 설정 백업 : `.env`
 2. 데이터베이스 백업
 3. 파일 첨부 기능은 이용하지 않음.
-
-
-# 기획, 구성
-## 사용되는 URL 목록
-* / : 아카이브 선택 화면
-* /archives/{아카이브id} : 아카이브의 문서 조회
-* 문서
-    * /doc/{문서id}
-    * /doc/create
-    * /doc/{문서id}/edit
-* 폴더, 카테고리, 탐색기
-    * 폴더
-        * /folders/{폴더id}
-        * /folders/{폴더id}?only=1
-    * 탐색기
-        * /explorer/{아카이브id}/{폴더경로} : 폴더 탐색기
-    * 검색기
-        * /archives/{아카이브id}/search : 검색기
-    * 카테고리
-        * /archives/1/category/{카테고리명}
-
-## 코드 구성
-컨트롤러
-* Admin/ : 관리자 모드 관련
-* Archive/ : 아카이브 관련
-* Auth/ : 라라벨에서 추가된 인증 관련
-
-view
-* `admin/` : 관리자 모드 관련
-* `app/`
-* _`auth/`_ : 라라벨에서 추가된 인증 관련
-* _`components/`_ : 라라벨에서 추가된 컴포넌트들
-* `layouts/` : 레이아웃 구성

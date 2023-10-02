@@ -15,7 +15,8 @@ Thumbs.db
 # project files
 logs/
 .env.local
+/web.sh
 
 # sql
-/scripts/*.sql
-!/scripts/procedures.sql
+/scripts/**/*.sql
+!/scripts/sql/procedures.sql
