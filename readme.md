@@ -1,5 +1,6 @@
 # 개요
-SArchive Project (소스 아카이브 프로젝트)
+SArchive Project 개요
+- 소스 아카이브 프로젝트
 - 내용 : 매우 오래된 소스코드나 오래된 IT 정보, 오래 보관하기 위한 노트 및 문서들을 보관하기 위한 프로젝트.
 - 링크
     - 개발 문서 : https://swiki.asv.kr/wiki/개발:SARChive_프로젝트
@@ -26,7 +27,7 @@ SArchive Project (소스 아카이브 프로젝트)
 1. 깃 클론 및 간단 설정
     ```shell
     # 깃 클론
-    git clone --recurse-submodules -j8 git@github.com:exizt/chosim-web.git chosim-web && cd chosim-web
+    git clone --recurse-submodules -j8 git@github.com:exizt/sarchive-web.git sarchive-web
     ```
 2. 라라벨 설정
     - `web/.env.local.example`을 복사해서 `web/.env` 생성 후 값 입력.
@@ -76,7 +77,7 @@ sudo docker-compose --env-file=.env.local --project-directory=. start
 
 1. 깃 클론 및 간단 설정
     ```shell
-    git clone --recurse-submodules -j8 git@github.com:exizt/chosim-web.git chosim-web && cd chosim-web
+    git clone --recurse-submodules -j8 git@github.com:exizt/sarchive-web.git sarchive-web
     ```
 2. 라라벨 설정
     - `web/.env.prod.example`을 복사해서 `web/.env` 생성 후 값 입력.
