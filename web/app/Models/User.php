@@ -11,7 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
-    protected $connection = G_AUTHDB_CONNECTION_ID;
+    protected $connection = G_DB_CONNECTION_SSO;
 
     /**
      * The attributes that are mass assignable.

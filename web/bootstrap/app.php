@@ -6,7 +6,7 @@
 |--------------------------------------------------------------------------
 */
 // 인증 센터의 DB 커넥션을 내부적으로 가리키는 명칭
-if(!defined('G_AUTHDB_CONNECTION_ID')) { define('G_AUTHDB_CONNECTION_ID', 'shared_auth_db'); }
+if(!defined('G_DB_CONNECTION_SSO')) { define('G_DB_CONNECTION_SSO', 'sso_database'); }
 
 // 스토리지의 퍼블릭 심볼릭 링크 경로
 if(!defined('G_STORAGE_PUBLIC_LINK')) { define('G_STORAGE_PUBLIC_LINK', 'd'); }

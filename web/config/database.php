@@ -53,11 +53,11 @@ return [
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
-        G_AUTHDB_CONNECTION_ID => [
+        G_DB_CONNECTION_SSO => [
             'driver' => 'mysql',
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
-            'database' => env('AUTHDB_DATABASE', 'forge'),
+            'database' => env('AUTHDB_DATABASE', env('DB_DATABASE', 'forge')),
             'username' => env('DB_USERNAME', 'forge'),
             'password' => env('DB_PASSWORD', ''),
             'charset' => env('AUTHDB_CHARSET', 'utf8mb4'),
