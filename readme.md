@@ -26,10 +26,7 @@ SArchive Project (소스 아카이브 프로젝트)
 1. 깃 클론 및 간단 설정
     ```shell
     # 깃 클론
-    git clone --recurse-submodules -j8 git@github.com:exizt/sarchive-web.git sarchive-web && cd sarchive-web
-
-    # 라라벨 폴더 및 파일 퍼미션 부여
-    ./scripts/laravel-permission.sh
+    git clone --recurse-submodules -j8 git@github.com:exizt/chosim-web.git chosim-web && cd chosim-web
     ```
 2. 라라벨 설정
     - `web/.env.local.example`을 복사해서 `web/.env` 생성 후 값 입력.
@@ -47,20 +44,27 @@ SArchive Project (소스 아카이브 프로젝트)
 6. 데이터베이스 테이블 import (아래 참조)
 7. 웹 접속
 
+
+### 셋팅 직후
 작업의 편의를 위해 다음의 심볼릭 링크를 생성한다.
 ```shell
-ln -s ./larabasekit/scripts/dev/cmd-web.sh web.sh
+ln -s ./larabasekit/scripts/dev/cmd-web.sh local.sh
 ```
+* 로컬에서 명령어를 수행하기 쉽게 해주는 스크립트. 웹 컨테이너로 명령어를 전달한다.
+
+
+사용법 예시
+```shell
+./local.sh "ls -al"
+./local.sh "composer --version"
+```
+
 
 
 ### 도커 컨테이너 시작
 도커 컨테이너 생성은 되었으나, 재부팅 등으로 컨테이너를 시작해야할 때
 ```shell
 sudo docker-compose --env-file=.env.local --project-directory=. start
-```
-
-```shell
-sudo docker start sarchive_db_1 sarchive_web_1
 ```
 
 
@@ -72,18 +76,20 @@ sudo docker start sarchive_db_1 sarchive_web_1
 
 1. 깃 클론 및 간단 설정
     ```shell
-    # 깃 클론
-    git clone --depth 1 --single-branch --branch master git@github.com:exizt/sarchive-web.git sarchive-web
+    git clone --recurse-submodules -j8 git@github.com:exizt/chosim-web.git chosim-web && cd chosim-web
     ```
 2. 라라벨 설정
     - `web/.env.prod.example`을 복사해서 `web/.env` 생성 후 값 입력.
     - 데이터베이스 연결 정보 등을 기입.
-3. 캐시 설정 등
-    - 구문: `sudo ./larabasekit/scripts/prod-install.sh (컨테이너명)`
-    - 예시:
-        ```shell
-        sudo ./larabasekit/scripts/prod-install.sh php_laravel_web_1
-        ```
+3. 라라벨 설치 및 셋업
+    - 구문: `sudo ./larabasekit/scripts/update.prod.sh (컨테이너명)`
+    ```shell
+    # 방법 1
+    sudo docker exec -it php_laravel_web_1 bash -c "cd $(pwd) && ./larabasekit/scripts/install-laravel.sh prod"
+
+    # 방법 2
+    sudo ./larabasekit/scripts/update.prod.sh php_laravel_web_1
+    ```
     - 설명: 라라벨 폴더 소유권 부여, composer 셋팅, 스토리지 심볼릭 링크 생성 등을 처리함
 4. 필요시 `APP_KEY` 갱신
     ```shell
@@ -95,29 +101,27 @@ sudo docker start sarchive_db_1 sarchive_web_1
 6. 데이터베이스 import (아래 참조)
 7. 웹 접속
 
+
 ### 업데이트 과정
-git 업데이트
-- 구문: `./larabasekit/scripts/prod-update.sh (컨테이너명)`
-- 예시: 
-    ```shell
-    su - shoon
+(1) git 내려받기
+```shell
+./scripts/fetch.sh
+```
 
-    ./larabasekit/scripts/prod-update.sh php_laravel_web_1
-    ```
 
-스크립트에 기입되어있는 필요한 진행 과정은 다음과 같음.
-1. `git pull` : git 내려받기
-2. 라라벨 폴더 및 파일들(bootstrap/cache, storage) 권한 부여
-3. 스크립트 파일들(scripts/*.sh) 권한 부여
-4. `composer install --optimize-autoloader --no-dev` : composer.lock을 토대로 설치.
-5. `php artisan config:cache` : 'config 설정' 캐시 갱신
-6. `php artisan route:cache` : 'route 설정' 캐시 갱신
+(2) 프로젝트 설정 변경이나 캐시 변경 등의 적용이 필요할 경우, 다음의 스크립트를 이어서 실행
+```shell
+sudo ./larabasekit/scripts/update.prod.sh php_laravel_web_1
+```
 
 
 # 데이터베이스
+(로컬 환경)
+* `scripts/sql` 폴더를 먼저 만들고 백업을 진행하자. `mkdir ./scripts/sql`
+
 (로컬 환경) 데이터베이스 백업
 ```shell
-sudo docker-compose --env-file=.env.local --project-directory=. exec db sh -c 'exec mariadb-dump --routines -uroot -p"${MARIADB_ROOT_PASSWORD}" ${MARIADB_DATABASE}' > ./scripts/db_dump.local.$(date +%Y%m%d).sql
+sudo docker-compose --env-file=.env.local --project-directory=. exec db sh -c 'exec mariadb-dump --routines -uroot -p"${MARIADB_ROOT_PASSWORD}" ${MARIADB_DATABASE}' > ./scripts/sql/db_dump.local.$(date +%Y%m%d).sql
 ```
 
 (로컬 환경) 데이터베이스 올리기
@@ -134,12 +138,14 @@ sudo docker-compose --env-file=.env.local --project-directory=. exec db sh -c 'e
 (로컬 환경에서)
 ```shell
 # 구문
-sudo docker exec -it sarchive_web_1 php artisan (명령어)
+sudo docker-compose --env-file=.env.local --project-directory=. exec web php artisan (명령어)
 
 # 예시 (스토리지 심볼릭 링크 생성)
-sudo docker exec -it sarchive_web_1 php artisan storage:link
-```
+sudo docker-compose --env-file=.env.local --project-directory=. exec web php artisan storage:link
 
+# 심볼릭 local.sh를 이용.
+./local.sh php artisan storage:link
+```
 
 (프로덕션 환경에서)
 ```shell
@@ -154,7 +160,11 @@ sudo docker exec -it php_laravel_web_1 bash -c "cd $(pwd) && php artisan key:gen
 ## Composer
 (로컬 환경에서)
 ```shell
-sudo docker exec -it sarchive_web_1 composer update
+# docker-compose 이용
+sudo docker-compose --env-file=.env.local --project-directory=. exec web composer update
+
+# 심볼릭 local.sh 이용
+./local.sh composer update
 ```
 
 
