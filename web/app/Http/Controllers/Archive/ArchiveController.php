@@ -361,33 +361,4 @@ class ArchiveController extends BaseController {
 
         return (strtok($previous,'?') == $routeLink) ? $previous : $routeLink;
     }
-
-
-    /**
-     * 이전 링크 주소.
-     * 바로 이전 주소를 가지고 셋팅을 하는데, '새로고침' 을 하는 경우도 있기 때문에, 세션에 넣어두고 활용한다.
-     * 뭔가 동작이 원하는 느낌이 아니다...살펴봐야 할 듯...
-     * @param Request $rqeust
-     * @return string
-     * @deprecated
-     */
-    protected function getPreviousLink(Request $request)
-    {
-        $session_previousName = 'devscrap-previousList';
-        // 바로 이전 주소가 list 형태의 index 경로라면, flash session 에 저장.
-        $request->session()->reflash();
-        $request->session()->keep([$session_previousName]);
-
-        $previous = url()->previous();
-        $previous_identifier = strtok($previous,'?');
-
-        // 해당 패턴과 일치하거나 index 의 주소인 경우에 previous 세션에 저장
-        if($previous_identifier == route ( self::ROUTE_ID . '.index', ['profile'=>1])){
-            $request->session()->flash($session_previousName, $previous);
-        }
-
-        //session 에 해당 값이 있으면 세션 값 사용. 없으면 목록 주소로 대체.
-        return ($request->session()->get($session_previousName,'') != '') ?
-        $request->session()->get($session_previousName,'') : route ( self::ROUTE_ID . '.index', ['profile'=>1]);
-    }
 }
