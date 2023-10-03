@@ -59,4 +59,4 @@ Route::middleware(['auth.404', 'verified'])->name('admin.')->prefix('admin')->gr
     Route::view('advanced','admin.advanced',['ROUTE_ID'=>'advanced']);
 });
 
-require __DIR__.'/auth.php';
+// require __DIR__.'/auth.php';
