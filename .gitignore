@@ -20,3 +20,9 @@ logs/
 # sql
 /scripts/**/*.sql
 !/scripts/sql/procedures.sql
+
+# laravel
+/web/storage/*
+!/web/storage/app
+!/web/storage/framework
+!/web/storage/logs
