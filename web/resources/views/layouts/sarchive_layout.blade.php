@@ -65,7 +65,7 @@
               <a class="dropdown-item site-shortcut-key-n site-shortcut-key-a" href="{{ route('doc.create',['archive'=>$layoutParams['archiveId']]) }}">글쓰기</a>
               @endisset
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="/">아카이브 변경</a>
+              <a class="dropdown-item" href="/archives">아카이브 변경</a>
               <a class="dropdown-item" href="/static/shortcut">단축키 일람</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="/admin">설정</a>

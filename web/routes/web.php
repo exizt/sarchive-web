@@ -2,19 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Archive\ArchiveController;
 use App\Http\Controllers\Archive\ExplorerController;
 use App\Http\Controllers\Admin\MainAdminController;
 use App\Http\Controllers\Admin\ArchiveFolderMgmt;
 
 
 // 대문 페이지
-Route::get('/', function () {
-    if(Auth::check()){
-        return redirect('/archives');
-    } else {
-        abort(404);
-    }
-});
+Route::get('/', [ArchiveController::class, 'mainPage']);
 
 // ajax
 Route::controller(ExplorerController::class)->group(function() {
