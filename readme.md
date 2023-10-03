@@ -4,10 +4,12 @@ SArchive Project 개요
 - 내용 : 매우 오래된 소스코드나 오래된 IT 정보, 오래 보관하기 위한 노트 및 문서들을 보관하기 위한 프로젝트.
 - 링크
     - 개발 문서 : https://swiki.asv.kr/wiki/개발:SARChive_프로젝트
-    - Github : https://github.com/exizt/sarchive-web
-    - 로컬 : http://localhost:30082
-    - Dev : http://dev-sarchive.asv.kr
-    - Prod : https://sarchive.asv.kr
+    - Git
+        - `git@github.com:exizt/sarchive-web.git`
+    - URL
+        - 로컬 : http://localhost:30082
+        - Dev : http://dev-sarchive.asv.kr
+        - Prod : https://sarchive.asv.kr
 
 
 이 프로젝트에서 필요로 하는 PHP 익스텐션
@@ -21,23 +23,26 @@ SArchive Project 개요
 * composer는 사용함.
 * 파일 첨부 기능 사용하지 않음.
 
+<br><br>
+
 # 셋팅하기
+## git 저장소 받기
+```shell
+git clone --recurse-submodules -j8 git@github.com:exizt/sarchive-web.git sarchive-web
+```
+
 ## 로컬 환경
 ### 셋팅
-1. 깃 클론 및 간단 설정
-    ```shell
-    # 깃 클론
-    git clone --recurse-submodules -j8 git@github.com:exizt/sarchive-web.git sarchive-web
-    ```
-2. 라라벨 설정
-    - `web/.env.local.example`을 복사해서 `web/.env` 생성 후 값 입력.
-    - 데이터베이스 연결 정보 등을 기입.
-3. 도커 컨테이너 설정
+1. 깃 클론
+2. 도커 컨테이너 설정
     - `/.env.local.sample`을 복사해서 `/.env.local` 생성 후 값 입력. (디비 암호, 포트 등)
-4. 도커 컨테이너 생성
+3. 도커 컨테이너 생성
     ```shell
     sudo docker-compose --env-file=.env.local --project-directory=. up --build --force-recreate -d
     ```
+4. 라라벨 설정
+    - `web/.env.local.example`을 복사해서 `web/.env` 생성 후 값 입력.
+    - 데이터베이스 연결 정보 등을 기입.
 5. 필요시 `APP_KEY` 갱신
     ```shell
     sudo docker-compose --env-file=.env.local --project-directory=. exec web php artisan key:generate
@@ -75,10 +80,7 @@ sudo docker-compose --env-file=.env.local --project-directory=. start
 ### 셋팅
 > 아무것도 없는 상태에서 프로젝트를 내려받고 셋팅하는 과정.
 
-1. 깃 클론 및 간단 설정
-    ```shell
-    git clone --recurse-submodules -j8 git@github.com:exizt/sarchive-web.git sarchive-web
-    ```
+1. 깃 클론
 2. 라라벨 설정
     - `web/.env.prod.example`을 복사해서 `web/.env` 생성 후 값 입력.
     - 데이터베이스 연결 정보 등을 기입.
@@ -127,7 +129,7 @@ sudo docker-compose --env-file=.env.local --project-directory=. exec db sh -c 'e
 
 (로컬 환경) 데이터베이스 올리기
 ```shell
-sudo docker-compose --env-file=.env.local --project-directory=. exec db sh -c 'exec mariadb -uroot -p"${MARIADB_ROOT_PASSWORD}" ${MARIADB_DATABASE}' < (백업_파일경로)
+sudo docker-compose --env-file=.env.local --project-directory=. exec -T db sh -c 'exec mariadb -uroot -p"${MARIADB_ROOT_PASSWORD}" ${MARIADB_DATABASE}' < (백업_파일경로)
 ```
 
 > 프로덕션 환경에 관련해서는 `larabasekit/readme.md`를 참조할 것.
