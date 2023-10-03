@@ -397,7 +397,7 @@ class DocumentController extends Controller {
         } else {
             // 아카이브의 최신 게시물(기본값)
             $explorerRouteId = 'explorer.archive';
-            $params['id'] = $archiveId;
+            $params['archive'] = $archiveId;
         }
         $link = route($explorerRouteId, $params);
         return $link;

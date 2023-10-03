@@ -30,9 +30,9 @@ Route::middleware(['auth.404', 'verified'])->group(function () {
     Route::get('static/{uri}', 'App\Http\Controllers\Home@staticPage');
 
     // 아카이브 게시물
-    Route::get('archives/{id}', 'App\Http\Controllers\Archive\ArchiveController@first')->name('archive.first')->where('id', '[0-9]+');
+    Route::get('archives/{archive}', 'App\Http\Controllers\Archive\ArchiveController@first')->name('archive.first')->where('archive', '[0-9]+');
     Route::controller(ExplorerController::class)->group(function() {
-        Route::get('archives/{id}/latest', 'showDocsByArchive')->name('explorer.archive')->where('id', '[0-9]+');
+        Route::get('archives/{archive}/latest', 'showDocsByArchive')->name('explorer.archive')->where('archive', '[0-9]+');
         Route::get('archives/{archive}/search', 'search')->name('search')->where('archive', '[0-9]+');
         Route::get('archives/{archive}/category/{category}', 'showDocsByCategory')->name('explorer.category');
         Route::get('folders/{id}', 'showDocsByFolder')->name('explorer.folder')->where('id', '[0-9]+');
