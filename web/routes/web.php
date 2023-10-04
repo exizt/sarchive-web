@@ -47,5 +47,7 @@ Route::middleware(['auth.404', 'verified'])->group(function () {
 });
 
 
+// 관리자 모드 관련
 require __DIR__.'/extends/admin.php';
+// 로컬 로그인 관련
 require __DIR__.'/extends/custom_auth.php';
