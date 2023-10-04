@@ -4,8 +4,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Archive\ArchiveController;
 use App\Http\Controllers\Archive\ExplorerController;
-use App\Http\Controllers\Admin\MainAdminController;
-use App\Http\Controllers\Admin\ArchiveFolderMgmt;
 
 
 // 대문 페이지
@@ -49,21 +47,5 @@ Route::middleware(['auth.404', 'verified'])->group(function () {
 });
 
 
-// 관리자 모드
-Route::middleware(['auth.404', 'verified'])->name('admin.')->prefix('admin')->group(function(){
-    Route::controller(MainAdminController::class)->group(function() {
-        Route::get('/', 'index');
-        Route::get('version', 'viewVersion');
-    });
-    Route::controller(ArchiveFolderMgmt::class)->group(function() {
-        // Route::resource('folderMgmt', 'App\Http\Controllers\Admin\ArchiveFolderMgmt', ['only'=>['index']]);
-        Route::get('folderMgmt', 'index')->name('folderMgmt.index');
-        Route::get('folderMgmt/index_ajax', 'index_ajax')->name('folderMgmt.indexAjax');
-        Route::post('folderMgmt/updateList', 'updateList')->name('folderMgmt.updateList');
-    });
-    
-    // 작업중인 페이지
-    Route::view('advanced','admin.advanced',['ROUTE_ID'=>'advanced']);
-});
-
-require __DIR__.'/custom_auth.php';
+require __DIR__.'/extends/admin.php';
+require __DIR__.'/extends/custom_auth.php';
