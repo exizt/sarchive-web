@@ -101,8 +101,14 @@ class MainAdminController extends AdminController
      * MySQL/MariaDB 버전 조회
      */
     private function getDBVersion(){
-        $results = DB::select( DB::raw("select version() as version") );
-        $version =  $results[0]->version;
+        // 데이터베이스에서 직접 버전 정보를 가져옴.
+        
+        // 라라벨 9 버전까지
+        // $results = DB::select( DB::raw("select version() as version") ); // 이 방식은 라라벨 10에서 오류가 생김.
+        // $version =  $results[0]->version;
+
+        // 라라벨 10 버전 이후
+        $version = DB::select('select version()')[0]->{'version()'};
         
         return $version;
     }
