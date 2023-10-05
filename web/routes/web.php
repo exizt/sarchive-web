@@ -6,8 +6,14 @@ use App\Http\Controllers\Archive\ArchiveController;
 use App\Http\Controllers\Archive\ExplorerController;
 
 
-// 대문 페이지
-Route::get('/', [ArchiveController::class, 'mainPage']);
+// 리디렉션
+Route::get('/home', function () {
+    if(Auth::check()){
+        return redirect('/');
+    } else {
+        abort(404);
+    }
+});
 
 // ajax
 Route::controller(ExplorerController::class)->group(function() {
@@ -18,6 +24,8 @@ Route::controller(ExplorerController::class)->group(function() {
 
 // SArchive 서비스
 Route::middleware(['auth.404', 'verified'])->group(function () {
+    // 첫 페이지
+    Route::get('/', [ArchiveController::class, 'mainPage']);
 
     // static page
     Route::get('static/{uri}', 'App\Http\Controllers\Home@staticPage');

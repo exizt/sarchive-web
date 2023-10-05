@@ -31,17 +31,13 @@ class ArchiveController extends BaseController {
      * '/'링크로 들어왔을 때, 설정된 기본 아카이브로 리디렉션
      */
     public function mainPage(Request $request){
-        if(Auth::check()){
-            // 메인 아카이브를 조회
-            $mainArchive = SAArchive::select(['id','name','comments','is_default','created_at'])
-                ->where('is_default', 1)->firstOrFail();
-            if($mainArchive['id']){
-                return redirect("/archives/{$mainArchive['id']}");
-            } else {
-                return redirect('/archives');
-            }
+        // 메인 아카이브를 조회
+        $mainArchive = SAArchive::select(['id','name','comments','is_default','created_at'])
+            ->where('is_default', 1)->firstOrFail();
+        if($mainArchive['id']){
+            return redirect("/archives/{$mainArchive['id']}");
         } else {
-            abort(404);
+            return redirect('/archives');
         }
     }
 
