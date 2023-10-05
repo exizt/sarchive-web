@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Cheiron\VersionInfo;
 
 class MainAdminController extends AdminController
 {
@@ -20,7 +21,7 @@ class MainAdminController extends AdminController
     {
         $data = array();
         $data['source_ver'] = config('_app.version');
-        $data['php_ver'] = $this->getPHPversion();
+        $data['php_ver'] = VersionInfo::getPHPVersion();
         return view ( 'admin.index',$data );
     }
 
@@ -31,86 +32,22 @@ class MainAdminController extends AdminController
     public function viewVersion(Request $request)
     {
         // 데이터베이스 버전 및 레이블
-        $db_version = $this->getDBVersion();
-        $db_label = (stripos($db_version, 'mariadb') !== false) ? 'MariaDB' : 'MySQL';
+        $db_version = VersionInfo::getDBVersion();
+        $db_label = VersionInfo::getDBLabel($db_version);
         
         // 웹 서버 소프트웨어 버전 및 레이블
-        $wss_version = $this->getWebServerSoftwareVersion();
-        $wss_label = (stripos($wss_version, 'apache') !== false) ? 'Apache' : 'Nginx';
+        $wss_version = VersionInfo::getWebServerSoftwareVersion();
+        $wss_label = VersionInfo::getWSSLabel($wss_version);
 
         $data = array();
         $data['source_ver'] = config('_app.version');
-        $data['laravel_ver'] = app()->version();
-        $data['php_ver'] = $this->getPHPversion();
+        $data['laravel_ver'] = VersionInfo::getLaravelVersion();
+        $data['php_ver'] = VersionInfo::getPHPVersion();
         $data['db_ver'] = $db_version;
         $data['db_label'] = $db_label;
         $data['wss_ver'] = $wss_version;
         $data['wss_label'] = $wss_label;
         return view ( 'admin.version', $data );
-    }
-
-
-    /**
-     * PHP 버전 조회
-     */
-    private function getPHPversion(){
-        if(function_exists('phpversion')){
-            return phpversion();
-        }
-        return '?';
-    }
-
-    /**
-     * Apache, Nginx 버전 조회
-     */
-    private function getWebServerSoftwareVersion(){
-        $version = '';
-
-        if(function_exists('apache_get_version')){
-            $version = apache_get_version();
-            //preg_match('@[0-9]+\.[0-9]+\.[0-9]+@', $output, $strings);
-            //$version = $strings[0];
-
-            //$_SERVER['SERVER_SOFTWARE'];
-
-            // 만족할 만한 값일 때에 반환
-            if(strlen($version) > 5 && strtolower($version) != 'server' && strtolower($version) != 'apache'){
-                return $version;
-            }
-        }
-
-        // 위에서 만족할 만한 값이 아닌 경우 httpd나 apache2 명령어를 통해서 버전값을 조회
-        $output = shell_exec('httpd -v');
-
-        if(is_null($output)){
-            $output = shell_exec('apache2 -v');
-        }
-        if(is_null($output)){
-            $output = shell_exec('nginx -v 2>&1');
-        }
-        if(!is_null($output)){
-            $strings = '';
-            // preg_match('@[0-9]+\.[0-9]+\.[0-9]+@', $output, $strings);
-            preg_match('/[a-zA-Z\/]+[0-9]+\.[0-9]+\.[0-9]+[a-zA-Z\s\(\)]*$/m', $output, $strings);
-            return $strings[0];
-        }
-        return '?';
-    }
-
-    /**
-     * MySQL/MariaDB 버전 조회
-     */
-    private function getDBVersion(){
-        // 데이터베이스에서 직접 버전 정보를 가져옴.
-        
-        // 라라벨 9 버전까지
-        // $results = DB::select( DB::raw("select version() as version") ); // 이 방식은 라라벨 10에서 오류가 생김.
-        // $version =  $results[0]->version;
-
-        // 라라벨 10 버전 이후
-        $version = DB::select('select version()')[0]->{'version()'};
-        
-        return $version;
     }
 
     /**
