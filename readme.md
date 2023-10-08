@@ -10,6 +10,9 @@ SArchive Project 개요
         - 로컬 : http://localhost:30082
         - Dev : http://dev-sarchive.asv.kr
         - Prod : https://sarchive.asv.kr
+- 다루는 주제
+    - 매우 오래된 소스코드 클립.
+    - 오래된 IT 정보 등
 
 
 이 프로젝트에서 필요로 하는 PHP 익스텐션
