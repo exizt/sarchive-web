@@ -135,7 +135,7 @@ function doAjaxFolderList(){
     function buildCurrentPaths(mode, data){
 
         // 맨 앞 '아카이브' 생성
-        var html = buildHtml(`/archives/${data.archive.id}/latest`, data.archive.name)
+        var html = buildHtml(`/archives/${data.archive.id}/latest`, '최상위')
 
         // 후위 폴더 경로 생성
         if(mode == "folder"){

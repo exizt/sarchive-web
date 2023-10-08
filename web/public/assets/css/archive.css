@@ -83,3 +83,8 @@ span.sarc-ico-archive {
 span.sarc-ico-folder {
     background-image: url("/assets/icons/folder.svg");
 }
+
+
+#SALocationNav .breadcrumb-item+.breadcrumb-item::before {
+    content: ">";
+}

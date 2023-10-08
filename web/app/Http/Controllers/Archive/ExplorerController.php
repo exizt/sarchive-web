@@ -350,7 +350,7 @@ class ExplorerController extends BaseController {
 
 
         } else {
-            // 하위 폴더 목록
+            // 아카이브의 하위 폴더 목록
             $masterList = DB::select("select
                                 p1.parent_id as parent_id,
                                 p1.id,

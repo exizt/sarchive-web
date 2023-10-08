@@ -53,7 +53,7 @@
                 </div>
                 <div class="col-md-3">
                     <h4 class="px-2">현재 위치</h4>
-                    <nav aria-label="breadcrumb">
+                    <nav aria-label="breadcrumb" id="SALocationNav">
                         <ol class="breadcrumb" id="shh-nav-board-path"></ol>
                     </nav>
                     <h5>폴더</h5>
