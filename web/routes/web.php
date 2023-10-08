@@ -6,7 +6,7 @@ use App\Http\Controllers\Archive\ArchiveController;
 use App\Http\Controllers\Archive\ExplorerController;
 
 
-// 리디렉션
+// 리디렉션 (RouteServiceProvider::HOME)(로그인 직후에 넘어오는 경로)
 Route::get('/home', function () {
     if(Auth::check()){
         return redirect('/');

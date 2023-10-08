@@ -101,7 +101,7 @@ class LoginRegisterController extends Controller
             'email' => 'Your provided credentials do not match in our records.',
         ])->onlyInput('email');
 
-    } 
+    }
     
     /**
      * 로그아웃
@@ -117,8 +117,9 @@ class LoginRegisterController extends Controller
         
         $request->session()->regenerateToken();
         
-        return redirect()->route('login')
-            ->withSuccess('You have logged out successfully!');;
-    }    
+        return redirect('/');
 
+        //return redirect()->route('login')
+        //    ->withSuccess('You have logged out successfully!');
+    }
 }
