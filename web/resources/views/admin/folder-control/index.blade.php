@@ -19,7 +19,7 @@
 	</ul>
 
 	<div id="tree-container" class="mt-1 mb-3"></div>
-	<!--<button id="shh-btn-save" class="btn btn-sm btn-primary disabled">저장</button>-->
+	<button id="shh-btn-save" class="btn btn-sm btn-primary disabled">저장</button>
 	<button id="shh-btn-create" class="btn btn-sm btn-outline-success">게시판 추가</button>
 	<button id="shh-btn-rename" class="btn btn-sm btn-outline-success">이름 변경</button>
 	<button id="shh-btn-delete" class="btn btn-sm btn-outline-success">삭제</button>

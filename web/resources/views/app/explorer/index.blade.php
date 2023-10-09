@@ -64,49 +64,46 @@
                 </div>
                 <div class="col-md-3">
                     <h5>폴더</h5>
-                    <div class="list-group sarc-layout-nav-folder-list" id="shh-nav-board-list"></div>
-
+                    
                     @if (isset($parameters['folder']))
+                    <div class="list-group my-2">
                         @if ($folder->parent_id == 0)
-                        <div class="list-group pt-3">
                             <a href="/archives/{{ $archive->id }}/latest" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" >
                                 상위 폴더로
                             </a>
-                        </div>
                         @else
-                        <div class="list-group pt-3">
                             <a href="/folders/{{ $folder->parent_id }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" >
                                 상위 폴더로
                             </a>
-                        </div>
                         @endif
+                    </div>
                     @endif
-
-                    @if (isset($parameters['folder']))
-                        <div class="list-group pt-3">
+                    
+                    
+                    <div class="list-group my-3">
+                        @if (isset($parameters['folder']))
                             <a href="/folders/{{ $folder->id }}?only=1" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" >
                                 {{ $folder->name }} (only)
                                 <span class="badge badge-secondary badge-pill">{{ $folder->doc_count }}</span>
                             </a>
-                        </div>
-                    @else
-                        <div class="list-group pt-3">
+                        @else
                             <a href="/archives/{{ $archive->id }}/latest?only=1" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" >
                                 {{ $archive->name }} (only)
                             </a>
-                        </div>
-                    @endif
+                        @endif
+                    </div>
+                    
+                    <div class="list-group sarc-layout-nav-folder-list" id="shh-nav-board-list"></div>
+
                     <div class="d-flex w-100 justify-content-between my-2">
-                        <span>
-                            <a href="{{ route($ROUTE_ID.'.create') }}" class="btn btn-outline-success btn-sm arch-indexEditMode-show" style="display:none">신규</a>
-                        </span>
-                        <span>
-                            <a href="#" id="btnIndexEditModeToggle" class="btn btn-sm arch-indexEditMode-hide">변경</a>
+                        <div>
                             <a href="#" id="btnIndexEditModeCancel"
-                                class="btn btn-sm btn-outline-success arch-indexEditMode-show" style="display:none">순서변경 취소</a>
-                            <a href="#" id="btnIndexEditModeSave"
-                                class="btn btn-sm btn-outline-success arch-indexEditMode-show" style="display:none">순서변경 저장</a>
-                        </span>
+                            class="btn btn-sm arch-indexEditMode-show" style="display:none">취소</a>
+                        </div>
+                        <div>
+                            <a href="#" id="btnIndexEditModeToggle" class="btn btn-sm arch-indexEditMode-hide">변경</a>
+                            <a href="#" id="btnIndexEditModeSave" class="btn btn-sm btn-outline-success arch-indexEditMode-show" style="display:none">순서변경 저장</a>
+                        </div>
                     </div>
                 </div>
             </div>

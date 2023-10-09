@@ -83,6 +83,10 @@ class ArchiveFolderMgmt extends Controller
      */
     public function updateList(Request $request)
     {
+        /**
+         * 1단계. sa_folders에 변경 사항(이름 변경, 순서 변경 등)이나 추가로 등록될 사항을 입력한다.
+         * 2단계. 'system_path' 컬럼값을 계산하여 입력하는 프로시저를 호출한다.
+         */
         //print_r($_POST);
         $archiveId = $request->input('archive_id');
         $listData = $request->input('list_data');
@@ -232,7 +236,6 @@ class ArchiveFolderMgmt extends Controller
      * 예전 방식은 left, right 로 트리형태를 구현하는 방식이었었음.. 현재는 변경함.
      */
     private function updateListTreeTable($archiveId){
-        //DB::statement('call procedure_insert_menus()');
         DB::statement("call proc_build_folders_systempath_in_archive('{$archiveId}')");
     }
 }
