@@ -27,7 +27,7 @@
                         @endif
                     </div>
                     <hr class="mt-1">
-                    <nav aria-label="breadcrumb">
+                    <nav aria-label="breadcrumb" id="SALocationNav">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="/archives/{{$archive->id}}/latest">{{ $archive->name }}</a></li>
                             @isset ($folder->paths)
@@ -37,7 +37,7 @@
                             @endisset
                         </ol>
                     </nav>
-                    <div class="list-group">
+                    <div class="list-group mb-3">
                         @foreach ($masterList as $item)
                         <a class="list-group-item list-group-item-action flex-column align-items-start"
                         @if(isset($parameters['folder']))
@@ -53,10 +53,11 @@
                             <p class="mb-1 pl-md-3 sarc-item-comments">
                                 <small>{{ $item->summary_var }}</small>
                             </p>
+                            @if(isset($item->folder))
                             <div class="text-right">
-                                <small>@if(isset($item->folder)) 폴더 : {{ $item->folder->name }} @endif</small>
-                                <!--<small>분류 : {{ $item->category }}</small>-->
+                                <small>폴더 : {{ $item->folder->name }}</small>
                             </div>
+                            @endif
                         </a>
                         @endforeach
                     </div>

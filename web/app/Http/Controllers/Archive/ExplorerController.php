@@ -349,21 +349,19 @@ class ExplorerController extends BaseController {
             // 아카이브의 하위 폴더 목록
             // 3단계까지만 조회하게 제한함.
             $masterList = DB::select("select
-                                p1.parent_id as parent_id,
-                                p1.id,
-                                p1.name,
-                                p1.doc_count_all as count,
-                                p1.depth,
-                                p1.system_path
-            from        sa_folders p1
+                                n.parent_id as parent_id,
+                                n.id,
+                                n.name,
+                                n.doc_count_all as count,
+                                n.depth,
+                                n.system_path
+            from        sa_folders n
+            left join   sa_folders p1 on p1.id = n.parent_id
             left join   sa_folders p2 on p2.id = p1.parent_id
             left join   sa_folders p3 on p3.id = p2.parent_id
-            left join   sa_folders p4 on p4.id = p3.parent_id
-            left join   sa_folders p5 on p5.id = p4.parent_id
-            left join   sa_folders p6 on p6.id = p5.parent_id
-            where       p1.archive_id = ?
-            and         p1.depth <= 3
-            order by    p1.depth, p1.index;",[$archiveId]);
+            where       n.archive_id = ?
+            and         n.depth <= 3
+            order by    n.depth, n.index;",[$archiveId]);
             //order       by p1.index, p2.index, p3.index, p4.index, p5.index, p1.id;
         }
 
