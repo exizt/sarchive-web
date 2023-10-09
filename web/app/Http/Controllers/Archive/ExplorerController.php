@@ -54,14 +54,14 @@ class ExplorerController extends BaseController {
 
         if($is_only) $qry = $qry->whereNull('folder_id');
 
-        $masterList = $qry->orderBy ( 'created_at', 'desc' )
-        ->paginate(15);
+        $masterList = $qry->orderBy ( 'created_at', 'desc' )->paginate(15);
 
         // dataSet 생성
-        $dataSet = $this->createViewData ();
-        $dataSet ['masterList'] = $masterList;
-        if($is_only) $dataSet ['paginationParams']['only'] = true;
-        return view ( self::VIEW_PATH . '.index', $dataSet );
+        $viewData = $this->createViewData ();
+        $viewData['masterList'] = $masterList;
+        $viewData['archive'] = $archive;
+        if($is_only) $viewData['paginationParams']['only'] = true;
+        return view ( self::VIEW_PATH . '.index', $viewData );
     }
 
 
@@ -105,13 +105,16 @@ class ExplorerController extends BaseController {
             ->paginate(15);
         }
 
-        // dataSet 생성
-        $dataSet = $this->createViewData ();
-        $dataSet ['masterList'] = $masterList;
-        $dataSet ['bodyParams']['folder'] = $folderId;
-        $dataSet ['parameters']['folder'] = $folder;
-        if($is_only) $dataSet ['paginationParams']['only'] = true;
-        return view ( self::VIEW_PATH . '.index', $dataSet );
+        // viewData 생성
+        $viewData = $this->createViewData ();
+        $viewData['masterList'] = $masterList;
+        $viewData['folder'] = $folder;
+        $viewData['folder']->paths = $folder->paths();
+        $viewData['archive'] = $archive;
+        $viewData['bodyParams']['folder'] = $folderId;
+        $viewData['parameters']['folder'] = $folder;
+        if($is_only) $viewData['paginationParams']['only'] = true;
+        return view ( self::VIEW_PATH . '.index', $viewData );
     }
 
 
@@ -287,9 +290,9 @@ class ExplorerController extends BaseController {
     public function doAjax_getFolderNav(Request $request){
         $mode = 'folder';
 
-
+        // 유효성 검증
         if($request->has('folder_id') && !empty($request->input('folder_id'))){
-            // 유효성 검증
+            // folder_id 값이 있을 때 비어있지 않아야 함.
             $validatedData = $request->validate([
                 'archive_id' => 'required|integer',
                 'folder_id' => 'required|integer'
@@ -298,7 +301,8 @@ class ExplorerController extends BaseController {
             $archiveId = $request->input('archive_id');
             $folderId = $request->input('folder_id');
         } else if($request->has('archive_id') && !empty($request->input('archive_id'))){
-            // 유효성 검증
+            // folder_id 값이 없으면서 (선행 조건에서 걸러짐)
+            // archive_id 값이 있을 때 비어있지 않아야 함.
             $validatedData = $request->validate([
                 'archive_id' => 'required|integer'
             ]);
@@ -310,47 +314,40 @@ class ExplorerController extends BaseController {
             abort(500, 'parameters wrong.');
         }
 
-        // 권한 체크 및 조회
+        // Archive의 Id에 대한 권한 보유 여부를 조사
         $archive = SAArchive::select(['id', 'name'])
             ->where ( [['user_id', Auth::id() ],['id',$archiveId]])
             ->firstOrFail ();
 
         if($mode == 'folder'){
-            // 현재의 폴더 정보
+            // 선택된 폴더의 정보
             $currentFolder = SAFolder::select(['id','name','parent_id','depth', 'system_path', 'doc_count'])
                 ->where ( 'id', $folderId )
                 ->firstOrFail ();
-            //$currentPath = $currentFolder->system_path;
-            //$currentPaths = $this->getPathsFromIds($currentFolder->system_path);
-            $currentPaths = $currentFolder->paths();
-
 
             // 하위 폴더 목록
+            // 노드의 부모 p2, p3, p4를 left join하여 만든 후 탐색을 하는 쿼리.
             $masterList = DB::select("select
-                                p1.parent_id as parent_id,
-                                p1.id,
-                                p1.name,
-                                p1.doc_count_all as count,
-                                p1.depth,
-                                p1.system_path
-            from        sa_folders p1
+                        n.parent_id as parent_id,
+                        n.id,
+                        n.name,
+                        n.doc_count_all as count,
+                        n.depth,
+                        n.system_path
+            from        sa_folders n
+            left join   sa_folders p1 on p1.id = n.parent_id
             left join   sa_folders p2 on p2.id = p1.parent_id
             left join   sa_folders p3 on p3.id = p2.parent_id
-            left join   sa_folders p4 on p4.id = p3.parent_id
-            left join   sa_folders p5 on p5.id = p4.parent_id
-            left join   sa_folders p6 on p6.id = p5.parent_id
-            where       ? in (p1.parent_id,
-                        p2.parent_id,
-                        p3.parent_id,
-                        p4.parent_id,
-                        p5.parent_id,
-                        p6.parent_id)
-            order by    p1.depth, p1.index;",[$folderId]);
-
+            where       ? in (n.parent_id,
+                p1.parent_id,
+                p2.parent_id,
+                p3.parent_id)
+            order by    n.depth, n.index;",[$folderId]);
 
 
         } else {
             // 아카이브의 하위 폴더 목록
+            // 3단계까지만 조회하게 제한함.
             $masterList = DB::select("select
                                 p1.parent_id as parent_id,
                                 p1.id,
@@ -365,6 +362,7 @@ class ExplorerController extends BaseController {
             left join   sa_folders p5 on p5.id = p4.parent_id
             left join   sa_folders p6 on p6.id = p5.parent_id
             where       p1.archive_id = ?
+            and         p1.depth <= 3
             order by    p1.depth, p1.index;",[$archiveId]);
             //order       by p1.index, p2.index, p3.index, p4.index, p5.index, p1.id;
         }
@@ -372,7 +370,7 @@ class ExplorerController extends BaseController {
         $dataSet = array();
         if(isset($currentFolder)){
             $dataSet['currentFolder'] = $currentFolder;
-            $dataSet['currentPaths'] = $currentPaths;
+            // $dataSet['currentPaths'] = $currentPaths;
         }
         $dataSet['archive'] = $archive;
         $dataSet['list'] = $masterList;

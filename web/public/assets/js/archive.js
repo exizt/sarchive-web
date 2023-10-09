@@ -103,60 +103,12 @@ function doAjaxFolderList(){
         params : params
     }).then(function(response){
         var data = response.data
-        // 현재 위치 생성
-        buildCurrentPaths(mode, data)
 
         // 목록 생성
         buildFolderListItem(mode, data)
-
-        // only 버튼 생성
-        buildCurrentFolderOnly(mode, data)
     })
-
-    /*
-    $.getJSON("/ajax/folder_nav", params, function(data){
-
-        // 현재 위치 생성
-        buildCurrentPaths(mode, data)
-
-        // 목록 생성
-        buildFolderListItem(mode, data)
-
-        // only 버튼 생성
-        buildCurrentFolderOnly(mode, data)
-    })
-    */
 
     /**
-     * 현재 위치 breadcrumb 생성
-     * @param {string} mode folder/archive 구분값
-     * @param {object} data json 데이터
-     */
-    function buildCurrentPaths(mode, data){
-
-        // 맨 앞 '아카이브' 생성
-        var html = buildHtml(`/archives/${data.archive.id}/latest`, '최상위')
-
-        // 후위 폴더 경로 생성
-        if(mode == "folder"){
-            if(typeof data.currentPaths !== "undefined"){
-                $.each(data.currentPaths,function(i,item){
-                    html += buildHtml(`/folders/${item.id}`, item.name)
-                })
-            }
-        }
-        //$("#shh-nav-board-path").append(html)
-        document.getElementById("shh-nav-board-path").innerHTML = html
-
-        function buildHtml(link, label){
-            var html = `<li class="breadcrumb-item">
-            <a href="${link}">${label}</a>
-            </li>`
-            return html
-        }
-    }
-
-        /**
      * 하위 폴더 리스트 생성 함수
      * @param string mode 
      * @param object data 
@@ -189,70 +141,6 @@ function doAjaxFolderList(){
                     ${label}
                     <span class="arch-indexEditMode-hide badge badge-secondary badge-pill">${count}</span>
             </a><span style="display:none" id="${idPrefix}${id}" class="arch-js-temp"></span>`
-            return html
-        }
-    }
-
-    /**
-     * 하위 폴더 리스트 생성 함수
-     * @param string mode 
-     * @param object data 
-     */
-    function buildFolderListItem_Legacy(mode, data){
-        var currentDepth = (mode == "folder") ? data.currentFolder.depth : 0
-        var html = "";
-        $.each(data.list, function(i,item){
-            var depth = item.depth - currentDepth
-            //var t_depth = (depth - 1 < 0) ? 0 : depth - 1
-
-            if(depth >3) return
-            var repeatString = "❯".repeat(depth-1)
-            var label = `${repeatString}&nbsp;&nbsp;${item.name}`
-            html += buildHtml(`/folders/${item.id}`,label, item.count, depth)
-            //buildFolderListItem(item, currentDepth)
-        })
-        //$("#shh-nav-board-list").append(html)
-        document.getElementById("shh-nav-board-list").innerHTML = html
-
-        function buildHtml(link, label, count, depth){
-            var html = `<a href="${link}" 
-                class="list-group-item list-group-item-action d-flex justify-content-between align-items-center shh-navboardlist-depth-${depth}">
-                    ${label} 
-                    <span class="badge badge-secondary badge-pill">${count}</span>
-            </a>`
-            return html
-        }
-    }
-
-    /**
-     * 현재 folder에만 해당되는 게시물 보기 버튼
-     */
-    function buildCurrentFolderOnly(mode, data){
-        var selectorId = "js-folderNav-folderOnly"
-
-        var link = ""
-        var label = ""
-        var count = null
-        if(mode == "folder"){
-            link = `/folders/${data.currentFolder.id}?only=1`
-            label = `${data.currentFolder.name} (only)`
-            count = data.currentFolder.doc_count
-        } else {
-            link = `/archives/${data.archive.id}?only=1`
-            label = `${data.archive.name} (only)`
-        }
-
-        // html 생성
-        document.getElementById(selectorId).innerHTML = buildHtml(link, label, count)
-        document.getElementById(selectorId).style.display = ""
-
-        function buildHtml(link, label, count){
-            var html = `<a href="${link}" 
-            class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" >${label}`
-            if(!func.empty(count)){
-                html += `<span class="badge badge-secondary badge-pill">${count}</span>`
-            }
-            html += "</a>";
             return html
         }
     }

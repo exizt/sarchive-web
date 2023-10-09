@@ -22,11 +22,21 @@
                                 <a href="/doc/create?archive={{ $layoutParams['archiveId'] }}" class="btn btn-sm btn-outline-primary">새 문서</a>
                             </div>
                         </div>
-                        @if(isset($parameters['folder']))
+                        @if (isset($parameters['folder']))
                         <p class="lead">{{ $parameters['folder']->comment }}</p>
                         @endif
                     </div>
                     <hr class="mt-1">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/archives/{{$archive->id}}/latest">{{ $archive->name }}</a></li>
+                            @isset ($folder->paths)
+                            @foreach ($folder->paths as $item)
+                            <li class="breadcrumb-item"><a href="/folders/{{$item->id}}">{{ $item->name }}</a></li>
+                            @endforeach
+                            @endisset
+                        </ol>
+                    </nav>
                     <div class="list-group">
                         @foreach ($masterList as $item)
                         <a class="list-group-item list-group-item-action flex-column align-items-start"
@@ -52,13 +62,39 @@
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <h4 class="px-2">현재 위치</h4>
-                    <nav aria-label="breadcrumb" id="SALocationNav">
-                        <ol class="breadcrumb" id="shh-nav-board-path"></ol>
-                    </nav>
                     <h5>폴더</h5>
                     <div class="list-group sarc-layout-nav-folder-list" id="shh-nav-board-list"></div>
-                    <div class="list-group pt-3" id="js-folderNav-folderOnly" style="display:none"></div>
+
+                    @if (isset($parameters['folder']))
+                        @if ($folder->parent_id == 0)
+                        <div class="list-group pt-3">
+                            <a href="/archives/{{ $archive->id }}/latest" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" >
+                                상위 폴더로
+                            </a>
+                        </div>
+                        @else
+                        <div class="list-group pt-3">
+                            <a href="/folders/{{ $folder->parent_id }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" >
+                                상위 폴더로
+                            </a>
+                        </div>
+                        @endif
+                    @endif
+
+                    @if (isset($parameters['folder']))
+                        <div class="list-group pt-3">
+                            <a href="/folders/{{ $folder->id }}?only=1" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" >
+                                {{ $folder->name }} (only)
+                                <span class="badge badge-secondary badge-pill">{{ $folder->doc_count }}</span>
+                            </a>
+                        </div>
+                    @else
+                        <div class="list-group pt-3">
+                            <a href="/archives/{{ $archive->id }}/latest?only=1" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" >
+                                {{ $archive->name }} (only)
+                            </a>
+                        </div>
+                    @endif
                     <div class="d-flex w-100 justify-content-between my-2">
                         <span>
                             <a href="{{ route($ROUTE_ID.'.create') }}" class="btn btn-outline-success btn-sm arch-indexEditMode-show" style="display:none">신규</a>

@@ -7,7 +7,7 @@
 <div class="container-fluid mt-4 mb-5">
     @include('layouts.modules.messages.messages_and_errors_bs4')
     <h5>위치</h5>
-    <nav aria-label="breadcrumb">
+    <nav aria-label="breadcrumb" id="SALocationNav">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/archives/{{$archive->id}}/latest">{{ $archive->name }}</a></li>
             @isset ($folder->paths)
