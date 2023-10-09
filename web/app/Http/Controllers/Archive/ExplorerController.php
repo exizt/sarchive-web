@@ -336,14 +336,9 @@ class ExplorerController extends BaseController {
                         n.system_path
             from        sa_folders n
             left join   sa_folders p1 on p1.id = n.parent_id
-            left join   sa_folders p2 on p2.id = p1.parent_id
-            left join   sa_folders p3 on p3.id = p2.parent_id
             where       ? in (n.parent_id,
-                p1.parent_id,
-                p2.parent_id,
-                p3.parent_id)
+                p1.parent_id)
             order by    n.depth, n.index;",[$folderId]);
-
 
         } else {
             // 아카이브의 하위 폴더 목록
@@ -357,10 +352,8 @@ class ExplorerController extends BaseController {
                                 n.system_path
             from        sa_folders n
             left join   sa_folders p1 on p1.id = n.parent_id
-            left join   sa_folders p2 on p2.id = p1.parent_id
-            left join   sa_folders p3 on p3.id = p2.parent_id
             where       n.archive_id = ?
-            and         n.depth <= 3
+            and         n.depth <= 2
             order by    n.depth, n.index;",[$archiveId]);
             //order       by p1.index, p2.index, p3.index, p4.index, p5.index, p1.id;
         }
