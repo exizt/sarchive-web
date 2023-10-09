@@ -10,24 +10,25 @@ class MainAdminController extends AdminController
     /**
      * 생성자
      */
-	public function __construct() {
-		$this->middleware ( 'auth' );
-	}
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
 
     /**
-     * 폴더 목록 조회
+     * 관리자 첫 페이지
      */
     public function index(Request $request)
     {
         $data = array();
         $data['source_ver'] = config('_app.version');
         $data['php_ver'] = VersionInfo::getPHPVersion();
-        return view ( 'admin.index',$data );
+        return view('admin.home', $data);
     }
 
 
     /**
-     * 폴더 목록 조회
+     * 버전 정보 조회
      */
     public function viewVersion(Request $request)
     {
@@ -47,18 +48,6 @@ class MainAdminController extends AdminController
         $data['db_label'] = $db_label;
         $data['wss_ver'] = $wss_version;
         $data['wss_label'] = $wss_label;
-        return view ( 'admin.version', $data );
-    }
-
-    /**
-     *
-     * @return string[]
-     */
-    protected function createViewData() {
-        $dataSet = array ();
-    	//$dataSet ['ROUTE_ID'] = self::ROUTE_ID;
-    	//$dataSet ['VIEW_PATH'] = self::VIEW_PATH;
-    	$dataSet ['parameters'] = array();
-    	return $dataSet;
+        return view('admin.version', $data);
     }
 }
