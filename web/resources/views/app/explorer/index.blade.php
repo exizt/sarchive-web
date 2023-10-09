@@ -135,8 +135,8 @@
             $("#shh-nav-board-list").find("span").remove();
             $(".sarc-depth-1").addClass(listItemClassName);
             $(".sarc-depth-1").append(`<span>
-						<button type="button" class="btn btn-primary btn-sm arch-indexEditMode-up">▲</button>
-						<button type="button" class="btn btn-primary btn-sm arch-indexEditMode-down">▼</button>
+                        <span class="badge badge-secondary arch-indexEditMode-up">▲</span>
+                        <span class="badge badge-secondary arch-indexEditMode-down">▼</span>
                     </span>`);
             $(".sarc-depth-2").remove();
             $(".sarc-depth-3").remove();
