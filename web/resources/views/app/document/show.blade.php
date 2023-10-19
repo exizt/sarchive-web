@@ -1,5 +1,8 @@
 @extends('layouts.sarchive_layout')
 @section('title',"$article->title")
+@push('scripts')
+<script src="/assets/js/document.js"></script>
+@endpush
 @section('content')
 <div class="container-fluid px-1 px-md-3 mt-4 mb-5">
     @include('layouts.modules.messages.messages_and_errors_bs4')
@@ -19,10 +22,8 @@
         <div>
             <a class="btn btn-sm btn-outline-info site-shortcut-key-e"
                 href="{{ $actionLinks->edit }}" role="button">편집</a>
-            <a class="btn btn-sm shh-btn-bookmark active {{($bookmark->is_favorite)? 'btn-info':'btn-primary'}}" href="#" role="button"
-                data-mode="favorite" data-archive="{{$article->id}}" data-value="{{$bookmark->is_favorite}}"><i class="fas fa-star"></i>&nbsp;즐겨찾기</a>
-            <a class="btn btn-sm shh-btn-bookmark active {{($bookmark->is_bookmark)? 'btn-info':'btn-primary'}}" href="#" role="button"
-                data-mode="bookmark" data-archive="{{$article->id}}" data-value="{{$bookmark->is_bookmark}}"><i class="fas fa-bookmark"></i>&nbsp;북마크</a>
+            <a id="saArticleLikeBtn" class="btn btn-sm btn-outline-secondary" href="#" role="button"
+                data-document="{{$article->id}}">Like</a>
         </div>
     </div>
     <div class="card sa-article">
@@ -64,56 +65,6 @@
     </div>
 
 </div>
-<script>
-$(function(){
-    $(".shh-btn-bookmark").on("click",doAjax_Bookmarking_event)
-})
-
-function doAjax_Bookmarking_event(e){
-    e.preventDefault()
-    var id = $(this).data("archive")
-    var mode = $(this).data("mode")
-    doAjax_Bookmarking(mode,id)
-}
-
-function doAjax_Bookmarking(mode,id){
-    var conf = {
-        true_class : "btn-info",
-        false_class : "btn-primary"
-    }
-    $.post({
-        url: '/archives/ajax_mark',
-        dataType: 'json',
-        data: {
-            mode: mode,
-            archive: id
-        }
-    }).done(function(json){
-        $(".shh-btn-bookmark").each(function(index){
-            if($(this).data("mode") == "favorite"){
-                $(this).attr("data-value",json.data.is_favorite)
-                if(json.data.is_favorite=='1'){
-                    $(this).addClass(conf.true_class)
-                    $(this).removeClass(conf.false_class)
-                } else {
-                    $(this).addClass(conf.false_class)
-                    $(this).removeClass(conf.true_class)
-                }
-            } else if($(this).data("mode") == "bookmark"){
-                $(this).attr("data-value",json.data.is_bookmark)
-                if(json.data.is_bookmark=='1'){
-                    $(this).addClass(conf.true_class)
-                    $(this).removeClass(conf.false_class)
-                } else {
-                    $(this).addClass(conf.false_class)
-                    $(this).removeClass(conf.true_class)
-                }
-            }
-            //console.log("dd"+index+$(this).data("mode"));
-        })
-    })
-}
-</script>
 {{-- prism : 코드 syntaxhighlighter 종류 중 하나 --}}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css" integrity="sha512-mIs9kKbaw6JZFfSuo+MovjU+Ntggfoj8RwAmJbVXQ5mkAX5LlgETQEweFPI18humSPHymTb5iikEOKWF7I8ncQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js" integrity="sha512-9khQRAUBYEJDCDVP2yw3LRUQvjJ0Pjx0EShmaQjcHa6AXiOv6qHQu9lCAIR8O+/D8FtaCoJ2c0Tf9Xo7hYH01Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>

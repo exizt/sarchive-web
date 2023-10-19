@@ -28,10 +28,10 @@
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="/assets/modules/jshotkey/jshotkey.min.js"></script>
 <script src="/assets/js/site-base.js"></script>
-<script src="/assets/js/archive.js"></script>
+<script src="/assets/js/common.js"></script>
 <script src="/assets/js/nav.js"></script>
-<script type="module" src="/assets/js/app.js"></script>
-@stack('layout-scripts')
+<script type="module" src="/assets/js/app_mod.js"></script>
+@stack('scripts')
 </head>
 <body @isset($bodyParams) @foreach ($bodyParams as $k => $v) data-{{$k}}="{{$v}}" @endforeach @endisset >
   <header>

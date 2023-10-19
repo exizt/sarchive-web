@@ -41,8 +41,19 @@
     </div>
 </div>
 <script>
-    $(function(){
+    documentReady(function(){
+        /*
         $("#folderName").on("click", function(){
+            $('#modalChoiceFolder').modal('show')
+            loadFolderSelectorIframe("jsTreeIframe",getArchiveId(), {
+                idReturn: "selectedFolderId",
+                nameReturn: "selectedFolderName",
+                excluded: getBodyParam("folder")
+            })
+        })
+        */
+        // '폴더 선택' 입력창 클릭시 이벤트 바인딩
+        document.getElementById("folderName").addEventListener('click', event => {
             $('#modalChoiceFolder').modal('show')
             loadFolderSelectorIframe("jsTreeIframe",getArchiveId(), {
                 idReturn: "selectedFolderId",
@@ -56,16 +67,18 @@
     function bindFolderSelectorDialog(){
         var folder_id_sel = "parent_id"
         var folder_name_sel = "folderName"
-
+        // '변경' 버튼 클릭시 이벤트
         document.getElementById("btnChangeFolderId").addEventListener('click', event => {
             var folderId = document.getElementById("selectedFolderId").value
             var folderName = document.getElementById("selectedFolderName").value
             setFolderIdName(folderId, folderName)
         })
+        // '선택 없애기' 버튼 클릭시 이벤트
         document.getElementById("btnChangeFolderIdNone").addEventListener('click', event => {
             setFolderIdName("0","")
         })
 
+        // 폴더 id, name을 input에 지정하는 함수
         function setFolderIdName(id, name){
             document.getElementById(folder_id_sel).value = id
             document.getElementById(folder_name_sel).value = name

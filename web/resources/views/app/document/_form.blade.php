@@ -46,14 +46,16 @@ tinymce.init({
 	</div>
 
 	<div class="form-group">
-    <label for="folderName">폴더 선택</label>
-    <input id="folderName" class="form-control" type="text" placeholder="" readonly @isset($article->folder) value="{{ $article->folder->name }}" @endisset>
+        <label for="folderName">폴더 선택</label>
+        <input id="folderName" class="form-control" type="text" placeholder="" readonly @isset($article->folder) value="{{ $article->folder->name }}" @endisset>
 		<input name="folder_id" type="hidden" id="folder_id" value="{{ $article->folder_id }}">
+        <small class="text-mute font-italic font-weight-light">* 미선택시 루트 경로가 됩니다.</small>
 	</div>
 
 	<div class="form-group">
 		<label for="article-category">분류 (ex: [분류명A] [분류명B])</label>
 		<input name="category" type="text" id="article-category" class="form-control" value="{{ $article->category }}" placeholder="" aria-label="">
+        <small class="text-mute font-italic font-weight-light">* 여러 개를 지정할 수 있는 분류입니다.</small>
 	</div>
 
 
@@ -86,11 +88,20 @@ tinymce.init({
 	</div>
 </div>
 <script>
-    $(function(){
+    documentReady(function(){
+        /*
         $(".shh-evt-append-ref").on("click",function(){
             if(typeof $(this).data("value") !== "undefined"){
                 $("#articleReference").val($(this).data("value"))
             }
+        });
+        */
+        document.querySelectorAll(".shh-evt-append-ref").forEach(el => {
+            el.addEventListener("click", function(){
+                if(typeof $(this).data("value") !== "undefined"){
+                    $("#articleReference").val($(this).data("value"))
+                }
+            })
         });
         /*
         $("#folderName").on("click", function(){

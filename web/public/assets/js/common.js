@@ -1,5 +1,9 @@
 // const { default: Axios } = require("axios");
 
+var documentReady = function(f) {
+    document.readyState == 'loading' ? document.addEventListener("DOMContentLoaded", f) : f();
+};
+
 function getArchiveId(){
     return document.body.dataset.archive;
     // return $("body").data("archive")

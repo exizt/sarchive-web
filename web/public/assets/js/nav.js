@@ -129,22 +129,23 @@
 
             // 일반적인 보여지는 부분 처리
             // $(".arch-indexEditMode-hide").hide()
-            document.querySelectorAll('.arch-indexEditMode-hide').forEach(e => {
-                // e.remove()
+            document.querySelectorAll(".arch-indexEditMode-hide").forEach(e => {
                 e.style.display = 'none'
             });
             // $(".arch-indexEditMode-show").show()
-            document.querySelectorAll('.arch-indexEditMode-show').forEach(e => {
-                // e.remove()
+            document.querySelectorAll(".arch-indexEditMode-show").forEach(e => {
                 e.style.display = 'block'
             });
-            $(listItemSelector).attr("href","#");
+            // $(listItemSelector).attr("href","#");
+            document.querySelectorAll(listItemSelector).forEach(el => {
+                el.href = "#"
+            });
 
             // 상하 버튼 이벤트 바인딩
-            document.querySelectorAll('.arch-indexEditMode-up').forEach(el => {
+            document.querySelectorAll(".arch-indexEditMode-up").forEach(el => {
                 el.addEventListener("click", moveUpItem )
             });
-            document.querySelectorAll('.arch-indexEditMode-down').forEach(el => {
+            document.querySelectorAll(".arch-indexEditMode-down").forEach(el => {
                 el.addEventListener("click", moveDownItem )
             });
 
@@ -176,7 +177,7 @@
          */
         function saveArchiveSort(){
             let dataList = [];
-            document.querySelectorAll('.sarc-depth-1').forEach((el, index) => {
+            document.querySelectorAll(".sarc-depth-1").forEach((el, index) => {
                 // console.log(index)
                 let item_id = el.dataset.id
                 let item_label = el.dataset.label
