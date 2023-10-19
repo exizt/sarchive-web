@@ -15,7 +15,6 @@
 <link rel="apple-touch-icon" sizes="152x152" href="/assets/favicon/sarchive-favicon-2021-152px-compressed.png" />
 <!-- styles -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA==" crossorigin="anonymous" />
-<link rel="stylesheet" href="/assets/css/site-base.css">
 <link rel="stylesheet" href="/assets/modules/scroll-to-top/scroll-to-top.min.css">
 <link rel="stylesheet" href="/assets/css/archive.css">
 <!-- scripts -->
