@@ -1,6 +1,7 @@
 @extends('layouts.sarchive_layout')
 @section('title','분류 > '.$category->name)
 @section('content')
+{{-- 카테고리 페이지 (/archives/x/category/x) --}}
 <div>
 	<div class="mt-4 mb-5">
 		<div class="container">
@@ -62,7 +63,7 @@
 			@endif
 		</div>
 		<hr>
-		<div class="text-xs-center">{{ $masterList->links() }}</div>
+		<div class="text-xs-center">{{ $masterList->onEachSide(2)->links() }}</div>
 	</div>
 </div>
 @endsection

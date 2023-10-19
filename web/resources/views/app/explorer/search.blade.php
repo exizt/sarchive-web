@@ -1,6 +1,7 @@
 @extends('layouts.sarchive_layout')
 @section('title',"검색 결과")
 @section('content')
+{{-- 검색 결과 페이지 (/archives/x/search) --}}
 <div class="container">
     <h6 class="mt-5 text-muted">검색 결과</h6>
     <div class="list-group list-group-flush">
@@ -21,6 +22,6 @@
         @endforeach
     </div>
     <hr>
-    <div class="text-xs-center">{{ $masterList->appends($paginationParams)->links() }}</div>
+    <div class="text-xs-center">{{ $masterList->appends($paginationParams)->onEachSide(2)->links() }}</div>
 </div>
 @endsection

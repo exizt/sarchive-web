@@ -15,6 +15,11 @@ Route::get('/home', function () {
     }
 });
 
+// https://stackoverflow.com/questions/63947183/laravel-methodnotallowedhttpexception-redirect-to-404
+Route::fallback( function () {
+    abort( 404 );
+} );
+
 // ajax
 Route::controller(ExplorerController::class)->group(function() {
     Route::get('ajax/header_nav', 'doAjax_getHeaderNav');
@@ -49,7 +54,7 @@ Route::middleware(['auth.404', 'verified'])->group(function () {
     Route::resource('folders', 'App\Http\Controllers\Archive\FolderController', ['except'=>['show','index']]);
     Route::post('archives/ajax_mark', 'App\Http\Controllers\Archive\DocumentController@doAjax_mark');
 
-    Route::resource('archives/{archive}/category', 'App\Http\Controllers\Archive\CategoryController', ['except'=>['create','store','show']]);
+    Route::resource('archives/{archive}/category', 'App\Http\Controllers\Archive\CategoryController', ['except'=>['create','store','show','index']]);
 
     //Route::get('category/{name?}', 'Archive\CategoryController@show')->where('category','(.*)');
 });

@@ -32,6 +32,8 @@ class CategoryController extends Controller {
 
     /**
      * 카테고리 목록
+     *
+     * @deprecated 사용하지 않음.
      */
     public function index(Request $request, $archiveId) {
         // archiveId 권한 체크 및 조회

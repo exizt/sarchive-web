@@ -1,6 +1,7 @@
 @extends('layouts.sarchive_layout')
 @section('title',"")
 @section('content')
+{{-- 아카이브 문서 목록 화면 (/archives/x/latest) --}}
 <div>
     <div class="mt-4 mb-5">
         <div class="container-fluid">
@@ -61,8 +62,10 @@
                         </a>
                         @endforeach
                     </div>
+                    <hr>
+                    <div class="text-xs-center">{{ $masterList->appends($paginationParams)->onEachSide(2)->links() }}</div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3 mt-5 mt-md-0">
                     <h5>폴더</h5>
 
                     @if (isset($parameters['folder']))
@@ -108,8 +111,7 @@
                 </div>
             </div>
         </div>
-        <hr>
-        <div class="text-xs-center">{{ $masterList->appends($paginationParams)->onEachSide(2)->links() }}</div>
+
     </div>
 </div>
 <script>

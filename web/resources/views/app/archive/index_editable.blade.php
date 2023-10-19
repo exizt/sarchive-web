@@ -1,6 +1,7 @@
 @extends('layouts.sarchive_layout')
 @section('title',"아카이브 목록 편집")
 @section('content')
+{{-- 아카이브 목록 편집 (/archives/editableIndex) --}}
 <div class="container py-5">
 	@include('layouts.modules.messages.messages_and_errors_bs4')
 	<div class="row px-0 mx-0">
@@ -45,7 +46,7 @@
 		</span>
 	</div>
 	<hr>
-	<div class="text-xs-center">{{ $masterList->links() }}</div>
+	<div class="text-xs-center">{{ $masterList->onEachSide(2)->links() }}</div>
 </div>
 <script>
 $(function(){
