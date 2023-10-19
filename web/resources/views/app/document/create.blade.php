@@ -1,21 +1,9 @@
 @extends('layouts.sarchive_layout')
 @section('title',"글 작성")
 @section('content')
-<script>
-$(function() {
-	$('form').on('keyup keypress', function(e) {
-		var keyCode = e.keyCode || e.which;
-		  if (keyCode === 13) {
-		    e.preventDefault();
-		    return false;
-		}
-	});
-});
-</script>
-
 <div class="container-fluid mt-4 mb-5">
 	@include('layouts.modules.messages.messages_and_errors_bs4')
-	<form class="form-horizontal" role="form" method="POST" action="{{ route($ROUTE_ID.'.store') }}">
+	<form class="form-horizontal prevent" role="form" method="POST" action="{{ route($ROUTE_ID.'.store') }}">
 		<input type="hidden" name="_token" value="{{ csrf_token() }}">
 		<input type="hidden" name="archive_id" value="{{ $parameters['archive_id'] }}">
 

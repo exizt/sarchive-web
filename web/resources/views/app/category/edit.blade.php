@@ -1,20 +1,8 @@
 @extends('layouts.sarchive_layout')
 @section('title',"")
 @section('content')
-<script>
-$(function() {
-	$('form').on('keyup keypress', function(e) {
-		var keyCode = e.keyCode || e.which;
-		  if (keyCode === 13) {
-		    e.preventDefault();
-		    return false;
-		}
-	});
-});
-</script>
-
 <div class="container-fluid mt-4 mb-5">
-	<form class="form-horizontal" role="form" method="POST"
+	<form class="form-horizontal prevent" role="form" method="POST"
 		action="{{ route($ROUTE_ID.'.update',['archive'=>$archive->id,'category'=>$item->id]) }}">
 		<input type="hidden" name="_token" value="{{ csrf_token() }}">
 		<input type="hidden" name="_method" value="PUT">

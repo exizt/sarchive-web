@@ -92,6 +92,7 @@ tinymce.init({
                 $("#articleReference").val($(this).data("value"))
             }
         });
+        /*
         $("#folderName").on("click", function(){
             $('#modalChoiceFolder').modal('show')
             loadFolderSelectorIframe("jsTreeIframe",getArchiveId(), {
@@ -99,25 +100,37 @@ tinymce.init({
                 nameReturn: "selectedFolderName",
             })
         })
+        */
+       // '폴더 선택' 입력창 클릭시 이벤트 바인딩
+        document.getElementById("folderName").addEventListener('click', event => {
+            $('#modalChoiceFolder').modal('show')
+            loadFolderSelectorIframe("jsTreeIframe",getArchiveId(), {
+                idReturn: "selectedFolderId",
+                nameReturn: "selectedFolderName",
+            })
+        })
         bindFolderSelectorDialog()
-    });
 
-    function bindFolderSelectorDialog(){
-        var folder_id_sel = "folder_id"
-        var folder_name_sel = "folderName"
+        // 폴더 선택 다이얼로그의 버튼 등의 이벤트 바인딩
+        function bindFolderSelectorDialog(){
+            var folder_id_sel = "folder_id"
+            var folder_name_sel = "folderName"
+            // '변경' 버튼 클릭시 이벤트
+            document.getElementById("btnChangeFolderId").addEventListener('click', event => {
+                var folderId = document.getElementById("selectedFolderId").value
+                var folderName = document.getElementById("selectedFolderName").value
+                setFolderIdName(folderId, folderName)
+            })
+            // '선택 없애기' 버튼 클릭시 이벤트
+            document.getElementById("btnChangeFolderIdNone").addEventListener('click', event => {
+                setFolderIdName("0","")
+            })
 
-        document.getElementById("btnChangeFolderId").addEventListener('click', event => {
-            var folderId = document.getElementById("selectedFolderId").value
-            var folderName = document.getElementById("selectedFolderName").value
-            setFolderIdName(folderId, folderName)
-        })
-        document.getElementById("btnChangeFolderIdNone").addEventListener('click', event => {
-            setFolderIdName("0","")
-        })
-
-        function setFolderIdName(id, name){
-            document.getElementById(folder_id_sel).value = id
-            document.getElementById(folder_name_sel).value = name
+            // 폴더 id, name을 input에 지정하는 함수
+            function setFolderIdName(id, name){
+                document.getElementById(folder_id_sel).value = id
+                document.getElementById(folder_name_sel).value = name
+            }
         }
-    }
+    });
 </script>

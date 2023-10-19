@@ -1,15 +1,18 @@
 // const { default: Axios } = require("axios");
+// import { documentReady } from "./base.js";
 
 $(function(){
     initPagination();
 });
 
 function getArchiveId(){
-    return $("body").data("archive")
+    return document.body.dataset.archive;
+    // return $("body").data("archive")
 }
 
 function getFolderId(){
-    return $("body").data("folder")
+    return document.body.dataset.folder;
+    // return $("body").data("folder")
 }
 
 function getBodyParam(keyname, defValue){
@@ -110,8 +113,8 @@ function doAjaxFolderList(){
 
     /**
      * 하위 폴더 리스트 생성 함수
-     * @param string mode 
-     * @param object data 
+     * @param string mode
+     * @param object data
      */
     function buildFolderListItem(mode, data){
         var currentDepth = (mode == "folder") ? data.currentFolder.depth : 0
@@ -156,7 +159,7 @@ function activeNavMenuItem(sel,value)
         if($(this).is("[data-item]"))
         {
             var item = $(this).attr("data-item");
-            var check_result = false; 
+            var check_result = false;
             if(item.indexOf("|") > -1){
                 var items = item.split("|");
                 for (var k in items)
@@ -181,55 +184,55 @@ function initPagination(){
         pagination_responsive($(this));
     });
     $(".pagination").addClass("justify-content-center");
-}
 
-// pagiation 반응형 보정
-function pagination_responsive($paginate){
-    $paginate.find(".disabled").each(function(){
-        if($(this).text() == "..."){
-            $(this).prev().addClass("d-none d-sm-block");
-            $(this).next().addClass("d-none d-sm-block");
+    // pagiation 반응형 보정
+    function pagination_responsive($paginate){
+        // << >> .. 세 가지의 경우가 disable이 될 수 있다.
+        $paginate.find(".disabled").each(function(){
+            if($(this).text() == "..."){
+                $(this).prev().addClass("d-none d-sm-block");
+                $(this).next().addClass("d-none d-sm-block");
 
-            if($(this).index()< 6){
-                $(this).closest(".pagination").data("dotPrev",true);
+                if($(this).index()< 6){
+                    $(this).closest(".pagination").data("dotPrev",true);
+                }
+                if($(this).index() > 6){
+                    $(this).closest(".pagination").data("dotNext",true);
+                }
             }
-            if($(this).index() > 6){
-                $(this).closest(".pagination").data("dotNext",true);
-            }			
+        });
+
+        var a = $(".pagination").data("dotPrev");
+        $paginate.find('li.active')
+            .prev().addClass('show-mobile');
+        $paginate.find('li.active')
+            .next().addClass('show-mobile');
+
+        $paginate.find('li:first-child, li:last-child, li.active')
+            .addClass('show-mobile');
+
+        $paginate.find('li:first-child')
+            .next().addClass('show-mobile');
+        $paginate.find('li:last-child')
+            .prev().addClass('show-mobile');
+
+
+        $paginate.find('li').not(".show-mobile").not(".disabled").addClass("d-none d-sm-block");
+
+        var active_index = $paginate.find('li.active').index();
+
+        if($paginate.data("dotPrev")===false){
+            if(active_index==4 || active_index==5 || active_index==6){
+                var html = "<li class='page-item disabled d-sm-none'><span class='page-link'>...</span></li>";
+                $paginate.find('li').eq(2).after(html);
+            }
         }
-    });
 
-    var a = $(".pagination").data("dotPrev");
-    $paginate.find('li.active')
-        .prev().addClass('show-mobile');
-    $paginate.find('li.active')    
-        .next().addClass('show-mobile');
-
-    $paginate.find('li:first-child, li:last-child, li.active')
-        .addClass('show-mobile');
-
-    $paginate.find('li:first-child')
-        .next().addClass('show-mobile');
-    $paginate.find('li:last-child')
-        .prev().addClass('show-mobile');
-
-
-    $paginate.find('li').not(".show-mobile").not(".disabled").addClass("d-none d-sm-block");
-
-
-    var active_index = $paginate.find('li.active').index();
-
-    if($paginate.data("dotPrev")===false){
-        if(active_index==4 || active_index==5 || active_index==6){
-            var html = "<li class='page-item disabled d-sm-none'><span class='page-link'>...</span></li>";
-            $paginate.find('li').eq(2).after(html);
-        }
-    }
-
-    if($paginate.data("dotNext")===false){
-        if(active_index==9||active_index==8||active_index==7){
-            var html = "<li class='page-item disabled d-sm-none'><span class='page-link'>...</span></li>";
-            $paginate.find('li').eq(11).after(html);
+        if($paginate.data("dotNext")===false){
+            if(active_index==9||active_index==8||active_index==7){
+                var html = "<li class='page-item disabled d-sm-none'><span class='page-link'>...</span></li>";
+                $paginate.find('li').eq(11).after(html);
+            }
         }
     }
 }
