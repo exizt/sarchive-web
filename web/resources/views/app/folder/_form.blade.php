@@ -13,7 +13,7 @@
 
 
     <div class="form-group">
-        <label for="folderName">폴더 선택</label>
+        <label for="folderName">상위 폴더 선택</label>
         <input id="folderName" class="form-control" type="text" placeholder="" readonly
             @isset($parentFolder) value="{{ $parentFolder->name }}" @endisset>
         <input name="parent_id" type="hidden" id="parent_id" @isset($parentFolder) value="{{ $parentFolder->id }}" @endisset>

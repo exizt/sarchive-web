@@ -194,7 +194,7 @@ class FolderController extends Controller {
         // 저장 옵션
         $submitAction = $request->input ('action');
 
-        // 문서 데이터 조회
+        // 데이터 조회
         $folder = SAFolder::findOrFail ( $id );
 
         // archiveId 권한 체크 및 조회
