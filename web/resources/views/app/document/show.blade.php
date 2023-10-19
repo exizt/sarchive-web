@@ -1,7 +1,7 @@
 @extends('layouts.sarchive_layout')
 @section('title',"$article->title")
 @section('content')
-<div class="container-fluid mt-4 mb-5">
+<div class="container-fluid px-1 px-md-3 mt-4 mb-5">
     @include('layouts.modules.messages.messages_and_errors_bs4')
     <h5>위치</h5>
     <nav aria-label="breadcrumb" id="locationNav">
@@ -26,7 +26,7 @@
         </div>
     </div>
     <div class="card sa-article">
-        <div class="card-body">
+        <div class="card-body px-2 px-sm-3">
             <h5 class="card-title">{{ $article->title }}</h5>
             <p class="text-right">
                 <small class="text-muted">최근 변경 {{ $article->updated_at->format('Y-m-d g:ia') }} (생성 {{ $article->created_at->format('Y-m-d g:ia') }})</small>
