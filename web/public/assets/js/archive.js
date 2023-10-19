@@ -1,9 +1,5 @@
 // const { default: Axios } = require("axios");
 
-$(function(){
-    // initPagination();
-});
-
 function getArchiveId(){
     return document.body.dataset.archive;
     // return $("body").data("archive")
