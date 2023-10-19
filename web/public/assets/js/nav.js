@@ -84,6 +84,10 @@
                             data-id="${id}" data-label="${label}">
                                 ${label}
                                 <span class="arch-indexEditMode-hide badge badge-secondary badge-pill">${count}</span>
+                                <span style="display:none;width:50px" class="arch-indexEditMode-show">
+                                    <span class="badge badge-secondary arch-indexEditMode-up">▲</span>
+                                    <span class="badge badge-secondary arch-indexEditMode-down">▼</span>
+                                </span>
                         </a>`
                     } else if(theme='tailwind') {
                         return ''

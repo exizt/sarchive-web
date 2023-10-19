@@ -116,40 +116,95 @@
 </div>
 <script>
     $(function(){
-        doAjaxFolderList(getArchiveId(), getFolderId())
-        bindIndexMode()
+        // doAjaxFolderList(getArchiveId(), getFolderId())
     })
+    bindIndexMode()
+
     function bindIndexMode(){
         var listItemClassName = "arch-indexEditMode-listitem";
         var listItemSelector = "."+listItemClassName;
 
-        $("#btnIndexEditModeToggle").on("click",changeIndexEditModeOn)
-        $("#btnIndexEditModeCancel").on("click",function(){location.reload();})
-        $("#btnIndexEditModeSave").on("click",saveArchiveSort)
-        $(document).on("click",".arch-indexEditMode-up",onClickMoveUp);
-        $(document).on("click",".arch-indexEditMode-down",onClickMoveDown);
+        // folderNav에서 '변경' 버튼.
+        // $("#btnIndexEditModeToggle").on("click",changeIndexEditModeOn)
+        document.getElementById('btnIndexEditModeToggle').addEventListener("click", changeIndexEditModeOn)
+
+        // folderNav에서 '취소' 버튼.
+        // $("#btnIndexEditModeCancel").on("click",function(){location.reload();})
+        document.getElementById('btnIndexEditModeCancel').addEventListener("click", e=>{ location.reload() })
+
+        // folderNav에서 '순서변경 저장' 버튼.
+        // $("#btnIndexEditModeSave").on("click",saveArchiveSort)
+        document.getElementById('btnIndexEditModeSave').addEventListener("click", saveArchiveSort)
+
+        // $(document).on("click",".arch-indexEditMode-up",onClickMoveUp);
+        // $(document).on("click",".arch-indexEditMode-down",onClickMoveDown);
+
+        // document.querySelectorAll('.arch-indexEditMode-up').forEach(e => {e.addEventListner("click", moveUpItem)});
+
+        //document.querySelectorAll('.arch-indexEditMode-down').forEach(e => e.addEventListner("click", onClickMoveDown));
 
         /**
          * 인덱스 변경 모드로 전환
          */
         function changeIndexEditModeOn(){
             // folderNav에 맞춘 작업
-            $("#shh-nav-board-list").find("span").remove();
+            //$("#shh-nav-board-list").find("span").remove();
             $(".sarc-depth-1").addClass(listItemClassName);
-            $(".sarc-depth-1").append(`<span>
-                        <span class="badge badge-secondary arch-indexEditMode-up">▲</span>
-                        <span class="badge badge-secondary arch-indexEditMode-down">▼</span>
-                    </span>`);
-            $(".sarc-depth-2").remove();
-            $(".sarc-depth-3").remove();
-            $(".sarc-depth-4").remove();
-            $(".sarc-depth-5").remove();
-            $(".sarc-depth-5").remove();
+            //$(".sarc-depth-1").append(`<span>
+            //            <span class="badge badge-secondary arch-indexEditMode-up">▲</span>
+            //            <span class="badge badge-secondary arch-indexEditMode-down">▼</span>
+            //        </span>`);
+            // $(".sarc-depth-2").remove();
+            // $(".sarc-depth-3").remove();
+            // $(".sarc-depth-4").remove();
+            // $(".sarc-depth-5").remove();
+            // $(".sarc-depth-5").remove();
+            document.querySelectorAll('.sarc-depth-2').forEach(e => e.remove());
+            document.querySelectorAll('.sarc-depth-3').forEach(e => e.remove());
 
             // 일반적인 보여지는 부분 처리
-            $(".arch-indexEditMode-hide").hide()
-            $(".arch-indexEditMode-show").show()
+            // $(".arch-indexEditMode-hide").hide()
+            document.querySelectorAll('.arch-indexEditMode-hide').forEach(e => {
+                // e.remove()
+                e.style.display = 'none'
+            });
+            // $(".arch-indexEditMode-show").show()
+            document.querySelectorAll('.arch-indexEditMode-show').forEach(e => {
+                // e.remove()
+                e.style.display = 'block'
+            });
             $(listItemSelector).attr("href","#");
+
+            // 상하 버튼 이벤트 바인딩
+            document.querySelectorAll('.arch-indexEditMode-up').forEach(el => {
+                el.addEventListener("click", moveUpItem )
+            });
+            document.querySelectorAll('.arch-indexEditMode-down').forEach(el => {
+                el.addEventListener("click", moveDownItem )
+            });
+
+            function moveUpItem(){
+                //console.log('ddd')
+                console.log(this)
+
+                let item = this.closest(".sarc-depth-1")
+                let before_item = item.previousElementSibling;
+                // console.log(before_item)
+                if( !! before_item ){
+                    before_item.before(item)
+                }
+            }
+
+            function moveDownItem(){
+                console.log(this)
+
+                let item = this.closest(".sarc-depth-1")
+                let next_item = item.nextElementSibling;
+                // console.log(before_item)
+                if( !! next_item){
+                    next_item.after(item)
+                }
+            }
         }
 
         /**
@@ -157,7 +212,8 @@
          */
         function saveArchiveSort(){
             // 작업 해야함.
-            var dataList = [];
+            let dataList = [];
+            /*
             $(".sarc-depth-1").each(function(index){
                 var data = {
                     id : $(this).data("id"),
@@ -166,12 +222,32 @@
                 };
                 dataList.push(data)
             })
-            console.log(dataList)
+            */
+           /*
+           let list = document.querySelectorAll('.sarc-depth-1')
+           for(var i=0; i < list.length; i++ ){
+
+           }
+           */
+            document.querySelectorAll('.sarc-depth-1').forEach((el, index) => {
+                // console.log(index)
+                let item_id = el.dataset.id
+                let item_label = el.dataset.label
+
+                let data = {
+                    id : item_id,
+                    name : item_label,
+                    index : index+1
+                };
+                dataList.push(data)
+            });
+            // console.log(dataList)
 
             ajaxSave(dataList)
         }
 
         function ajaxSave(dataList){
+            /*
             $.post({
                 url: '/folders/updateSort',
                 data: {
@@ -181,30 +257,13 @@
             .done(function(data){
                 location.reload()
             })
-        }
+            */
 
-        function onClickMoveUp(){
-            moveUp($(this).closest(".sarc-depth-1"),".sarc-depth-1")
-        }
-
-        function onClickMoveDown(){
-            moveDown($(this).closest(".sarc-depth-1"),".sarc-depth-1")
-        }
-
-        function moveUp($current,sel){
-            var hook = $current.prev(sel)
-            if(hook.length){
-                var elementToMove = $current.detach();
-                hook.before(elementToMove);
-            }
-        }
-
-        function moveDown($current,sel){
-            var hook = $current.next(sel)
-            if(hook.length){
-                var elementToMove = $current.detach();
-                hook.after(elementToMove);
-            }
+            axios.post("/folders/updateSort", {
+                'dataList': dataList
+            }).then(function(response){
+                location.reload()
+            })
         }
     }
 </script>
