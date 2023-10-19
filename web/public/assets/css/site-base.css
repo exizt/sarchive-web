@@ -1,17 +1,24 @@
-@charset "UTF-8";
-html { overflow-x:hidden;overflow-y: scroll; }
-
-body {
-	/*overflow-y: scroll;*/
-	overflow-x: hidden;
+html {
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 
-::selection {
-	background-color: rgb(225, 51, 0);
-	color: white;
+body {
+  /*overflow-y: scroll;*/
+  overflow-x: hidden;
 }
 
 ::-moz-selection {
-	background-color: rgb(225, 51, 0);
-	color: white;
+  background-color: rgb(225, 51, 0);
+  color: white;
+}
+
+::selection {
+  background-color: rgb(225, 51, 0);
+  color: white;
+}
+
+::-moz-selection {
+  background-color: rgb(225, 51, 0);
+  color: white;
 }
