@@ -21,6 +21,14 @@ SArchive Project 개요
 * extension=mbstring : 뭐였는지 기억 안 남
 
 
+VSCode 개발 환경에서 필요한 익스텐션
+- Live Sass Compiler (`glenn2223.live-sass`): 필수. scss -> css
+- PHP Intelephense (`bmewburn.vscode-intelephense-client`): PHP 구문 인텔리전스.
+- Laravel Snippets (`onecentlin.laravel5-snippets`): Laravel 구문 인텔리전스.
+- Laravel Blade Snippets (`onecentlin.laravel-blade`): Laravel blade 구문 인텔리전스.
+- Laravel Extra Intelilisense (`amiralizadeh9480.laravel-extra-intellisense`): Laravel 구문 인텔리전스.
+
+
 참고
 * 이 프로젝트에서는 npm, webpack은 사용하지 않음.
 * composer는 사용함.
