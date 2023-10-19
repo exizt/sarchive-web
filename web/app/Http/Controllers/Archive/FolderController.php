@@ -385,7 +385,8 @@ class FolderController extends Controller {
      * parentId 를 기준으로 폴더의 index 를 새로 갱신.
      */
     private function updateChildFolderIndex($parentId, $archiveId){
-        DB::statement(DB::raw('set @rownum:=0'));
+        DB::statement('set @rownum:=0');
+        // DB::statement(DB::raw('set @rownum:=0')); // laravel 9 under
 
         SAFolder::join(DB::raw(
             '(select id, @rownum:=@rownum+1 as rownum
