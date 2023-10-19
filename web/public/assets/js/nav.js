@@ -49,7 +49,7 @@ function doAjaxFolderList(archiveId, folderId, theme='bs4'){
 
         // $("span.ar-folder-list-temp").remove();
 
-        document.querySelectorAll(`span.${tempIdNode_className}`).forEach(e => e.remove());
+        // document.querySelectorAll(`span.${tempIdNode_className}`).forEach(e => e.remove());
 
         function result(i, item){
             let depth = item.depth - currentDepth
@@ -61,16 +61,17 @@ function doAjaxFolderList(archiveId, folderId, theme='bs4'){
                 let label = `${repeatString}&nbsp;&nbsp;${item.name}`
                 let html = buildHtml(item.id, `/folders/${item.id}`,label, item.count, depth)
                 //document.getElementById(`${tempIdNode_prefix}${item.parent_id}`).nextElementSibling.innerHTML += html
-                document.getElementById(`${tempIdNode_prefix}${item.parent_id}`).insertAdjacentHTML('beforebegin', html);
+                // document.getElementById(`${tempIdNode_prefix}${item.parent_id}`).insertAdjacentHTML('beforebegin', html);
+                document.getElementById(`${tempIdNode_prefix}${item.parent_id}`).insertAdjacentHTML('afterend', html)
             }
         }
         function buildHtml(id, link, label, count, depth){
-            const html = `<a href="${link}"
+            const html = `<a href="${link}" id="${tempIdNode_prefix}${id}"
                 class="list-group-item list-group-item-action d-flex justify-content-between align-items-center sarc-depth-${depth}"
                 data-id="${id}" data-label="${label}">
                     ${label}
                     <span class="arch-indexEditMode-hide badge badge-secondary badge-pill">${count}</span>
-            </a><span style="display:none" id="${tempIdNode_prefix}${id}" class="${tempIdNode_className}"></span>`
+            </a>`
             return html
         }
     }
