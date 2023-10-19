@@ -78,7 +78,7 @@ tinymce.init({
 			<div class="modal-footer">
         <input type="hidden" id="selectedFolderId">
         <input type="hidden" id="selectedFolderName">
-        <button type="button" class="btn btn-default" data-dismiss="modal" id="btnChangeFolderId">변경</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" id="btnChangeFolderId">선택</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
         <button type="button" class="btn btn-default" data-dismiss="modal" id="btnChangeFolderIdNone">선택 없애기</button>
 			</div>
