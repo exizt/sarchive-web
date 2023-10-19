@@ -109,7 +109,7 @@
             </div>
         </div>
         <hr>
-        <div class="text-xs-center">{{ $masterList->appends($paginationParams)->links() }}</div>
+        <div class="text-xs-center">{{ $masterList->appends($paginationParams)->onEachSide(2)->links() }}</div>
     </div>
 </div>
 <script>

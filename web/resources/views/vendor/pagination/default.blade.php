@@ -1,6 +1,6 @@
 {{-- /vendor/laravel/framework/src/illuminate/pagination/resources/default.blade.php --}}
 @if ($paginator->hasPages())
-    <ul class="pagination">
+    <ul class="pagination justify-content-center">
         {{-- Previous Page Link --}}
         @if ($paginator->onFirstPage())
             <li class="page-item disabled"><span class="page-link">&laquo;</span></li>

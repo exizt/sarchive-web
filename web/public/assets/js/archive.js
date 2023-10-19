@@ -1,8 +1,7 @@
 // const { default: Axios } = require("axios");
-// import { documentReady } from "./base.js";
 
 $(function(){
-    initPagination();
+    // initPagination();
 });
 
 function getArchiveId(){
@@ -37,54 +36,8 @@ var func = {
 }
 
 /**
- * 상단 header nav를 그리는 함수
- */
-function ajaxHeaderNav(){
-
-    var archiveId = getArchiveId()
-    if(!func.exists(archiveId)){
-        return;
-    }
-
-    /*
-    $.getJSON("/ajax/header_nav",{
-        archive_id : archiveId
-    },function(data){
-        $.each(data.list, function(i,item){
-            var html = '<li class="nav-item"><a class="nav-link" href="/'
-            + archiveId + '/archives?board='+item.id+'">'+item.name+'</a></li>'
-            $("#shh-header-navbar").append(html)
-        })
-    })*/
-
-    //console.log("ajaxHeaderNav")
-    axios.get("/ajax/header_nav", {
-        params : {
-            archive_id : archiveId
-        }
-    }).then(function(response){
-        buildHeadNav(response.data)
-    })
-
-    function buildHeadNav(data){
-        var html = ""
-        $.each(data.list, function(i,item){
-            var link = `/folders/${item.id}`
-            html += buildHtml(link, item.name)
-        })
-        $("#shh-header-navbar").append(html)
-
-        function buildHtml(link, label){
-            var html = `<li class="nav-item">
-                    <a class="nav-link" href="${link}">${label}</a>
-                </li>`
-            return html
-        }
-    }
-}
-
-/**
  * 우측 folder nav를 그리는 함수
+ * @requires axios
  */
 function doAjaxFolderList(){
     var archiveId = getArchiveId()
@@ -120,9 +73,15 @@ function doAjaxFolderList(){
         var currentDepth = (mode == "folder") ? data.currentFolder.depth : 0
         var selectorId = "shh-nav-board-list";
         var idPrefix = 'folderNav-item-';
+        var dataList = data.list;
 
-        $.each(data.list, result);
-        $("span.arch-js-temp").remove();
+        dataList.forEach(function(data, idx){
+            result(idx, data)
+        })
+        // $.each(data.list, result);
+
+        // $("span.ar-folder-list-temp").remove();
+        document.querySelectorAll("span.ar-folder-list-temp").forEach(e => e.remove());
 
         function result(i, item){
             var depth = item.depth - currentDepth
@@ -143,39 +102,10 @@ function doAjaxFolderList(){
                 data-id="${id}" data-label="${label}">
                     ${label}
                     <span class="arch-indexEditMode-hide badge badge-secondary badge-pill">${count}</span>
-            </a><span style="display:none" id="${idPrefix}${id}" class="arch-js-temp"></span>`
+            </a><span style="display:none" id="${idPrefix}${id}" class="ar-folder-list-temp"></span>`
             return html
         }
     }
-}
-
-
-/**
- * 현재 선택된 상태의 메뉴 를 active 처리
- */
-function activeNavMenuItem(sel,value)
-{
-    $(sel).find(".item-choice").each(function(){
-        if($(this).is("[data-item]"))
-        {
-            var item = $(this).attr("data-item");
-            var check_result = false;
-            if(item.indexOf("|") > -1){
-                var items = item.split("|");
-                for (var k in items)
-                {
-                    if(items[k]==value){
-                        check_result = true;
-                    }
-                }
-            } else {
-                check_result = (item==value) ? true: false;
-            }
-            if(check_result){
-                $(this).addClass("active");
-            }
-        }
-    });
 }
 
 // paginiation 관련
@@ -183,7 +113,7 @@ function initPagination(){
     $(".pagination").each(function(){
         pagination_responsive($(this));
     });
-    $(".pagination").addClass("justify-content-center");
+    // $(".pagination").addClass("justify-content-center");
 
     // pagiation 반응형 보정
     function pagination_responsive($paginate){
@@ -220,6 +150,7 @@ function initPagination(){
         $paginate.find('li').not(".show-mobile").not(".disabled").addClass("d-none d-sm-block");
 
         var active_index = $paginate.find('li.active').index();
+
 
         if($paginate.data("dotPrev")===false){
             if(active_index==4 || active_index==5 || active_index==6){
