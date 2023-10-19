@@ -20,6 +20,16 @@ SArchive 프로젝트 TODO
     - 테마 기능처럼 뷰를 변경가능하게 고려할 것. 변경이 좀 더 쉽게 하는 것이 목적.
 
 
+jquery 코드가 남아있는 곳들
+- admin/forder-control/index.blade.php
+- app/explorer/folder-selector.blade.php : jstree가 사용되어야 하므로 어쩔 수가 없음.
+- app/folder/_form.blade.php : 완료. (modal만 남음)
+- app/document/_form.blade.php : 완료 (modal만 남음)
+
+
+
+
+
 ## 완료됨
 - 우측 네비게이션에 jquery 구문 제거.
 - 입력폼에서 엔터키 방지 부분을 jquery에서 바닐라 코드로 변경 (2023-10)
