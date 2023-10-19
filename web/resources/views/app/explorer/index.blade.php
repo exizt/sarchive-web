@@ -116,7 +116,7 @@
 </div>
 <script>
     $(function(){
-        doAjaxFolderList()
+        doAjaxFolderList(getArchiveId(), getFolderId())
         bindIndexMode()
     })
     function bindIndexMode(){
