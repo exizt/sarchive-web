@@ -65,13 +65,6 @@
     </div>
 
 </div>
-<style>
-.sa-content-text {
-    font-family: 나눔고딕,'맑은 고딕','NanumGothic','Malgun Gothic';
-    font-size: 1.375rem;
-    font-weight: normal;
-}
-</style>
 <script>
 $(function(){
     $(".shh-btn-bookmark").on("click",doAjax_Bookmarking_event)

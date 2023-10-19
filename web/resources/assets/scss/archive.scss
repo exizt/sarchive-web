@@ -1,0 +1,116 @@
+@charset "UTF-8";
+#logo {
+    background: center / contain no-repeat url("/assets/logo/polymer-white-18dp.svg");
+    background-repeat: no-repeat;
+    width: 2rem;
+    height: 2rem;
+    -webkit-animation: spinX 3s infinite;
+    animation: spinX 3s infinite;
+}
+@keyframes spinX {
+    0%   {-webkit-transform: rotateX(0deg); -webkit-transform-origin: 0% 50% 0;}
+    100% {-webkit-transform: rotateX(360deg); -webkit-transform-origin: 0% 50% 0;}
+}
+p.sarc-item-comments{
+    overflow : hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+p.sarc-item-comments small{
+    font-size: 0.875rem;
+}
+.sarc-item-label {
+    line-height: 1.5;
+    color: rgb(27, 29, 31)
+}
+/*
+body{
+    background-color: #222;
+}
+*/
+/* 문서에서 분류 표시 (문서show/탐색category) */
+ul.sarc-cat-list {
+    letter-spacing: -1em;
+    padding-left: 0;
+    list-style: none;
+    display:inline;
+
+    > li{
+        display: inline-block;
+        letter-spacing: normal;
+        padding-left: 0.25rem !important;
+        padding-right: 0.25rem !important;
+    }
+
+    > li:first-child{
+        border-left:none;
+    }
+
+    > li:not(:first-child)::before{
+        content: "|";
+        padding-right: 0.5rem;
+        color: RGB(125,125,125)
+    }
+}
+
+/* 레이아웃 우측 폴더 목록 네비게이션 (아카이브/카테고리) */
+.sarc-layout-nav-folder-list {
+    > .sarc-depth-1{
+        padding-left: 1.25rem;
+    }
+    > .sarc-depth-2{
+        padding-left: 3.5rem;
+    }
+    > .sarc-depth-3{
+        padding-left: 6.0rem;
+    }
+    > .sarc-depth-4{
+        padding-left: 8.5rem;
+    }
+    @media (min-width: 768px) and (max-width: 1199.98px){
+        > .sarc-depth-2{
+            padding-left: 2rem;
+        }
+        > .sarc-depth-3{
+            padding-left: 3rem;
+        }
+    }
+}
+span.sarc-ico {
+    background-position: center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 1em;
+    height: 1em;
+    margin-right: 0.3em;
+    margin-bottom: 0.2em;
+    line-height: inherit;
+    display: inline-block;
+    vertical-align: text-bottom;
+}
+span.sarc-ico-archive {
+    background-image: url("/assets/icons/archive.svg");
+}
+span.sarc-ico-folder {
+    background-image: url("/assets/icons/folder.svg");
+}
+
+
+/* 경로 네비게이션의 중간 문자를 변환함 */
+#SALocationNav .breadcrumb-item+.breadcrumb-item::before {
+    content: ">";
+}
+
+
+.sa-content-text {
+    font-family: 나눔고딕,'맑은 고딕','NanumGothic','Malgun Gothic';
+    font-size: 1.125rem;
+    font-weight: normal;
+
+    /* 소스 코드 강조 블럭 */
+    pre > code {
+        font-size: 0.8em;
+    }
+}

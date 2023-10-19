@@ -39,25 +39,22 @@ body{
     background-color: #222;
 }
 */
-/* 상위 분류 표시 (문서show/탐색category) */
+/* 문서에서 분류 표시 (문서show/탐색category) */
 ul.sarc-cat-list {
   letter-spacing: -1em;
   padding-left: 0;
   list-style: none;
   display: inline;
 }
-
 ul.sarc-cat-list > li {
   display: inline-block;
   letter-spacing: normal;
   padding-left: 0.25rem !important;
   padding-right: 0.25rem !important;
 }
-
 ul.sarc-cat-list > li:first-child {
   border-left: none;
 }
-
 ul.sarc-cat-list > li:not(:first-child)::before {
   content: "|";
   padding-right: 0.5rem;
@@ -68,19 +65,15 @@ ul.sarc-cat-list > li:not(:first-child)::before {
 .sarc-layout-nav-folder-list > .sarc-depth-1 {
   padding-left: 1.25rem;
 }
-
 .sarc-layout-nav-folder-list > .sarc-depth-2 {
   padding-left: 3.5rem;
 }
-
 .sarc-layout-nav-folder-list > .sarc-depth-3 {
   padding-left: 6rem;
 }
-
 .sarc-layout-nav-folder-list > .sarc-depth-4 {
   padding-left: 8.5rem;
 }
-
 @media (min-width: 768px) and (max-width: 1199.98px) {
   .sarc-layout-nav-folder-list > .sarc-depth-2 {
     padding-left: 2rem;
@@ -89,6 +82,7 @@ ul.sarc-cat-list > li:not(:first-child)::before {
     padding-left: 3rem;
   }
 }
+
 span.sarc-ico {
   background-position: center;
   background-size: contain;
@@ -117,6 +111,10 @@ span.sarc-ico-folder {
 
 .sa-content-text {
   font-family: 나눔고딕, "맑은 고딕", "NanumGothic", "Malgun Gothic";
-  font-size: 1.375rem;
+  font-size: 1.125rem;
   font-weight: normal;
+  /* 소스 코드 강조 블럭 */
+}
+.sa-content-text pre > code {
+  font-size: 0.8em;
 }
