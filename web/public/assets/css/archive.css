@@ -49,7 +49,6 @@ p.sarc-item-comments {
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 }
-
 p.sarc-item-comments small {
   font-size: 0.875rem;
 }
@@ -108,7 +107,7 @@ ul.sarc-cat-list > li:not(:first-child)::before {
   }
 }
 
-span.sarc-ico {
+span.sa-icon {
   background-position: center;
   background-size: contain;
   background-repeat: no-repeat;
@@ -120,26 +119,27 @@ span.sarc-ico {
   display: inline-block;
   vertical-align: text-bottom;
 }
-
-span.sarc-ico-archive {
+span.sa-icon.sa-icon-archive {
   background-image: url("/assets/icons/archive.svg");
 }
-
-span.sarc-ico-folder {
+span.sa-icon.sa-icon-folder {
   background-image: url("/assets/icons/folder.svg");
 }
 
 /* 경로 네비게이션의 중간 문자를 변환함 */
-#SALocationNav .breadcrumb-item + .breadcrumb-item::before {
+#locationNav .breadcrumb-item + .breadcrumb-item::before {
   content: ">";
 }
 
-.sa-content-text {
+/* 문서 보기 > 컨텐츠 부분 */
+.sa-article {
   font-family: 나눔고딕, "맑은 고딕", "NanumGothic", "Malgun Gothic";
   font-size: 1.125rem;
   font-weight: normal;
+}
+.sa-article .sa-article-output {
   /* 소스 코드 강조 블럭 */
 }
-.sa-content-text pre > code {
+.sa-article .sa-article-output pre > code {
   font-size: 0.8em;
 }

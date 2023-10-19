@@ -10,11 +10,11 @@
                         <div class="d-flex w-100 justify-content-between">
                             <div>
                                 @if(isset($parameters['folder']))
-                                <h4 class=""><span class="sarc-ico-folder sarc-ico"></span>{{ $parameters['folder']->name }}<a href="{{ route('folders.edit', [$parameters['folder']->id]) }}"
+                                <h4 class=""><span class="sa-icon sa-icon-folder"></span>{{ $parameters['folder']->name }}<a href="{{ route('folders.edit', [$parameters['folder']->id]) }}"
                                         class="btn btn-sm">편집</a>
                                 </h4>
                                 @else
-                                <h4 class=""><span class="sarc-ico-archive sarc-ico"></span>{{$layoutParams['archiveName'] ?? '아카이브'}}</h4>
+                                <h4 class=""><span class="sa-icon sa-icon-archive"></span>{{$layoutParams['archiveName'] ?? '아카이브'}}</h4>
                                 @endif
                             </div>
                             <div class="text-right">
@@ -27,7 +27,7 @@
                         @endif
                     </div>
                     <hr class="mt-1">
-                    <nav aria-label="breadcrumb" id="SALocationNav">
+                    <nav aria-label="breadcrumb" id="locationNav">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="/archives/{{$archive->id}}/latest">{{ $archive->name }}</a></li>
                             @isset ($folder->paths)
@@ -64,7 +64,7 @@
                 </div>
                 <div class="col-md-3">
                     <h5>폴더</h5>
-                    
+
                     @if (isset($parameters['folder']))
                     <div class="list-group my-2">
                         @if ($folder->parent_id == 0)
@@ -78,8 +78,8 @@
                         @endif
                     </div>
                     @endif
-                    
-                    
+
+
                     <div class="list-group my-3">
                         @if (isset($parameters['folder']))
                             <a href="/folders/{{ $folder->id }}?only=1" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" >
@@ -92,7 +92,7 @@
                             </a>
                         @endif
                     </div>
-                    
+
                     <div class="list-group sarc-layout-nav-folder-list" id="shh-nav-board-list"></div>
 
                     <div class="d-flex w-100 justify-content-between my-2">

@@ -4,7 +4,7 @@
 <div class="container-fluid mt-4 mb-5">
     @include('layouts.modules.messages.messages_and_errors_bs4')
     <h5>위치</h5>
-    <nav aria-label="breadcrumb" id="SALocationNav">
+    <nav aria-label="breadcrumb" id="locationNav">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/archives/{{$archive->id}}/latest">{{ $archive->name }}</a></li>
             @isset ($folder->paths)
@@ -25,14 +25,16 @@
                 data-mode="bookmark" data-archive="{{$article->id}}" data-value="{{$bookmark->is_bookmark}}"><i class="fas fa-bookmark"></i>&nbsp;북마크</a>
         </div>
     </div>
-    <div class="card sa-content-text">
+    <div class="card sa-article">
         <div class="card-body">
             <h5 class="card-title">{{ $article->title }}</h5>
             <p class="text-right">
                 <small class="text-muted">최근 변경 {{ $article->updated_at->format('Y-m-d g:ia') }} (생성 {{ $article->created_at->format('Y-m-d g:ia') }})</small>
             </p>
             <hr>
-            <p class="card-text">{!! $article->content !!}</p>
+            <div class="sa-article-output">
+                {!! $article->content !!}
+            </div>
         </div>
     </div>
     <h4 class="my-3">문서 정보</h4>
