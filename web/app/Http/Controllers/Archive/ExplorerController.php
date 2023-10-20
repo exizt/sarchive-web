@@ -70,11 +70,6 @@ class ExplorerController extends BaseController {
         // return view( self::VIEW_PATH.'.index', $viewData );
     }
 
-    private function makeQueryString($arr): string{
-        return http_build_query($arr);
-    }
-
-
     /**
      * 'folder_id'기준으로 문서 조회
      *
@@ -147,13 +142,15 @@ class ExplorerController extends BaseController {
         // actionLinks
         $actionLinks = (object)[];
         // 액션 folders.create, doc.create 등에서 사용되는 파라미터.
+        $newFolderParams = ['archive'=>$archive->id];
         $actionParams = ['archive'=>$archive->id];
         if($folder) {
-            $actionParams['folder'] = $folder->id;
+            $actionParams['lfolder'] = $folder->id;
+            $newFolderParams['parent'] = $folder->id;
         }
         // 새 폴더, 새 문서에서는 archive, folder, category 정도의 정보면 충분하다.
         $actionLinks->new_doc = route('doc.create', $actionParams, false);
-        $actionLinks->new_folder = route('folders.create', $actionParams, false);
+        $actionLinks->new_folder = route('folders.create', $newFolderParams, false);
 
         // 문서 목록에서 활용될 링크 파라미터. 링크에 따라붙이기 위한 목적으로만 사용되는 파라미터. page 등.
         $trackedLinkParams = ListLinker::getLinkParameters($request, ['lpage'=>'page']);
@@ -244,12 +241,12 @@ class ExplorerController extends BaseController {
                 ->search($word)
                 ->paginate(30);
 
-            // dataSet 생성
-            $dataSet = $this->createViewData ();
-            $dataSet ['masterList'] = $masterList;
-            $dataSet ['parameters']['q'] = $word;
-            $dataSet ['paginationParams']['q'] = $word;
-            return view ( self::VIEW_PATH . '.search', $dataSet );
+            // viewData 생성
+            $viewData = $this->createViewData ();
+            $viewData['masterList'] = $masterList;
+            $viewData['parameters']['q'] = $word;
+            $viewData['paginationParams']['q'] = $word;
+            return view ( self::VIEW_PATH . '.search', $viewData );
         }
     }
 
@@ -265,18 +262,18 @@ class ExplorerController extends BaseController {
         // archiveId 권한 체크 및 조회
         $archive = $this->retrieveAuthArchive($archiveId);
 
-
-        $dataSet = $this->createViewData ();
+        // viewData 생성
+        $viewData = $this->createViewData ();
         if(!empty($excluded) && $excluded != 'undefined'){
-            $dataSet['bodyParams']['excluded'] = $excluded;
+            $viewData['bodyParams']['excluded'] = $excluded;
         }
         if(!empty($folderIdReturn) && $folderIdReturn != 'undefined'){
-            $dataSet['bodyParams']['folder-id-of-parent'] = $folderIdReturn;
+            $viewData['bodyParams']['folder-id-of-parent'] = $folderIdReturn;
         }
         if(!empty($folderNameReturn) && $folderNameReturn != 'undefined'){
-            $dataSet['bodyParams']['folder-name-of-parent'] = $folderNameReturn;
+            $viewData['bodyParams']['folder-name-of-parent'] = $folderNameReturn;
         }
-        return view ( self::VIEW_PATH . '.folder-selector', $dataSet );
+        return view ( self::VIEW_PATH . '.folder-selector', $viewData );
     }
 
 
@@ -434,10 +431,10 @@ class ExplorerController extends BaseController {
      */
     protected function createViewData() {
         $data = array ();
-        $data ['ROUTE_ID'] = self::ROUTE_ID;
-        $data ['VIEW_PATH'] = self::VIEW_PATH;
-        $data ['parameters'] = array();
-        $data ['paginationParams'] = array();
+        $data['ROUTE_ID'] = self::ROUTE_ID;
+        $data['VIEW_PATH'] = self::VIEW_PATH;
+        $data['parameters'] = array();
+        $data['paginationParams'] = array();
 
         $layoutParams = array();
         $bodyParams = array();
@@ -446,41 +443,9 @@ class ExplorerController extends BaseController {
             $layoutParams['archiveName'] = $this->archive->name;
             $bodyParams['archive'] = $this->archive->id;
         }
-        $data ['layoutParams'] = $layoutParams;
-        $data ['bodyParams'] = $bodyParams;
+        $data['layoutParams'] = $layoutParams;
+        $data['bodyParams'] = $bodyParams;
         return $data;
-    }
-
-
-    /**
-     * 이전 링크 주소.
-     * 바로 이전 주소를 가지고 셋팅을 하는데, '새로고침' 을 하는 경우도 있기 때문에, 세션에 넣어두고 활용한다.
-     * 뭔가 동작이 원하는 느낌이 아니다...살펴봐야 할 듯...
-     * @param Request $rqeust
-     * @return string
-     * @deprecated
-     */
-    protected function makePreviousListLink(Request $request, $profileId)
-    {
-        $previous = url()->previous();
-
-        $routeLink = route ( self::ROUTE_ID . '.index', ['profile'=> $profileId]);
-
-        return (strtok($previous,'?') == $routeLink) ? $previous : $routeLink;
-    }
-
-
-    /**
-     * '취소 링크' 생성.
-     * @deprecated
-     */
-    protected function makePreviousShowLink(Request $request, $profileId, $archiveId)
-    {
-        $previous = url()->previous();
-
-        $routeLink = route ( self::ROUTE_ID . '.show', ['profile'=> $profileId, 'archive'=>$archiveId]);
-
-        return (strtok($previous,'?') == $routeLink) ? $previous : $routeLink;
     }
 
     /**

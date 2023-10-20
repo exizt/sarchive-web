@@ -39,7 +39,6 @@ class DocumentController extends Controller {
         $this->middleware ( 'auth' );
     }
 
-
     /**
      * 글 본문 읽기
      *
@@ -89,16 +88,18 @@ class DocumentController extends Controller {
      *
      * archive_id 파라미터를 필수로 한다.
      */
-    public function create(Request $request) {
-
+    public function create(Request $request, $archiveId)
+    {
+        /*
         // 유효성 검증
         $validatedData = $request->validate([
             'archive' => 'required|integer'
         ]);
+        */
 
         // 파라미터
-        $archiveId = $request->input('archive');
-        $folderId = $request->input('folder');// folder id
+        // $archiveId = $request->input('archive');
+        $folderId = $request->input('lfolder');// folder id
 
         // archiveId 권한 체크 및 조회
         $archive = $this->retrieveAuthArchive($archiveId);
@@ -151,13 +152,11 @@ class DocumentController extends Controller {
         $linkParams = ListLinker::getLinkParameters($request, $this->link_parameters, true);
         $actionLinks = (object)[];
         $actionLinks->cancel = route(self::ROUTE_ID.'.show', array_merge($linkParams,['doc'=>$document->id]) );
+        // @todo 편집에서 '취소' 눌르고 '본문 보기'화면에서 '뒤로'를 누르면...에디터 화면으로의 무한 루프...이 문제를 어떻게 해결해야 하는가?
 
         $viewData['actionLinks'] = $actionLinks;
         return view( self::VIEW_PATH . '.edit', $viewData );
     }
-
-
-
 
     /**
      * 문서 생성 > 저장
@@ -190,17 +189,17 @@ class DocumentController extends Controller {
         $archive = $this->retrieveAuthArchive($archiveId);
 
         // 데이터 insert
-        $article = new SADocument;
-        $article->title = $title;
-        $article->content = $content;
-        $article->archive_id = $archiveId;
+        $document = new SADocument;
+        $document->title = $title;
+        $document->content = $content;
+        $document->archive_id = $archiveId;
 
         if($folderId != null){
             $folder = SAFolder::findOrFail($folderId);
-            $article->folder_id = $folderId;
+            $document->folder_id = $folderId;
         }
-        $article->reference = $reference;
-        $article->save ();
+        $document->reference = $reference;
+        $document->save ();
 
         // folder 의 문서 수 변경.
         if(isset($folder)){
@@ -210,10 +209,10 @@ class DocumentController extends Controller {
         // 카테고리 입력. 값의 길이가 3이상일 때 입력.
         if($category!=null && strlen($category) >= 3){
             // 값 입력
-            $article->category = $category;
+            $document->category = $category;
 
             // Category 와 Document 의 릴레이션 갱신
-            $this->updateCategoryDocumentRel($archiveId, $article->id, $article->category_array);
+            $this->updateCategoryDocumentRel($archiveId, $document->id, $document->category_array);
         }
 
         /**
@@ -222,15 +221,19 @@ class DocumentController extends Controller {
         // 편집 직후임을 알리는 임시 세션
         session()->flash('status_after_editing', 'true');
 
+        // url()->previous()는 '편집 화면'의 url을 의미한다. 원하는 것은 '보기 화면'이므로, 링크를 생성해준다.
+        // $linkParams = $this->createLinkParamsByUrl(url()->previous());
+        $linkParams = ListLinker::getParametersFromUrl(url()->previous(), array_merge(['archive'], $this->link_parameters), true);
+
         // redirect
         if ($submitAction === 'continue') {
-            return redirect()->route ( self::ROUTE_ID . '.edit', $article->id )
+            return redirect()->route ( self::ROUTE_ID . '.edit', array_merge($linkParams,['doc'=>$document->id]) )
             ->with('message', '저장되었습니다.' );
         }
-        return redirect()->route ( self::ROUTE_ID . '.show', $article->id )
+
+        return redirect()->route( self::ROUTE_ID.'.show', array_merge($linkParams,['doc'=>$document->id]))
         ->with('message', '저장되었습니다.' );
     }
-
 
     /**
      * 문서 편집 > 저장
@@ -331,7 +334,6 @@ class DocumentController extends Controller {
         }
     }
 
-
     /**
      * 문서 삭제.
      *
@@ -355,15 +357,13 @@ class DocumentController extends Controller {
         // folder 의 문서 수 변경.
         $this->updateFolderDocCount($folderId);
 
-        $linkParams = $this->createLinkParamsByUrl(url()->previous());
+        // $linkParams = $this->createLinkParamsByUrl(url()->previous());
+        $linkParams = ListLinker::getParametersFromUrl(url()->previous(), $this->link_parameters, true);
+        // 이전의 목록 링크로 리디렉션
         $previousListLink = $this->generateListLink($archive->id, $linkParams);
-
-        // @todo 폴더의 게시물 목록 or 아카이브의 게시물 목록으로 이동
         return redirect($previousListLink)
         ->with('message', '삭제되었습니다.' );
     }
-
-
 
     /**
      * bookmark, favorite 기능 구현
@@ -410,8 +410,6 @@ class DocumentController extends Controller {
 
         return response()->json($dataSet);
     }
-
-
 
     /**
      * 목록으로 돌아가는 링크를 생성.

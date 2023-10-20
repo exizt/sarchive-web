@@ -35,7 +35,7 @@ class FolderController extends Controller {
      *
      * archive_id 파라미터를 필수로 한다.
      */
-    public function create(Request $request) {
+    public function create(Request $request, $archiveId) {
 
         /*
         // 유효성 검증
@@ -45,20 +45,20 @@ class FolderController extends Controller {
         */
 
         // 파라미터
-        $archiveId = $request->input('archive');
         $parentId = $request->input('parent');
 
         // 파라미터 체크
-        if(empty($archiveId) && empty($parentId)){
-            abort(403);
-        }
+        //if(empty($archiveId) && empty($parentId)){
+        //    abort(403);
+        //}
 
         // parentId
+        $parentFolder = null;
         if(!empty($parentId)){
             $parentFolder = SAFolder::findOrFail($parentId);
-            $archiveId = $parentFolder->archive_id;
-        } else {
-            $parentFolder = null;
+            if($archiveId != $parentFolder->archive_id){
+                abort(403);
+            }
         }
 
         // archiveId 권한 체크 및 조회
@@ -66,14 +66,13 @@ class FolderController extends Controller {
 
         $folder = new SAFolder;
 
-        // dataSet 생성
-        $dataSet = $this->createViewData ();
-        $dataSet['item'] = $folder;
-        $dataSet['archive'] = $archive;
-        $dataSet['parameters']['archive_id'] = $archiveId;
-        $dataSet['parentFolder'] = $parentFolder;
-        $dataSet['cancelButtonLink'] = url()->previous();
-        return view ( self::VIEW_PATH . '.create', $dataSet );
+        // viewData 생성
+        $viewData = $this->createViewData ();
+        $viewData['item'] = $folder;
+        $viewData['archive'] = $archive;
+        // $viewData['parameters']['archive_id'] = $archiveId;
+        $viewData['parentFolder'] = $parentFolder;
+        return view ( self::VIEW_PATH . '.create', $viewData );
     }
 
     /**
@@ -99,13 +98,12 @@ class FolderController extends Controller {
         // archiveId 권한 체크 및 조회
         $archive = $this->retrieveAuthArchive($archiveId);
 
-        // create dataSet
-        $dataSet = $this->createViewData ();
-        $dataSet ['item'] = $folder;
-        $dataSet ['parentFolder'] = $parentFolder;
-        $dataSet ['bodyParams']['folder'] = $folder->id;
-        $dataSet ['cancelButtonLink'] = url()->previous();
-        return view ( self::VIEW_PATH . '.edit', $dataSet );
+        // viewData 생성
+        $viewData = $this->createViewData ();
+        $viewData['item'] = $folder;
+        $viewData['parentFolder'] = $parentFolder;
+        $viewData['bodyParams']['folder'] = $folder->id;
+        return view ( self::VIEW_PATH . '.edit', $viewData );
     }
 
 
@@ -190,8 +188,6 @@ class FolderController extends Controller {
         $name = $request->input('name');
         $comments = $request->input('comments');
         $parentId = $request->input('parent_id');
-        // 저장 옵션
-        $submitAction = $request->input ('action');
 
         // 데이터 조회
         $folder = SAFolder::findOrFail ( $id );
@@ -276,9 +272,6 @@ class FolderController extends Controller {
         $this->updateChildFolderIndex($folder->parent_id, $folder->archive_id);
 
         // 결과 처리
-        if ($submitAction === 'continue') {
-            return redirect()->back()->with('message', '저장되었습니다.');
-        }
         return redirect( "/folders/{$folder->id}")
             ->with('message', '저장되었습니다.' );
     }
@@ -357,12 +350,12 @@ class FolderController extends Controller {
             $folder->save();
         }
 
-        $request->session()->flash('message', '변경 완료되었습니다.');
+        session()->flash('message', '변경 완료되었습니다.');
 
         // 결과값
-        $dataSet = array();
-        $dataSet['success'] = '변경 완료되었습니다.';
-        return response()->json($dataSet);
+        $dataset = array();
+        $dataset['success'] = '변경 완료되었습니다.';
+        return response()->json($dataset);
     }
 
 
@@ -403,9 +396,9 @@ class FolderController extends Controller {
      */
     protected function createViewData() {
         $data = array ();
-        $data ['ROUTE_ID'] = self::ROUTE_ID;
-        $data ['VIEW_PATH'] = self::VIEW_PATH;
-        $data ['parameters'] = array();
+        $data['ROUTE_ID'] = self::ROUTE_ID;
+        $data['VIEW_PATH'] = self::VIEW_PATH;
+        $data['parameters'] = array();
 
         $layoutParams = array();
         $bodyParams = array();
@@ -414,8 +407,8 @@ class FolderController extends Controller {
             $layoutParams['archiveName'] = $this->archive->name;
             $bodyParams['archive'] = $this->archive->id;
         }
-        $data ['layoutParams'] = $layoutParams;
-        $data ['bodyParams'] = $bodyParams;
+        $data['layoutParams'] = $layoutParams;
+        $data['bodyParams'] = $bodyParams;
         return $data;
     }
 
