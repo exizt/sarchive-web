@@ -84,6 +84,35 @@ class DocumentController extends Controller {
         return view ( self::VIEW_PATH . '.show', $viewData );
     }
 
+    /**
+     * 문서 생성
+     *
+     * archive_id 파라미터를 필수로 한다.
+     */
+    public function create(Request $request) {
+
+        // 유효성 검증
+        $validatedData = $request->validate([
+            'archive' => 'required|integer'
+        ]);
+
+        // 파라미터
+        $archiveId = $request->input('archive');
+
+        // archiveId 권한 체크 및 조회
+        $archive = $this->retrieveAuthArchive($archiveId);
+
+        // document 개체 생성
+        $article = new SADocument;
+
+        // dataSet 생성
+        $dataSet = $this->createViewData ();
+        $dataSet ['article'] = $article;
+        $dataSet ['parameters']['archive_id'] = $archiveId;
+        return view ( self::VIEW_PATH . '.create', $dataSet );
+    }
+
+
 
     /**
      * 문서 편집
@@ -111,35 +140,6 @@ class DocumentController extends Controller {
 
         $viewData ['actionLinks'] = $actionLinks;
         return view ( self::VIEW_PATH . '.edit', $viewData );
-    }
-
-
-    /**
-     * 문서 생성
-     *
-     * archive_id 파라미터를 필수로 한다.
-     */
-    public function create(Request $request) {
-
-        // 유효성 검증
-        $validatedData = $request->validate([
-            'archive' => 'required|integer'
-        ]);
-
-        // 파라미터
-        $archiveId = $request->input('archive');
-
-        // archiveId 권한 체크 및 조회
-        $archive = $this->retrieveAuthArchive($archiveId);
-
-        // document 개체 생성
-        $article = new SADocument;
-
-        // dataSet 생성
-        $dataSet = $this->createViewData ();
-        $dataSet ['article'] = $article;
-        $dataSet ['parameters']['archive_id'] = $archiveId;
-        return view ( self::VIEW_PATH . '.create', $dataSet );
     }
 
 

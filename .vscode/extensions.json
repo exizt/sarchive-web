@@ -1,9 +1,11 @@
 {
     "recommendations": [
-        "glenn2223.live-sass",
-        "bmewburn.vscode-intelephense-client",
         "onecentlin.laravel5-snippets",
         "onecentlin.laravel-blade",
-        "amiralizadeh9480.laravel-extra-intellisense"
+        "amiralizadeh9480.laravel-extra-intellisense",
+        "glenn2223.live-sass",
+        "bmewburn.vscode-intelephense-client",
+        "editorconfig.editorconfig",
+        "streetsidesoftware.code-spell-checker"
     ]
 }
