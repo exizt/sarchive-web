@@ -1,0 +1,25 @@
+@charset "UTF-8";
+
+/* 레이아웃 우측 폴더 목록 네비게이션 (아카이브/카테고리) */
+#navFolderList {
+    > a[data-depth="1"] {
+        padding-left: 1.25rem;
+    }
+    > a[data-depth="2"] {
+        padding-left: 3.5rem;
+    }
+    > a[data-depth="3"] {
+        padding-left: 6.0rem;
+    }
+    > a[data-depth="4"] {
+        padding-left: 8.5rem;
+    }
+    @media (min-width: 768px) and (max-width: 1199.98px){
+        > a[data-depth="2"] {
+            padding-left: 2rem;
+        }
+        > a[data-depth="3"] {
+            padding-left: 3rem;
+        }
+    }
+}

@@ -1,13 +1,15 @@
 (function () {
+    // folderNav 목록의 셀렉터 아이디
+    const navListSelectorId = "navFolderList"
     // folderNav의 셀렉터 아이디
-    const navSelectorId = "shh-nav-board-list"
+    const navSelectorId = "navFolder"
 
     var documentReady = function(f) {
         document.readyState == 'loading' ? document.addEventListener("DOMContentLoaded", f) : f();
     };
 
     documentReady(function(){
-        if( !document.getElementById(navSelectorId) ) return
+        if( !document.getElementById(navListSelectorId) ) return
         doAjaxFolderList(getArchiveId(), getFolderId())
         bindEditModeBtn()
     });
@@ -22,7 +24,7 @@
         // archiveId가 없을 때는 실행하지 않음
         if( !archiveId ) return
 
-        if( !document.getElementById(navSelectorId) ) return
+        if( !document.getElementById(navListSelectorId) ) return
 
         let params = {}
         // folderId가 없을 때
@@ -60,15 +62,10 @@
             dataList.forEach(function(data, idx){
                 result(idx, data)
             })
-            // $.each(data.list, result);
-
-            // $("span.ar-folder-list-temp").remove();
-
-            // document.querySelectorAll(`span.${tempIdNode_className}`).forEach(e => e.remove());
 
             function result(i, item){
                 let depth = item.depth - currentDepth
-                let nav = document.getElementById(navSelectorId)
+                let nav = document.getElementById(navListSelectorId)
                 if(depth == 1){
                     nav.innerHTML += buildHtml(item.id, `/folders/${item.id}`,item.name, item.count, depth)
                 } else {
@@ -84,11 +81,11 @@
                 function buildHtml(id, link, label, count, depth){
                     if(theme='bs4'){
                         return `<a href="${link}" id="${tempIdNode_prefix}${id}"
-                            class="list-group-item list-group-item-action d-flex justify-content-between align-items-center sarc-depth-${depth}"
-                            data-id="${id}" data-label="${label}">
+                            class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                            data-id="${id}" data-label="${label}" data-depth="${depth}">
                                 ${label}
-                                <span class="arch-indexEditMode-hide badge badge-secondary badge-pill">${count}</span>
-                                <span style="display:none;width:50px" class="arch-indexEditMode-show">
+                                <span class="badge badge-secondary badge-pill" data-visible="only_index">${count}</span>
+                                <span style="display:none;width:50px" data-visible="only_edit">
                                     <span class="badge badge-secondary arch-indexEditMode-up">▲</span>
                                     <span class="badge badge-secondary arch-indexEditMode-down">▼</span>
                                 </span>
@@ -103,41 +100,49 @@
 
     /* */
     function bindEditModeBtn(){
-        var listItemClassName = "arch-indexEditMode-listitem";
-        var listItemSelector = "."+listItemClassName;
-
         // folderNav에서 '변경' 버튼.
-        // $("#btnIndexEditModeToggle").on("click",changeIndexEditModeOn)
-        document.getElementById('btnIndexEditModeToggle').addEventListener("click", changeIndexEditModeOn)
+        document.getElementById('btnFolderNavEditModeToggle').addEventListener("click", changeIndexEditModeOn)
 
         // folderNav에서 '취소' 버튼.
-        // $("#btnIndexEditModeCancel").on("click",function(){location.reload();})
-        document.getElementById('btnIndexEditModeCancel').addEventListener("click", e=>{ location.reload() })
+        document.getElementById('btnFolderNavEditModeCancel').addEventListener("click", e=>{ location.reload() })
 
         // folderNav에서 '순서변경 저장' 버튼.
-        // $("#btnIndexEditModeSave").on("click",saveArchiveSort)
-        document.getElementById('btnIndexEditModeSave').addEventListener("click", saveArchiveSort)
+        document.getElementById('btnFolderNavEditModeSave').addEventListener("click", saveArchiveSort)
+
+        /**
+         * depth의 셀렉터 문자열을 반환하는 함수
+         * @param {int} depth
+         * @returns
+         */
+        function getDepthSelector(depth){
+            // return `.${navDepthClassPrefix}-${depth}`
+            return `#${navListSelectorId} > a[data-depth="${depth}"]`
+        }
+
+        function getVisibleSelector(mode){
+            return `#${navSelectorId} *[data-visible="only_${mode}"]`
+        }
 
         /**
          * 아카이브의 순서를 변경하는 기능
          */
         function changeIndexEditModeOn(){
             // folderNav에 맞춘 작업
-            $(".sarc-depth-1").addClass(listItemClassName);
-            document.querySelectorAll('.sarc-depth-2').forEach(e => e.remove());
-            document.querySelectorAll('.sarc-depth-3').forEach(e => e.remove());
+            // $(getDepthSelector(1)).addClass(listItemClassName);
+            document.querySelectorAll(getDepthSelector(2)).forEach(e => e.remove());
+            document.querySelectorAll(getDepthSelector(3)).forEach(e => e.remove());
 
             // 일반적인 보여지는 부분 처리
-            // $(".arch-indexEditMode-hide").hide()
-            document.querySelectorAll(".arch-indexEditMode-hide").forEach(e => {
+            // '순서변경 모드'에서 숨길 것을 hide
+            document.querySelectorAll(getVisibleSelector("index")).forEach(e => {
                 e.style.display = 'none'
             });
-            // $(".arch-indexEditMode-show").show()
-            document.querySelectorAll(".arch-indexEditMode-show").forEach(e => {
+            // '순서변경 모드'에서 숨길 것을 show
+            document.querySelectorAll(getVisibleSelector("edit")).forEach(e => {
                 e.style.display = 'block'
             });
-            // $(listItemSelector).attr("href","#");
-            document.querySelectorAll(listItemSelector).forEach(el => {
+            // 링크 기능을 해제.
+            document.querySelectorAll(getDepthSelector(1)).forEach(el => {
                 el.href = "#"
             });
 
@@ -149,10 +154,12 @@
                 el.addEventListener("click", moveDownItem )
             });
 
+            /**
+             * 아이템을 위로 이동
+             */
             function moveUpItem(){
                 // console.log(this)
-
-                let item = this.closest(".sarc-depth-1")
+                let item = this.closest(getDepthSelector(1))
                 let before_item = item.previousElementSibling;
                 // console.log(before_item)
                 if( !! before_item ){
@@ -160,10 +167,12 @@
                 }
             }
 
+            /**
+             * 아이템을 아래로 이동
+             */
             function moveDownItem(){
                 // console.log(this)
-
-                let item = this.closest(".sarc-depth-1")
+                let item = this.closest(getDepthSelector(1))
                 let next_item = item.nextElementSibling;
                 // console.log(before_item)
                 if( !! next_item){
@@ -177,7 +186,7 @@
          */
         function saveArchiveSort(){
             let dataList = [];
-            document.querySelectorAll(".sarc-depth-1").forEach((el, index) => {
+            document.querySelectorAll(getDepthSelector(1)).forEach((el, index) => {
                 // console.log(index)
                 let item_id = el.dataset.id
                 let item_label = el.dataset.label
@@ -192,17 +201,17 @@
             // console.log(dataList)
 
             ajaxSave(dataList)
-        }
 
-        /**
-         * post ajax 전송
-         */
-        function ajaxSave(dataList){
-            axios.post("/folders/updateSort", {
-                'dataList': dataList
-            }).then(function(response){
-                location.reload()
-            })
+            /**
+             * post ajax 전송
+             */
+            function ajaxSave(dataList){
+                axios.post("/folders/updateSort", {
+                    'dataList': dataList
+                }).then(function(response){
+                    location.reload()
+                })
+            }
         }
     }
 })();

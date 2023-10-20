@@ -96,18 +96,20 @@
                         @endif
                     </div>
 
-                    <div class="list-group sarc-layout-nav-folder-list" id="shh-nav-board-list"></div>
+                    <nav id="navFolder">
+                        <div class="list-group" id="navFolderList"></div>
 
-                    <div class="d-flex w-100 justify-content-between my-2">
-                        <div>
-                            <a href="#" id="btnIndexEditModeCancel"
-                            class="btn btn-sm arch-indexEditMode-show" style="display:none">취소</a>
+                        <div class="d-flex w-100 justify-content-between my-2">
+                            <div>
+                                <a href="#" id="btnFolderNavEditModeCancel"
+                                class="btn btn-sm" style="display:none" data-visible="only_edit">취소</a>
+                            </div>
+                            <div>
+                                <a href="#" id="btnFolderNavEditModeToggle" class="btn btn-sm" data-visible="only_index">변경</a>
+                                <a href="#" id="btnFolderNavEditModeSave" class="btn btn-sm btn-outline-success" style="display:none" data-visible="only_edit">순서변경 저장</a>
+                            </div>
                         </div>
-                        <div>
-                            <a href="#" id="btnIndexEditModeToggle" class="btn btn-sm arch-indexEditMode-hide">변경</a>
-                            <a href="#" id="btnIndexEditModeSave" class="btn btn-sm btn-outline-success arch-indexEditMode-show" style="display:none">순서변경 저장</a>
-                        </div>
-                    </div>
+                    </nav>
                 </div>
             </div>
         </div>

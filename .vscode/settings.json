@@ -11,4 +11,10 @@
         },
     ],
     "liveSassCompile.settings.generateMap": false,
+    "cSpell.words": [
+        "jstree",
+        "larchive",
+        "lcategory",
+        "lfolder"
+    ],
 }
