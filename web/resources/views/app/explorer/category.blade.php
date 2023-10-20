@@ -15,16 +15,16 @@
 				</h4>
 				<small class="text-mute">Page {{ $masterList->currentPage() }}/{{ $masterList->lastPage() }}</small>
 				</div>
-				<p class="lead">{{ $category->comments }}</p>
+				<p class="lead font-italic small">{{ $category->comments }}</p>
 			</div>
 			@if(count($childCategories))
 			<h5>하위 분류</h5>
 			<div class="row mb-5 mx-0">
-				@foreach ($childCategories as $item)
+				@foreach ($childCategories as $categoryName)
 				<div class="list-group col mx-2">
 					<a class="list-group-item list-group-item-action"
-						href="{{route('explorer.category',['archive'=>$archive->id,'category'=>urlencode($item)])}}">
-						{{$item}}
+						href="{{route('explorer.category',['archive'=>$archive->id,'category'=>$categoryName])}}">
+						{{$categoryName}}
 					</a>
 				</div>
 				@endforeach
@@ -35,7 +35,7 @@
 			<div class="list-group">
 				@foreach ($masterList as $item)
 				<a class="list-group-item list-group-item-action flex-column align-items-start"
-					href="/doc/{{ $item->id }}?lcategory={{ urlencode($category->name) }}">
+					href="/doc/{{ $item->id }}?lcategory={{ $category->id }}">
 					<div class="d-flex w-100 justify-content-between">
 						<h5 class="mb-1">{{ $item->title }}</h5>
 						<small>{{ $item->created_at->format('Y-m-d') }}</small>
@@ -51,7 +51,7 @@
 			<div class="card">
 				<div class="card-body">
 					상위 분류&nbsp;:&nbsp;
-					<ul class="sarc-cat-list">
+					<ul class="sa-category-breadcrumbs">
 					@foreach ($category->category_array as $i=>$item)
 					<li><a href="{{route('explorer.category',['archive'=>$archive->id,'category'=>urlencode($item)])}}">
 							{{$item}}

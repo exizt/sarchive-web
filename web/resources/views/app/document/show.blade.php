@@ -42,7 +42,7 @@
             <div>생성 일시 : {{ $article->created_at->format('Y-m-d g:ia') }}</div>
             <div>최근 변경 : {{ $article->updated_at->format('Y-m-d g:ia') }}</div>
             <div>
-                분류 : <ul class="sarc-cat-list">
+                분류 : <ul class="sa-category-breadcrumbs">
                     @foreach ($article->category_array as $i => $item)
                         <li><a href="/archives/{{$archive->id}}/category/{{urlencode($item)}}">{{$item}}</a></li>
                     @endforeach

@@ -1,5 +1,6 @@
 @extends('layouts.sarchive_layout')
 @section('content')
+{{-- 아카이브 선택 (/archives) --}}
 <div class="container py-5">
 	@if(count($masterList) == 0)
 	<div class="text-center">

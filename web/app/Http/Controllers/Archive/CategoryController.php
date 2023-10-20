@@ -166,10 +166,10 @@ class CategoryController extends Controller {
 
         if(count($categoryNames) > 0){
             // insert 할 데이터 생성
-            $datas = array();
+            $dataSet = array();
             foreach($categoryNames as $k => $categoryName){
                 if(strlen(trim($categoryName))>0){
-                    $datas[$k] = [
+                    $dataSet[$k] = [
                         'archive_id' => $archiveId,
                         'category_name' => trim($categoryName),
                         'child_category_name' => $currentName,
@@ -179,8 +179,8 @@ class CategoryController extends Controller {
             }
 
             // 대량 할당
-            if(count($datas)>0){
-                SACategoryRel::insert($datas);
+            if(count($dataSet)>0){
+                SACategoryRel::insert($dataSet);
             }
         }
     }
