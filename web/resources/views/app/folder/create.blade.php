@@ -12,10 +12,11 @@
 			<h5 class="card-header">폴더 추가</h5>
 			<div class="card-body px-1 px-md-3">
 				@include($VIEW_PATH.'._form')
-				<div class="d-flex w-100 justify-content-between">
-					<button type="submit" class="btn btn-primary btn-sm site-shortcut-key-s">추가</button>
-					<a class="btn btn-secondary btn-sm site-shortcut-key-z"
-					href="{{ url()->previous() }}" role="button">취소</a>
+				<div>
+					<button type="submit" class="btn btn-primary btn-sm site-shortcut-key-s">저장</button>
+                    <button type="submit" class="btn btn-outline-success btn-sm" name="action" value="continue">저장 후 계속 편집</button>
+					<a class="text-secondary mx-2 site-shortcut-key-z" style="font-size:14px"
+					href="javascript:history.back()" role="button">취소</a>
 				</div>
 			</div>
 		</div>
