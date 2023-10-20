@@ -14,7 +14,6 @@
                 <div class="d-flex w-100 justify-content-between">
                     <div>
                         <button type="submit" class="btn btn-primary btn-sm site-shortcut-key-s" name="action" value="finished">저장</button>
-                        <button type="submit" class="btn btn-outline-success btn-sm" name="action" value="continue">중간 저장</button>
                         <a class="btn btn-outline-secondary btn-sm site-shortcut-key-z"
                             href="{{ route('explorer.category',['archive'=>$archive->id,'category'=>urlencode($item->name)]) }}" role="button">뒤로</a>
                     </div>
@@ -25,28 +24,7 @@
         <!-- //Card -->
     </form>
 </div>
-<!-- //.container-fluid -->
 {{-- Confirm Delete --}}
-<div class="modal fade" id="modal-delete" tabIndex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">확인</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p class="lead">정말 삭제하시겠습니까?</p>
-            </div>
-            <div class="modal-footer">
-                <form method="POST"
-                    action="{{ route($ROUTE_ID.'.destroy',['archive'=>$archive->id,'category'=>$item->id]) }}">
-                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    <input type="hidden" name="_method" value="DELETE">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
-                    <button type="submit" class="btn btn-danger">예</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+@include('modules.dialog.delete.default',['action'=>route($ROUTE_ID.'.destroy',['archive'=>$archive->id,'category'=>$item->id]), 'token'=> csrf_token()])
+
 @endsection

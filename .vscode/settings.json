@@ -26,6 +26,7 @@
         "lcategory",
         "lfolder",
         "lpage",
-        "Nanum"
+        "Nanum",
+        "rownum"
     ],
 }

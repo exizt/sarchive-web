@@ -4,7 +4,7 @@
 <div class="container-fluid mt-4 mb-5">
     @include('modules.message.messages_and_errors.default')
     <form class="form-horizontal prevent" role="form" method="POST" action="{{ route($ROUTE_ID.'.update',['doc'=>$article->id]) }}">
-        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+        @csrf
         <input type="hidden" name="_method" value="PUT">
 
         <div class="card mt-3">
