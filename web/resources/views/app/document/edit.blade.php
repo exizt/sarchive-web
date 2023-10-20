@@ -25,26 +25,7 @@
 		<!-- //Card -->
 	</form>
 </div>
-<!-- //.container-fluid -->
 {{-- Confirm Delete --}}
-<div class="modal fade" id="modal-delete" tabIndex="-1">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h4 class="modal-title">확인</h4>
-				<button type="button" class="close" data-dismiss="modal">&times;</button>
-			</div>
-			<div class="modal-body">
-				<p class="lead">정말 삭제하시겠습니까?</p>
-			</div>
-			<div class="modal-footer">
-				<form method="POST" action="{{ route($ROUTE_ID.'.destroy',['doc'=>$article->id]) }}">
-					<input type="hidden" name="_token" value="{{ csrf_token() }}"> <input type="hidden" name="_method" value="DELETE">
-					<button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
-					<button type="submit" class="btn btn-danger">예</button>
-				</form>
-			</div>
-		</div>
-	</div>
-</div>
+@include('modules.dialog.delete.default',['action'=>route($ROUTE_ID.'.destroy',['doc'=>$article->id]), 'token'=> csrf_token()])
+
 @endsection
