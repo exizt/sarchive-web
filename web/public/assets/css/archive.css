@@ -86,24 +86,6 @@ ul.sa-category-breadcrumbs > li:not(:first-child)::before {
   color: RGB(125, 125, 125);
 }
 
-#logo {
-  background: center/contain no-repeat url("/assets/logo/polymer-white-18dp.svg");
-  background-repeat: no-repeat;
-  width: 2rem;
-  height: 2rem;
-  animation: spinX 3s infinite;
-}
-
-@keyframes spinX {
-  0% {
-    -webkit-transform: rotateX(0deg);
-    -webkit-transform-origin: 0% 50% 0;
-  }
-  100% {
-    -webkit-transform: rotateX(360deg);
-    -webkit-transform-origin: 0% 50% 0;
-  }
-}
 p.sarc-item-comments {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -120,11 +102,6 @@ p.sarc-item-comments small {
   color: rgb(27, 29, 31);
 }
 
-/*
-body{
-    background-color: #222;
-}
-*/
 span.sa-icon {
   background-position: center;
   background-size: contain;
@@ -143,3 +120,27 @@ span.sa-icon.sa-icon-archive {
 span.sa-icon.sa-icon-folder {
   background-image: url("/assets/icons/folder.svg");
 }
+
+#logo {
+  background: center/contain no-repeat url("/assets/logo/polymer-white-18dp.svg");
+  background-repeat: no-repeat;
+  width: 2rem;
+  height: 2rem;
+  animation: spinX 3s infinite;
+}
+
+@keyframes spinX {
+  0% {
+    -webkit-transform: rotateX(0deg);
+    -webkit-transform-origin: 0% 50% 0;
+  }
+  100% {
+    -webkit-transform: rotateX(360deg);
+    -webkit-transform-origin: 0% 50% 0;
+  }
+}
+/*
+body{
+    background-color: #222;
+}
+*/

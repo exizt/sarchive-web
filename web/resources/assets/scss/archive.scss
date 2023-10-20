@@ -3,6 +3,7 @@
 @import "_folder_nav.scss";
 @import "_document.scss";
 @import "_breadcrumbs.scss";
+@import "_explorer.scss";
 
 #logo {
     background: center / contain no-repeat url("/assets/logo/polymer-white-18dp.svg");
@@ -16,42 +17,10 @@
     0%   {-webkit-transform: rotateX(0deg); -webkit-transform-origin: 0% 50% 0;}
     100% {-webkit-transform: rotateX(360deg); -webkit-transform-origin: 0% 50% 0;}
 }
-p.sarc-item-comments{
-    overflow : hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    small{
-        font-size: 0.875rem;
-    }
-}
-.sarc-item-label {
-    line-height: 1.5;
-    color: rgb(27, 29, 31)
-}
+
 /*
 body{
     background-color: #222;
 }
 */
 
-span.sa-icon {
-    background-position: center;
-    background-size: contain;
-    background-repeat: no-repeat;
-    width: 1em;
-    height: 1em;
-    margin-right: 0.3em;
-    margin-bottom: 0.2em;
-    line-height: inherit;
-    display: inline-block;
-    vertical-align: text-bottom;
-
-    &.sa-icon-archive {
-        background-image: url("/assets/icons/archive.svg");
-    }
-    &.sa-icon-folder {
-        background-image: url("/assets/icons/folder.svg");
-    }
-}
