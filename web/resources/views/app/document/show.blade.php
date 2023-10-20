@@ -6,7 +6,6 @@
 @section('content')
 <div class="container-fluid px-1 px-md-3 mt-4 mb-5">
     @include('layouts.modules.messages.messages_and_errors_bs4')
-    <h5>위치</h5>
     <nav aria-label="breadcrumb" id="locationNav">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/archives/{{$archive->id}}/latest">{{ $archive->name }}</a></li>
@@ -17,32 +16,31 @@
             @endisset
         </ol>
     </nav>
-    <div class="d-flex justify-content-between">
-        <h4>본문</h4>
-        <div>
-            <a class="btn btn-sm btn-outline-info site-shortcut-key-e"
-                href="{{ $actionLinks->edit }}" role="button">편집</a>
-            <a id="saArticleLikeBtn" class="btn btn-sm btn-outline-secondary" href="#" role="button"
-                data-document="{{$article->id}}">Like</a>
-        </div>
-    </div>
-    <div class="card sa-article">
-        <div class="card-body px-2 px-sm-3">
-            <h5 class="card-title">{{ $article->title }}</h5>
-            <p class="text-right">
-                <small class="text-muted">최근 변경 {{ $article->updated_at->format('Y-m-d g:ia') }} (생성 {{ $article->created_at->format('Y-m-d g:ia') }})</small>
-            </p>
-            <hr>
-            <div class="sa-article-output">
-                {!! $article->content !!}
+    <div class="sa-article">
+        <h3 class="">{{ $article->title }}</h3>
+        <div class="d-flex justify-content-between">
+            <small class="text-muted font-italic font-weight-light">
+                {{ $article->created_at->format('Y-m-d') }}
+                (updated {{ $article->updated_at->format('Y-m-d') }})
+            </small>
+            <div class="text-right">
+                <a class="btn btn-sm btn-outline-info site-shortcut-key-e"
+                    href="{{ $actionLinks->edit }}" role="button">편집</a>
+                <a id="saArticleLikeBtn" class="btn btn-sm btn-outline-secondary" href="#" role="button"
+                    data-document="{{$article->id}}">Like</a>
             </div>
         </div>
+        <hr>
+        <div class="sa-article-output">
+            {!! $article->content !!}
+        </div>
     </div>
-    <h4 class="my-3">문서 정보</h4>
+    <hr>
+    <h5 class="mt-5">문서 정보</h5>
     <div class="card">
         <div class="card-body">
-            <div>작성 : {{ $article->created_at->format('Y-m-d g:ia') }}</div>
-            <div>수정 : {{ $article->updated_at->format('Y-m-d g:ia') }}</div>
+            <div>생성 일시 : {{ $article->created_at->format('Y-m-d g:ia') }}</div>
+            <div>최근 변경 : {{ $article->updated_at->format('Y-m-d g:ia') }}</div>
             <div>
                 분류 : <ul class="sarc-cat-list">
                     @foreach ($article->category_array as $i => $item)
@@ -53,14 +51,19 @@
         </div>
     </div>
     <hr>
-    <div class="form-group row">
-        <div class="col-md-10 col-md-offset-2">
-            <a class="btn btn-primary btn-sm site-shortcut-key-z"
+    <div class="d-flex justify-content-between">
+        <div>
+            @if (session()->has('status_after_editing'))
+            <a class="btn btn-secondary btn-sm site-shortcut-key-z"
                 href="{{ $actionLinks->list }}" role="button">목록</a>
+            @else
+                <a class="btn btn-secondary btn-sm site-shortcut-key-z"
+                    href="javascript:history.back()" role="button">뒤로</a>
+            @endif
+        </div>
+        <div>
             <a class="btn btn-outline-info btn-sm site-shortcut-key-e"
                 href="{{ $actionLinks->edit }}" role="button">편집</a>
-            <a class="btn btn-outline-secondary btn-sm"
-                href="javascript:history.back()" role="button">뒤로</a>
         </div>
     </div>
 

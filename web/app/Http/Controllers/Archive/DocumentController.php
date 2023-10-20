@@ -22,6 +22,10 @@ class DocumentController extends Controller {
      */
     protected $archive = null;
 
+    //
+    protected $linkParamKeys = [
+        'lcategory','lfolder','larchive', 'page'
+    ];
 
     /**
      * 생성자
@@ -61,11 +65,13 @@ class DocumentController extends Controller {
         // 공용 파라미터 처리
         $viewData ['parameters']['archiveId'] = $archiveId;
 
-        $linkParams = $this->buildLinkParams($request);
+        // 링크 생성
         $actionLinks = (object)[];
+        $linkParams = $this->createLinkParams($request);
+        // '편집' 링크
         $actionLinks->edit = route(self::ROUTE_ID.'.edit',array_merge($linkParams,['doc'=>$document->id]));
-        // list 링크 생성
-        $actionLinks->list = $this->generatePreviousListLink($archive->id, $linkParams);
+        // '목록' 링크
+        $actionLinks->list = $this->generateListLinkString($archive->id, $linkParams);
 
         $viewData ['actionLinks'] = $actionLinks;
         return view ( self::VIEW_PATH . '.show', $viewData );
@@ -123,7 +129,7 @@ class DocumentController extends Controller {
         $viewData = $this->createViewData ();
         $viewData ['article'] = $document;
 
-        $linkParams = $this->buildLinkParams($request);
+        $linkParams = $this->createLinkParams($request);
         $actionLinks = (object)[];
         $actionLinks->cancel = route(self::ROUTE_ID.'.show', array_merge($linkParams,['doc'=>$document->id]) );
 
@@ -196,6 +202,7 @@ class DocumentController extends Controller {
             return redirect()->route ( self::ROUTE_ID . '.edit', $article->id )
             ->with('message', '저장되었습니다.' );
         }
+        $request->session()->flash('status_after_editing', 'true');
         return redirect()->route ( self::ROUTE_ID . '.show', $article->id )
         ->with('message', '저장되었습니다.' );
     }
@@ -286,8 +293,8 @@ class DocumentController extends Controller {
         if ($submitAction === 'continue') {
             return redirect()->back()->with('message', '저장되었습니다.');
         } else {
-            $linkParams = $this->buildLinkParamsByUrl(url()->previous());
-
+            $linkParams = $this->createLinkParamsByUrl(url()->previous());
+            $request->session()->flash('status_after_editing', 'true');
             return redirect()->route( self::ROUTE_ID.'.show', array_merge($linkParams,['doc'=>$document->id]))
             ->with('message', '저장되었습니다.' );
         }
@@ -317,8 +324,8 @@ class DocumentController extends Controller {
         // folder 의 문서 수 변경.
         $this->updateFolderDocCount($folderId);
 
-        $linkParams = $this->buildLinkParamsByUrl(url()->previous());
-        $previousListLink = $this->generatePreviousListLink($archive->id, $linkParams);
+        $linkParams = $this->createLinkParamsByUrl(url()->previous());
+        $previousListLink = $this->generateListLinkString($archive->id, $linkParams);
 
         // @todo 폴더의 게시물 목록 or 아카이브의 게시물 목록으로 이동
         return redirect($previousListLink)
@@ -380,7 +387,7 @@ class DocumentController extends Controller {
      * 일반적인 경우는 route메소드에 인자값만 추가로 넘겨주면 되지만,
      * 목록으로 돌아가는 링크는 제각기 다르므로 이 메서드에서 정의해준다.
      */
-    private function generatePreviousListLink($archiveId, $linkParams){
+    private function generateListLinkString(int|string $archiveId, array $linkParams): string {
         $params = array();
 
         if(isset($linkParams['lfolder'])){
@@ -406,18 +413,19 @@ class DocumentController extends Controller {
 
 
     /**
-     * Request를 통해서 링크에 이용될 파라미터 배열을 생성.
+     * Request의 Get 파라미터 변수 중 링크에 활용되는 변수에 대해서
+     * 파라미터 배열을 생성.
      *
      * @return array
      */
-    private function buildLinkParams(Request $request){
+    private function createLinkParams(Request $request){
         $parameters = array();
-        $paramKeys = ['larchive','lcategory','lfolder'];
-        foreach($paramKeys as $pKey){
+        // $paramKeys = ['larchive','lcategory','lfolder'];
+        $allowed_keys = $this->linkParamKeys;
+        foreach($allowed_keys as $pKey){
             $value = $request->input($pKey);
             if(!empty($value)){
-
-                $parameters[$pKey] = $value;
+                $parameters[$pKey] = (int) $value;
             }
         }
 
@@ -431,8 +439,9 @@ class DocumentController extends Controller {
      *
      * @return array
      */
-    private function buildLinkParamsByUrl($url){
-        $allowed_keys = ['lcategory','lfolder','larchive'];
+    private function createLinkParamsByUrl($url){
+        // $allowed_keys = ['lcategory','lfolder','larchive'];
+        $allowed_keys = $this->linkParamKeys;
         $matches = array();
 
         // query 부분을 배열화
@@ -442,6 +451,10 @@ class DocumentController extends Controller {
 
             // 허용된 것만 처리
             $matches = array_intersect_key($queryArray, array_flip($allowed_keys));
+            foreach($matches as $k => $v){
+                // int형으로 안전하게 변환.
+                $matches[$k] = (int) $v;
+            }
         }
         return $matches;
     }
