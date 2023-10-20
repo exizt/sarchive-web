@@ -42,9 +42,12 @@
                     @foreach ($masterList as $item)
                     <a class="list-group-item list-group-item-action flex-column align-items-start"
                     @if(isset($parameters['folder']))
-                        href="{{ "/doc/{$item->id}?lfolder={$parameters['folder']->id}" }}"
+                        href="{{ route('doc.show', array_merge(['doc'=>$item->id], $trackedLinkParams), false) }}"
                     @else
                         href="{{ "/doc/{$item->id}" }}"
+                    @endif
+                    @if (isset($trackedLinkParams))
+                        data-debug="{{ route('doc.show', array_merge(['doc'=>$item->id], $trackedLinkParams), false) }}"
                     @endif
                         >
                         <div class="d-flex w-100 justify-content-between">

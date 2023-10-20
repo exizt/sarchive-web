@@ -29,7 +29,7 @@ class DocumentController extends Controller {
 
     //
     protected $link_parameters = [
-        'lcategory','lfolder','larchive', 'page'
+        'larchive', 'lfolder', 'lcategory', 'lpage'
     ];
 
     /**
@@ -77,7 +77,7 @@ class DocumentController extends Controller {
         // '편집' 링크
         $actionLinks->edit = route(self::ROUTE_ID.'.edit',array_merge($linkParams,['doc'=>$document->id]));
         // '목록' 링크
-        $actionLinks->list = $this->generateListLinkString($archive->id, $linkParams);
+        $actionLinks->list = $this->generateListLink($archive->id, $linkParams);
         $viewData['actionLinks'] = $actionLinks;
 
         // view 호출
@@ -216,12 +216,17 @@ class DocumentController extends Controller {
             $this->updateCategoryDocumentRel($archiveId, $article->id, $article->category_array);
         }
 
-        // 결과 처리
+        /**
+         * 결과 처리
+         */
+        // 편집 직후임을 알리는 임시 세션
+        session()->flash('status_after_editing', 'true');
+
+        // redirect
         if ($submitAction === 'continue') {
             return redirect()->route ( self::ROUTE_ID . '.edit', $article->id )
             ->with('message', '저장되었습니다.' );
         }
-        session()->flash('status_after_editing', 'true');
         return redirect()->route ( self::ROUTE_ID . '.show', $article->id )
         ->with('message', '저장되었습니다.' );
     }
@@ -307,13 +312,20 @@ class DocumentController extends Controller {
             }
         }
 
+        /**
+         * 결과 처리
+         */
+        // 편집 직후임을 알리는 임시 세션
+        session()->flash('status_after_editing', 'true');
 
-        // 결과 처리
+        // redirect
         if ($submitAction === 'continue') {
             return redirect()->back()->with('message', '저장되었습니다.');
         } else {
-            $linkParams = $this->createLinkParamsByUrl(url()->previous());
-            session()->flash('status_after_editing', 'true');
+            // url()->previous()는 '편집 화면'의 url을 의미한다. 원하는 것은 '보기 화면'이므로, 링크를 생성해준다.
+            // $linkParams = $this->createLinkParamsByUrl(url()->previous());
+            $linkParams = ListLinker::getParametersFromUrl(url()->previous(), $this->link_parameters, true);
+
             return redirect()->route( self::ROUTE_ID.'.show', array_merge($linkParams,['doc'=>$document->id]))
             ->with('message', '저장되었습니다.' );
         }
@@ -344,7 +356,7 @@ class DocumentController extends Controller {
         $this->updateFolderDocCount($folderId);
 
         $linkParams = $this->createLinkParamsByUrl(url()->previous());
-        $previousListLink = $this->generateListLinkString($archive->id, $linkParams);
+        $previousListLink = $this->generateListLink($archive->id, $linkParams);
 
         // @todo 폴더의 게시물 목록 or 아카이브의 게시물 목록으로 이동
         return redirect($previousListLink)
@@ -406,30 +418,41 @@ class DocumentController extends Controller {
      * 일반적인 경우는 route메소드에 인자값만 추가로 넘겨주면 되지만,
      * 목록으로 돌아가는 링크는 제각기 다르므로 이 메서드에서 정의해준다.
      */
-    private function generateListLinkString(int|string $archiveId, array $linkParams): string {
-        $params = array();
+    private function generateListLink(int|string $archiveId, array $linkParams): string
+    {
+        if(isset($linkParams['lpage'])){
+            $linkParams['page'] = $linkParams['lpage'];
+            unset($linkParams['lpage']);
+        }
 
         if(isset($linkParams['lfolder'])){
             // 폴더에 의한 최신 게시물
-            $explorerRouteId = 'explorer.folder';
-            $params['id'] = $linkParams['lfolder'];
+            $routeId = 'explorer.folder';
+
+            $linkParams['id'] = $linkParams['lfolder'];
+            unset($linkParams['lfolder']);
+
         } else if(isset($linkParams['lcategory'])){
             // 카테고리에 의한 최신 게시물
-            $explorerRouteId = 'explorer.category';
-            $params['archive'] = $archiveId;
+            $routeId = 'explorer.category';
+
+            $linkParams['archive'] = $archiveId;
             // 여기서는 카테고리 이름이 필요함...
             $categoryId = $linkParams['lcategory'];
             $categoryName = SACategory::find($categoryId, 'name')->name;
-            $params['category'] = $categoryName;
+            $linkParams['category'] = $categoryName;
+            unset($linkParams['lcategory']);
 
             // 카테고리 접근
-            //$cat = urlencode($params['lcategory']);
+            //$cat = urlencode($linkParams['lcategory']);
+
         } else {
             // 아카이브의 최신 게시물(기본값)
-            $explorerRouteId = 'explorer.archive';
-            $params['archive'] = $archiveId;
+            $routeId = 'explorer.archive';
+            $linkParams['archive'] = $archiveId;
+
         }
-        $link = route($explorerRouteId, $params);
+        $link = route($routeId, $linkParams);
         return $link;
     }
 

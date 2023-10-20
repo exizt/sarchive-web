@@ -154,10 +154,16 @@ class ExplorerController extends BaseController {
         // 새 폴더, 새 문서에서는 archive, folder, category 정도의 정보면 충분하다.
         $actionLinks->new_doc = route('doc.create', $actionParams, false);
         $actionLinks->new_folder = route('folders.create', $actionParams, false);
+
         // 문서 목록에서 활용될 링크 파라미터. 링크에 따라붙이기 위한 목적으로만 사용되는 파라미터. page 등.
-        $linkParams = ListLinker::getLinkParameters($request, ['lpage'=>'page']);
+        $trackedLinkParams = ListLinker::getLinkParameters($request, ['lpage'=>'page']);
+        // $trackedLinkParams['archive'] = $archive->id;
+        if($folder) {
+            $trackedLinkParams['lfolder'] = $folder->id;
+        }
 
         $viewData['actionLinks'] = $actionLinks;
+        $viewData['trackedLinkParams'] = $trackedLinkParams;
 
 
         // view 호출
