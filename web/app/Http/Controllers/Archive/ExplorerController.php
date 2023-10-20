@@ -202,9 +202,9 @@ class ExplorerController extends BaseController {
         }
     }
 
-
-
-
+    /**
+     * 폴더 선택
+     */
     public function folderSelector(Request $request){
         $archiveId = $request->input('archive');
         $excluded = $request->input('excluded');
@@ -230,33 +230,8 @@ class ExplorerController extends BaseController {
 
 
     /**
-     * 상단 네비게이션 아이템 조회
+     * 하위 폴더를 조회
      */
-    public function doAjax_getHeaderNav(Request $request){
-
-        // 유효성 검증
-        $validatedData = $request->validate([
-            'archive_id' => 'required|integer'
-        ]);
-
-        // 파라미터
-        $archiveId = $request->input('archive_id');
-
-        // 권한 체크
-        SAArchive::select(['id'])
-            ->where ( [['user_id', Auth::id() ],['id',$archiveId]])
-            ->firstOrFail ();
-
-        $masterList = SAFolder::select(['id','name','parent_id','depth'])
-        ->where('depth','1')
-        ->where('archive_id', $archiveId)
-        ->orderBy('index','asc')->get();
-
-        $dataSet['list'] = $masterList;
-        return response()->json($dataSet);
-    }
-
-
     public function doAjax_getChildFolder(Request $request){
         // 파라미터
         $archiveId = $request->input('archive_id');
@@ -434,5 +409,33 @@ class ExplorerController extends BaseController {
         $routeLink = route ( self::ROUTE_ID . '.show', ['profile'=> $profileId, 'archive'=>$archiveId]);
 
         return (strtok($previous,'?') == $routeLink) ? $previous : $routeLink;
+    }
+
+    /**
+     * 상단 네비게이션 아이템 조회
+     * @deprecated
+     */
+    public function doAjax_getHeaderNav(Request $request){
+
+        // 유효성 검증
+        $validatedData = $request->validate([
+            'archive_id' => 'required|integer'
+        ]);
+
+        // 파라미터
+        $archiveId = $request->input('archive_id');
+
+        // 권한 체크
+        SAArchive::select(['id'])
+            ->where ( [['user_id', Auth::id() ],['id',$archiveId]])
+            ->firstOrFail ();
+
+        $masterList = SAFolder::select(['id','name','parent_id','depth'])
+        ->where('depth','1')
+        ->where('archive_id', $archiveId)
+        ->orderBy('index','asc')->get();
+
+        $dataSet['list'] = $masterList;
+        return response()->json($dataSet);
     }
 }
