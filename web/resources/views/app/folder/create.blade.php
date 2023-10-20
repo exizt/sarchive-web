@@ -2,24 +2,24 @@
 @section('title',"폴더 신규")
 @section('content')
 <div class="container py-5">
-	@include('modules.message.messages_and_errors.default')
-	<form class="form-horizontal prevent" role="form" method="POST"
-		action="{{ route($ROUTE_ID.'.store') }}">
-		<input type="hidden" name="_token" value="{{ csrf_token() }}">
-		<input type="hidden" name="archive_id" value="{{ $parameters['archive_id'] }}">
+    @include('modules.message.messages_and_errors.default')
+    <form class="form-horizontal prevent" role="form" method="POST"
+        action="{{ route($ROUTE_ID.'.store') }}">
+        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="archive_id" value="{{ $parameters['archive_id'] }}">
 
-		<div class="card mt-3">
-			<h5 class="card-header">폴더 추가</h5>
-			<div class="card-body px-1 px-md-3">
-				@include($VIEW_PATH.'._form')
-				<div>
-					<button type="submit" class="btn btn-primary btn-sm site-shortcut-key-s">저장</button>
+        <div class="card mt-3">
+            <h5 class="card-header">폴더 추가</h5>
+            <div class="card-body px-1 px-md-3">
+                @include($VIEW_PATH.'._form')
+                <div>
+                    <button type="submit" class="btn btn-primary btn-sm site-shortcut-key-s">저장</button>
                     <button type="submit" class="btn btn-outline-success btn-sm" name="action" value="continue">저장 후 계속 편집</button>
-					<a class="text-secondary mx-2 site-shortcut-key-z" style="font-size:14px"
-					href="javascript:history.back()" role="button">취소</a>
-				</div>
-			</div>
-		</div>
-	</form>
+                    <a class="text-secondary mx-2 site-shortcut-key-z" style="font-size:14px"
+                    href="javascript:history.back()" role="button">취소</a>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 @endsection
