@@ -2,7 +2,7 @@
 @section('title',"글 수정 : $article->title")
 @section('content')
 <div class="container-fluid mt-4 mb-5">
-	@include('layouts.modules.messages.messages_and_errors_bs4')
+	@include('modules.message.messages_and_errors.default')
 	<form class="form-horizontal prevent" role="form" method="POST" action="{{ route($ROUTE_ID.'.update',['doc'=>$article->id]) }}">
 		<input type="hidden" name="_token" value="{{ csrf_token() }}">
 		<input type="hidden" name="_method" value="PUT">

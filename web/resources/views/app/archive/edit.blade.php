@@ -2,7 +2,7 @@
 @section('title',"아카이브 편집")
 @section('content')
 <div class="container py-5">
-	@include('layouts.modules.messages.messages_and_errors_bs4')
+	@include('modules.message.messages_and_errors.default')
 	<form class="form-horizontal prevent" role="form" method="POST" action="{{ route($ROUTE_ID.'.update',$item->id) }}">
 		<input type="hidden" name="_token" value="{{ csrf_token() }}">
 		<input type="hidden" name="_method" value="PUT">

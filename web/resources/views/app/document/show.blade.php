@@ -5,7 +5,7 @@
 @endpush
 @section('content')
 <div class="container-fluid px-1 px-md-3 mt-4 mb-5">
-    @include('layouts.modules.messages.messages_and_errors_bs4')
+    @include('modules.message.messages_and_errors.default')
     <nav aria-label="breadcrumb" id="locationNav">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="/archives/{{$archive->id}}/latest">{{ $archive->name }}</a></li>

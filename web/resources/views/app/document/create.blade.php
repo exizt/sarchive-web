@@ -2,7 +2,7 @@
 @section('title',"글 작성")
 @section('content')
 <div class="container-fluid mt-4 mb-5">
-	@include('layouts.modules.messages.messages_and_errors_bs4')
+	@include('messages.messages_and_errors_bs4')
 	<form class="form-horizontal prevent" role="form" method="POST" action="{{ route($ROUTE_ID.'.store') }}">
 		<input type="hidden" name="_token" value="{{ csrf_token() }}">
 		<input type="hidden" name="archive_id" value="{{ $parameters['archive_id'] }}">
