@@ -12,6 +12,7 @@ use App\Models\SArchive\SAFolder;
 use App\Models\SArchive\SADocument;
 use App\Models\SArchive\SACategoryDocumentRel;
 use App\Models\ArchiveBookmark;
+use App\Models\SArchive\SACategory;
 
 class DocumentController extends Controller {
     protected const VIEW_PATH = 'app.document';
@@ -398,7 +399,11 @@ class DocumentController extends Controller {
             // 카테고리에 의한 최신 게시물
             $explorerRouteId = 'explorer.category';
             $params['archive'] = $archiveId;
-            $params['category'] = $linkParams['lcategory'];
+            // 여기서는 카테고리 이름이 필요함...
+            $categoryId = $linkParams['lcategory'];
+            $categoryName = SACategory::find($categoryId, 'name')->name;
+            $params['category'] = $categoryName;
+
             // 카테고리 접근
             //$cat = urlencode($params['lcategory']);
         } else {
