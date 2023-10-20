@@ -13,6 +13,7 @@ use App\Models\SArchive\SADocument;
 use App\Models\SArchive\SACategoryDocumentRel;
 use App\Models\ArchiveBookmark;
 use App\Models\SArchive\SACategory;
+use App\App\ListLinker;
 
 class DocumentController extends Controller {
     protected const VIEW_PATH = 'app.document';
@@ -79,6 +80,32 @@ class DocumentController extends Controller {
     }
 
 
+    /**
+     * 문서 편집
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Request $request, $documentId) {
+
+        // 문서 내용 조회
+        $document = SADocument::findOrFail($documentId);
+        $archiveId = $document->archive_id;
+
+        // archiveId 권한 체크 및 조회
+        $archive = $this->retrieveAuthArchive($archiveId);
+
+        // data 생성
+        $viewData = $this->createViewData ();
+        $viewData ['article'] = $document;
+
+        $linkParams = $this->createLinkParams($request);
+        $actionLinks = (object)[];
+        $actionLinks->cancel = route(self::ROUTE_ID.'.show', array_merge($linkParams,['doc'=>$document->id]) );
+
+        $viewData ['actionLinks'] = $actionLinks;
+        return view ( self::VIEW_PATH . '.edit', $viewData );
+    }
 
 
     /**
@@ -110,35 +137,6 @@ class DocumentController extends Controller {
     }
 
 
-
-    /**
-     * 문서 편집
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Request $request, $documentId) {
-
-        // 문서 내용 조회
-        $document = SADocument::findOrFail($documentId);
-        $archiveId = $document->archive_id;
-
-        // archiveId 권한 체크 및 조회
-        $archive = $this->retrieveAuthArchive($archiveId);
-
-        // data 생성
-        $viewData = $this->createViewData ();
-        $viewData ['article'] = $document;
-
-        $linkParams = $this->createLinkParams($request);
-        $actionLinks = (object)[];
-        $actionLinks->cancel = route(self::ROUTE_ID.'.show', array_merge($linkParams,['doc'=>$document->id]) );
-
-        $viewData ['actionLinks'] = $actionLinks;
-        return view ( self::VIEW_PATH . '.edit', $viewData );
-
-
-    }
 
 
     /**
@@ -416,7 +414,6 @@ class DocumentController extends Controller {
     }
 
 
-
     /**
      * Request의 Get 파라미터 변수 중 링크에 활용되는 변수에 대해서
      * 파라미터 배열을 생성.
@@ -436,7 +433,6 @@ class DocumentController extends Controller {
 
         return $parameters;
     }
-
 
 
     /**
