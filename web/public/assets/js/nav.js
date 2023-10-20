@@ -51,7 +51,7 @@
          */
         function buildFolderListItem(mode, data, theme){
             // 임시로 사용될 id prefix 설정값 (겹치지 않도록 주의)
-            const tempIdNode_prefix = 'folderNav-item-';
+            const tempIdNode_prefix = 'tmpFolderNav-item-';
             // const tempIdNode_className = 'ar-folder-list-temp';
 
             // 선택된 폴더의 depth
@@ -63,6 +63,16 @@
                 result(idx, data)
             })
 
+            // 임시로 만든 span 태그 삭제
+            document.querySelectorAll(`#${navListSelectorId} > span`).forEach(el => el.remove());
+
+            /**
+             * 결과를 html로 표현.
+             *
+             * 1단계 아이템은 순서대로 잘 생성이 되지만, 2단계부터는 순서가 애매하다.
+             * 1단계 A아이템 뒤로 붙인다고 가정할 때, 하나씩 붙다보면 순서가 역순이 되버릴 수 있다.
+             * 그래서 span 태그를 하나 추가하고, 그 앞에 붙이는 식으로 트릭을 써야 한다.
+             */
             function result(i, item){
                 let depth = item.depth - currentDepth
                 let nav = document.getElementById(navListSelectorId)
@@ -73,14 +83,14 @@
                     let label = `${repeatString}&nbsp;&nbsp;${item.name}`
                     let html = buildHtml(item.id, `/folders/${item.id}`,label, item.count, depth)
                     //document.getElementById(`${tempIdNode_prefix}${item.parent_id}`).nextElementSibling.innerHTML += html
-                    // document.getElementById(`${tempIdNode_prefix}${item.parent_id}`).insertAdjacentHTML('beforebegin', html);
-                    document.getElementById(`${tempIdNode_prefix}${item.parent_id}`).insertAdjacentHTML('afterend', html)
+                    document.getElementById(`${tempIdNode_prefix}${item.parent_id}`).insertAdjacentHTML('beforebegin', html)
+                    // document.getElementById(`${tempIdNode_prefix}${item.parent_id}`).insertAdjacentHTML('afterend', html)
                 }
 
                 // html 생성
                 function buildHtml(id, link, label, count, depth){
                     if(theme='bs4'){
-                        return `<a href="${link}" id="${tempIdNode_prefix}${id}"
+                        return `<a href="${link}"
                             class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
                             data-id="${id}" data-label="${label}" data-depth="${depth}">
                                 ${label}
@@ -89,7 +99,7 @@
                                     <span class="badge badge-secondary arch-indexEditMode-up">▲</span>
                                     <span class="badge badge-secondary arch-indexEditMode-down">▼</span>
                                 </span>
-                        </a>`
+                        </a><span style="display:none" id="${tempIdNode_prefix}${id}"></span>`
                     } else if(theme='tailwind') {
                         return ''
                     }
