@@ -21,7 +21,7 @@ SArchive 프로젝트 TODO
 
 
 jquery 코드가 남아있는 곳들
-- admin/forder-control/index.blade.php : jstree가 사용되어야 하므로 어쩔 수가 없음.
+- admin/folder-control/index.blade.php : jstree가 사용되어야 하므로 어쩔 수가 없음.
 - app/explorer/folder-selector.blade.php : jstree가 사용되어야 하므로 어쩔 수가 없음.
 - app/folder/_form.blade.php : 완료. (modal만 남음)
 - app/document/_form.blade.php : 완료 (modal만 남음)

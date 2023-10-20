@@ -202,7 +202,7 @@ class DocumentController extends Controller {
             return redirect()->route ( self::ROUTE_ID . '.edit', $article->id )
             ->with('message', '저장되었습니다.' );
         }
-        $request->session()->flash('status_after_editing', 'true');
+        session()->flash('status_after_editing', 'true');
         return redirect()->route ( self::ROUTE_ID . '.show', $article->id )
         ->with('message', '저장되었습니다.' );
     }
@@ -294,7 +294,7 @@ class DocumentController extends Controller {
             return redirect()->back()->with('message', '저장되었습니다.');
         } else {
             $linkParams = $this->createLinkParamsByUrl(url()->previous());
-            $request->session()->flash('status_after_editing', 'true');
+            session()->flash('status_after_editing', 'true');
             return redirect()->route( self::ROUTE_ID.'.show', array_merge($linkParams,['doc'=>$document->id]))
             ->with('message', '저장되었습니다.' );
         }
@@ -375,7 +375,7 @@ class DocumentController extends Controller {
         ];
         $dataSet['success'] = '변경 완료되었습니다.';
 
-        $request->session()->flash('message', '변경 완료되었습니다.');
+        session()->flash('message', '변경 완료되었습니다.');
 
         return response()->json($dataSet);
     }
@@ -472,10 +472,10 @@ class DocumentController extends Controller {
 
         if(count($categoryNames) > 0){
             // insert 할 데이터 생성
-            $datas = array();
+            $dataSet = array();
             foreach($categoryNames as $k => $categoryName){
                 if(strlen(trim($categoryName))>0){
-                    $datas[$k] = [
+                    $dataSet[$k] = [
                         'archive_id' => $archiveId,
                         'category_name' => trim($categoryName),
                         'document_id' => $documentId,
@@ -485,8 +485,8 @@ class DocumentController extends Controller {
             }
 
             // 대량 할당
-            if(count($datas)>0){
-                SACategoryDocumentRel::insert($datas);
+            if(count($dataSet)>0){
+                SACategoryDocumentRel::insert($dataSet);
             }
         }
     }
