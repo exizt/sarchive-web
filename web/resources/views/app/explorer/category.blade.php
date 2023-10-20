@@ -40,7 +40,7 @@
 						<h5 class="mb-1">{{ $item->title }}</h5>
 						<small>{{ $item->created_at->format('Y-m-d') }}</small>
 					</div>
-					<p class="mb-1 pl-md-3 sarc-item-comments">
+					<p class="mb-1 pl-md-3 sa-list-item-summary">
 						<small>{{ $item->summary_var }}</small>
 					</p>
 				</a> @endforeach

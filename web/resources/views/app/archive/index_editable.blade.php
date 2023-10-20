@@ -30,7 +30,7 @@
 					</span>
 				</div>
 			</div>
-			<p class="mb-1 pl-md-3 sarc-item-comments">
+			<p class="mb-1 pl-md-3 sa-list-item-summary">
 				<small>{{ $item->comments }}</small>
 			</p>
 		</a>

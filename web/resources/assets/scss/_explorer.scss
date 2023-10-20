@@ -1,6 +1,7 @@
 @charset "UTF-8";
 
-p.sarc-item-comments{
+/* 목록에서 요약 부분. (아카이브선택,글 목록,검색결과목록 등) */
+.list-group p.sa-list-item-summary {
     overflow : hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -10,7 +11,9 @@ p.sarc-item-comments{
         font-size: 0.875rem;
     }
 }
-.sarc-item-label {
+
+/* 게시물 목록의 글 제목 */
+.sa-list-item-title {
     line-height: 1.5;
     color: rgb(27, 29, 31)
 }
