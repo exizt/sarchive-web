@@ -13,8 +13,8 @@
             <div class="modal-footer">
                 <form method="POST"
                     action="{{ $action }}">
-                    <input type="hidden" name="_token" value="{{ $token }}"> <input
-                        type="hidden" name="_method" value="DELETE">
+                    <input type="hidden" name="_token" value="{{ $token }}">
+                    <input type="hidden" name="_method" value="DELETE">
                     <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
                     <button type="submit" class="btn btn-danger">삭제</button>
                 </form>

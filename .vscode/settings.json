@@ -11,6 +11,15 @@
         },
     ],
     "liveSassCompile.settings.generateMap": false,
+    "search.exclude": {
+        "**/*.css.map": true,
+        "**/*.js.map": true,
+        "**/*.LICENSE.txt": true,
+        "**/AUTHORS.txt": true,
+        "**/LICENSE.txt": true,
+        "**/vendor": true,
+        "**/storage/*": true
+    },
     "cSpell.words": [
         "jstree",
         "larchive",
