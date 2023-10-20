@@ -6,7 +6,7 @@
     <form class="form-horizontal prevent" role="form" method="POST"
         action="{{ route($ROUTE_ID.'.store') }}">
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
-        <input type="hidden" name="archive_id" value="{{ $parameters['archive_id'] }}">
+        <input type="hidden" name="archive_id" value="{{ $archive->id }}">
 
         <div class="card mt-3">
             <h5 class="card-header">폴더 추가</h5>

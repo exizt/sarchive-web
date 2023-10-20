@@ -59,16 +59,16 @@ class DocumentController extends Controller {
 
         // viewData 생성
         $viewData = $this->createViewData ();
-        $viewData ['archive'] = $archive;
-        $viewData ['folder'] = $folder;
+        $viewData['archive'] = $archive;
+        $viewData['folder'] = $folder;
         //$viewData ['folder']->paths_decode = json_decode($folder->path);
-        if(isset($folder)) $viewData ['folder']->paths = $folder->paths();
-        $viewData ['article'] = $document;
+        if(isset($folder)) $viewData['folder']->paths = $folder->paths();
+        $viewData['article'] = $document;
         // $viewData ['previousLink'] = url()->previous();
         // $viewData ['bookmark'] = $bookmark;
 
         // 공용 파라미터 처리
-        $viewData ['parameters']['archiveId'] = $archiveId;
+        $viewData['parameters']['archiveId'] = $archiveId;
 
         // 링크 생성
         $actionLinks = (object)[];
@@ -78,10 +78,10 @@ class DocumentController extends Controller {
         $actionLinks->edit = route(self::ROUTE_ID.'.edit',array_merge($linkParams,['doc'=>$document->id]));
         // '목록' 링크
         $actionLinks->list = $this->generateListLinkString($archive->id, $linkParams);
-        $viewData ['actionLinks'] = $actionLinks;
+        $viewData['actionLinks'] = $actionLinks;
 
         // view 호출
-        return view ( self::VIEW_PATH . '.show', $viewData );
+        return view( self::VIEW_PATH . '.show', $viewData );
     }
 
     /**
@@ -98,21 +98,27 @@ class DocumentController extends Controller {
 
         // 파라미터
         $archiveId = $request->input('archive');
+        $folderId = $request->input('folder');// folder id
 
         // archiveId 권한 체크 및 조회
         $archive = $this->retrieveAuthArchive($archiveId);
 
+        if($folderId != null){
+            $folder = SAFolder::find($folderId, ['id', 'name']);
+        }
+
         // document 개체 생성
         $article = new SADocument;
 
-        // dataSet 생성
-        $dataSet = $this->createViewData ();
-        $dataSet ['article'] = $article;
-        $dataSet ['parameters']['archive_id'] = $archiveId;
-        return view ( self::VIEW_PATH . '.create', $dataSet );
+        // viewData 생성
+        $viewData = $this->createViewData();
+        $viewData['article'] = $article;
+        if(isset($folder)) $viewData['folder'] = $folder;
+        // $viewData['parameters']['archive_id'] = $archiveId;
+        $viewData['archive'] = $archive;
+
+        return view( self::VIEW_PATH . '.create', $viewData );
     }
-
-
 
     /**
      * 문서 편집
@@ -129,17 +135,25 @@ class DocumentController extends Controller {
         // archiveId 권한 체크 및 조회
         $archive = $this->retrieveAuthArchive($archiveId);
 
+        // folder 조회하기
+        if($document->folder_id){
+            $folder = $document->folder;
+        }
+
         // viewData 생성
         $viewData = $this->createViewData ();
-        $viewData ['article'] = $document;
+        $viewData['article'] = $document;
+        if(isset($folder)) $viewData['folder'] = $folder;
+        $viewData['archive'] = $archive;
 
+        // actionLinks 생성
         // $linkParams = $this->createLinkParams($request);
         $linkParams = ListLinker::getLinkParameters($request, $this->link_parameters, true);
         $actionLinks = (object)[];
         $actionLinks->cancel = route(self::ROUTE_ID.'.show', array_merge($linkParams,['doc'=>$document->id]) );
 
-        $viewData ['actionLinks'] = $actionLinks;
-        return view ( self::VIEW_PATH . '.edit', $viewData );
+        $viewData['actionLinks'] = $actionLinks;
+        return view( self::VIEW_PATH . '.edit', $viewData );
     }
 
 
@@ -419,28 +433,6 @@ class DocumentController extends Controller {
         return $link;
     }
 
-
-    /**
-     * Request의 Get 파라미터 변수 중 링크에 활용되는 변수에 대해서
-     * 파라미터 배열을 생성.
-     *
-     * @return array
-     */
-    private function createLinkParams(Request $request){
-        $parameters = array();
-        // $paramKeys = ['larchive','lcategory','lfolder'];
-        $allowed_keys = $this->link_parameters;
-        foreach($allowed_keys as $pKey){
-            $value = $request->input($pKey);
-            if(!empty($value)){
-                $parameters[$pKey] = (int) $value;
-            }
-        }
-
-        return $parameters;
-    }
-
-
     /**
      * URL 문자열을 통해서 링크에 이용될 파라미터 배열을 생성한다.
      *
@@ -465,8 +457,6 @@ class DocumentController extends Controller {
         }
         return $matches;
     }
-
-
 
     /**
      * Category 와 Document 의 릴레이션 갱신
@@ -498,21 +488,17 @@ class DocumentController extends Controller {
         }
     }
 
-
-
     /**
      * id를 통한 archive 조회 및 권한 체크
      * @param int $id 아카이브 Id
      */
-    private function retrieveAuthArchive($id){
-
+    private function retrieveAuthArchive($id)
+    {
         $this->archive = SAArchive::select(['id','name','route'])
             ->where ( [['user_id', Auth::id() ],['id',$id]])
             ->firstOrFail ();
         return $this->archive;
     }
-
-
 
     /**
      * folder 테이블의 doc_count 값을 갱신
@@ -523,27 +509,28 @@ class DocumentController extends Controller {
         SAFolder::updateDocCountAll($folderId);
     }
 
-
-
     /**
      *
      * @return string[]
      */
-    protected function createViewData() {
+    protected function createViewData()
+    {
         $data = array ();
-        $data ['ROUTE_ID'] = self::ROUTE_ID;
-        $data ['VIEW_PATH'] = self::VIEW_PATH;
-        $data ['parameters'] = array();
+        $data['ROUTE_ID'] = self::ROUTE_ID;
+        $data['VIEW_PATH'] = self::VIEW_PATH;
+        $data['parameters'] = array();
 
         $layoutParams = array();
+
+        // body 태그에 붙을 파라미터
         $bodyParams = array();
         if(isset($this->archive) && $this->archive != null){
             $layoutParams['archiveId'] = $this->archive->id;
             $layoutParams['archiveName'] = $this->archive->name;
             $bodyParams['archive'] = $this->archive->id;
         }
-        $data ['layoutParams'] = $layoutParams;
-        $data ['bodyParams'] = $bodyParams;
+        $data['layoutParams'] = $layoutParams;
+        $data['bodyParams'] = $bodyParams;
         return $data;
     }
 }

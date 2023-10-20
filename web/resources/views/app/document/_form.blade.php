@@ -47,8 +47,8 @@ tinymce.init({
 
     <div class="form-group">
         <label for="folderName">폴더 선택</label>
-        <input id="folderName" class="form-control" type="text" placeholder="" readonly @isset($article->folder) value="{{ $article->folder->name }}" @endisset>
-        <input name="folder_id" type="hidden" id="folder_id" value="{{ $article->folder_id }}">
+        <input id="folderName" class="form-control" type="text" placeholder="" readonly @isset($folder) value="{{ $folder->name }}" @endisset>
+        <input name="folder_id" type="hidden" id="folder_id" @isset($folder) value="{{ $folder->id }}" @endisset>
         <small class="text-mute font-italic font-weight-light">* 미선택시 루트 경로가 됩니다.</small>
     </div>
 
