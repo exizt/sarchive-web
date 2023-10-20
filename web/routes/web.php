@@ -22,7 +22,7 @@ Route::fallback( function () {
 
 // ajax
 Route::controller(ExplorerController::class)->group(function() {
-    Route::get('ajax/header_nav', 'doAjax_getHeaderNav');
+    // Route::get('ajax/header_nav', 'doAjax_getHeaderNav');
     Route::get('ajax/folder_nav', 'doAjax_getFolderNav');
     Route::get('ajax/folderList', 'doAjax_getChildFolder');
 });
