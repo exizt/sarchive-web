@@ -15,6 +15,9 @@ use App\Models\ArchiveBookmark;
 use App\Models\SArchive\SACategory;
 use App\App\ListLinker;
 
+/**
+ *
+ */
 class DocumentController extends Controller {
     protected const VIEW_PATH = 'app.document';
     protected const ROUTE_ID = 'doc';
@@ -25,7 +28,7 @@ class DocumentController extends Controller {
     protected $archive = null;
 
     //
-    protected $linkParamKeys = [
+    protected $link_parameters = [
         'lcategory','lfolder','larchive', 'page'
     ];
 
@@ -45,37 +48,39 @@ class DocumentController extends Controller {
 
         // 문서 조회
         $document = SADocument::findOrFail($documentId);
-
-        $archiveId = $document->archive_id;
-
         // archiveId 권한 체크 및 조회
-        $archive = $this->retrieveAuthArchive($archiveId);
-
+        $archive = $this->retrieveAuthArchive($document->archive_id);
+        // folder 조회
         $folder = SAFolder::find($document->folder_id);
-        $bookmark = ArchiveBookmark::firstOrNew(['id'=>$documentId]);
 
-        // create viewData
+        // archiveId
+        $archiveId = $archive->id;
+        // $bookmark = ArchiveBookmark::firstOrNew(['id'=>$documentId]);
+
+        // viewData 생성
         $viewData = $this->createViewData ();
         $viewData ['archive'] = $archive;
         $viewData ['folder'] = $folder;
         //$viewData ['folder']->paths_decode = json_decode($folder->path);
         if(isset($folder)) $viewData ['folder']->paths = $folder->paths();
         $viewData ['article'] = $document;
-        $viewData ['previousLink'] = url()->previous();
-        $viewData ['bookmark'] = $bookmark;
+        // $viewData ['previousLink'] = url()->previous();
+        // $viewData ['bookmark'] = $bookmark;
 
         // 공용 파라미터 처리
         $viewData ['parameters']['archiveId'] = $archiveId;
 
         // 링크 생성
         $actionLinks = (object)[];
-        $linkParams = $this->createLinkParams($request);
+        // $linkParams = $this->createLinkParams($request);
+        $linkParams = ListLinker::getLinkParameters($request, $this->link_parameters, true);
         // '편집' 링크
         $actionLinks->edit = route(self::ROUTE_ID.'.edit',array_merge($linkParams,['doc'=>$document->id]));
         // '목록' 링크
         $actionLinks->list = $this->generateListLinkString($archive->id, $linkParams);
-
         $viewData ['actionLinks'] = $actionLinks;
+
+        // view 호출
         return view ( self::VIEW_PATH . '.show', $viewData );
     }
 
@@ -95,11 +100,12 @@ class DocumentController extends Controller {
         // archiveId 권한 체크 및 조회
         $archive = $this->retrieveAuthArchive($archiveId);
 
-        // data 생성
+        // viewData 생성
         $viewData = $this->createViewData ();
         $viewData ['article'] = $document;
 
-        $linkParams = $this->createLinkParams($request);
+        // $linkParams = $this->createLinkParams($request);
+        $linkParams = ListLinker::getLinkParameters($request, $this->link_parameters, true);
         $actionLinks = (object)[];
         $actionLinks->cancel = route(self::ROUTE_ID.'.show', array_merge($linkParams,['doc'=>$document->id]) );
 
@@ -423,7 +429,7 @@ class DocumentController extends Controller {
     private function createLinkParams(Request $request){
         $parameters = array();
         // $paramKeys = ['larchive','lcategory','lfolder'];
-        $allowed_keys = $this->linkParamKeys;
+        $allowed_keys = $this->link_parameters;
         foreach($allowed_keys as $pKey){
             $value = $request->input($pKey);
             if(!empty($value)){
@@ -442,7 +448,7 @@ class DocumentController extends Controller {
      */
     private function createLinkParamsByUrl($url){
         // $allowed_keys = ['lcategory','lfolder','larchive'];
-        $allowed_keys = $this->linkParamKeys;
+        $allowed_keys = $this->link_parameters;
         $matches = array();
 
         // query 부분을 배열화

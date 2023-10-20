@@ -11,8 +11,11 @@ use App\Models\SArchive\SAFolder;
 use App\Models\SArchive\SADocument;
 use App\Models\SArchive\SACategory;
 use App\Models\SArchive\SACategoryRel;
+use App\App\ListLinker;
 
-
+/**
+ *
+ */
 class ExplorerController extends BaseController {
     protected const VIEW_PATH = 'app.explorer';
     protected const ROUTE_ID = 'archives';
@@ -56,12 +59,19 @@ class ExplorerController extends BaseController {
 
         $masterList = $qry->orderBy ( 'created_at', 'desc' )->paginate(15);
 
-        // dataSet 생성
-        $viewData = $this->createViewData ();
-        $viewData['masterList'] = $masterList;
-        $viewData['archive'] = $archive;
-        if($is_only) $viewData['paginationParams']['only'] = true;
-        return view ( self::VIEW_PATH . '.index', $viewData );
+        // view 처리
+        return $this->renderDocumentListView($request, [
+            'masterList' => $masterList,
+            'archive' => $archive,
+            'is_only' => $is_only
+        ]);
+
+        // view 호출
+        // return view( self::VIEW_PATH.'.index', $viewData );
+    }
+
+    private function makeQueryString($arr): string{
+        return http_build_query($arr);
     }
 
 
@@ -70,17 +80,15 @@ class ExplorerController extends BaseController {
      *
      */
     public function showDocsByFolder(Request $request, $folderId) {
-
-        $folder = SAFolder::findOrFail($folderId);
-        $archiveId = $folder->archive_id;
-        //$archive = $folder->archive;
-
-        // archiveId 권한 체크 및 조회
-        $archive = $this->retrieveAuthArchive($archiveId);
-
         // 해당 폴더에 해당하는 것만 조회하는 옵션. false 일 때에는 하위 폴더까지 조회.
         $is_only = (bool)$request->input( 'only' , false);
-        if(! $is_only){
+
+        // folder 정보 조회
+        $folder = SAFolder::findOrFail($folderId);
+        // archiveId 권한 체크 및 조회
+        $archive = $this->retrieveAuthArchive($folder->archive_id);
+
+        if( !$is_only ){
             /**
              * 하위 폴더까지 게시물 목록 조회
              */
@@ -105,19 +113,56 @@ class ExplorerController extends BaseController {
             ->paginate(15);
         }
 
-        // viewData 생성
-        $viewData = $this->createViewData ();
-        $viewData['masterList'] = $masterList;
-        $viewData['folder'] = $folder;
-        $viewData['folder']->paths = $folder->paths();
-        $viewData['archive'] = $archive;
-        $viewData['bodyParams']['folder'] = $folderId;
-        $viewData['parameters']['folder'] = $folder;
-        if($is_only) $viewData['paginationParams']['only'] = true;
-        return view ( self::VIEW_PATH . '.index', $viewData );
+        // view 처리
+        return $this->renderDocumentListView($request, [
+            'masterList' => $masterList,
+            'archive' => $archive,
+            'folder' => $folder,
+            'is_only' => $is_only
+        ]);
     }
 
+    /**
+     * Url 진입점인 showDocsByArchive, showDocsByFolder, showDocsByCategory의 공통적인 부분을 추리고
+     * view로 전달하는 과정을 동일하게 함.
+     */
+    protected function renderDocumentListView(Request $request, $data){
+        $archive = $data['archive'];
+        $folder = isset($data['folder']) ? $data['folder'] : null;
+        $is_only = isset($data['is_only']) ? $data['is_only'] : null;
+        $masterList = isset($data['masterList']) ? $data['masterList'] : null;
 
+        // viewData 생성
+        $viewData = $this->createViewData ();
+        $viewData['archive'] = $archive;
+        if ($folder) {
+            $viewData['folder'] = $folder;
+            $viewData['folder']->paths = $folder->paths();
+            $viewData['bodyParams']['folder'] = $folder->id;
+            $viewData['parameters']['folder'] = $folder;
+        }
+        if($is_only) $viewData['paginationParams']['only'] = true;
+        $viewData['masterList'] = $masterList;
+
+        // actionLinks
+        $actionLinks = (object)[];
+        // 액션 folders.create, doc.create 등에서 사용되는 파라미터.
+        $actionParams = ['archive'=>$archive->id];
+        if($folder) {
+            $actionParams['folder'] = $folder->id;
+        }
+        // 새 폴더, 새 문서에서는 archive, folder, category 정도의 정보면 충분하다.
+        $actionLinks->new_doc = route('doc.create', $actionParams, false);
+        $actionLinks->new_folder = route('folders.create', $actionParams, false);
+        // 문서 목록에서 활용될 링크 파라미터. 링크에 따라붙이기 위한 목적으로만 사용되는 파라미터. page 등.
+        $linkParams = ListLinker::getLinkParameters($request, ['lpage'=>'page']);
+
+        $viewData['actionLinks'] = $actionLinks;
+
+
+        // view 호출
+        return view ( self::VIEW_PATH . '.index', $viewData );
+    }
 
 
     /**

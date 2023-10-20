@@ -19,8 +19,8 @@
                             @endif
                         </div>
                         <div class="text-right">
-                            <a href="/folders/create?archive={{ $layoutParams['archiveId'] }}" class="btn btn-sm btn-outline-primary">새 폴더</a>
-                            <a href="/doc/create?archive={{ $layoutParams['archiveId'] }}" class="btn btn-sm btn-outline-primary">새 문서</a>
+                            <a href="{{ $actionLinks->new_folder }}" class="btn btn-sm btn-outline-primary">새 폴더</a>
+                            <a href="{{ $actionLinks->new_doc }}" class="btn btn-sm btn-outline-primary">새 문서</a>
                         </div>
                     </div>
                     @if (isset($parameters['folder']))
