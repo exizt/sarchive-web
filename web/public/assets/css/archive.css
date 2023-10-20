@@ -46,6 +46,46 @@ body {
   }
 }
 
+/* 문서 보기 > 컨텐츠 부분 */
+.sa-article {
+  font-family: 나눔고딕, "맑은 고딕", "NanumGothic", "Malgun Gothic";
+  font-size: 1.125rem;
+  font-weight: normal;
+}
+.sa-article .sa-article-output {
+  /* 소스 코드 강조 블럭 */
+}
+.sa-article .sa-article-output pre > code {
+  font-size: 0.8em;
+}
+
+/* 경로 네비게이션의 중간 문자를 변환함 */
+#locationNav .breadcrumb-item + .breadcrumb-item::before {
+  content: ">";
+}
+
+/* 분류 category의 표현 (문서 show / 탐색 category) */
+ul.sa-category-breadcrumbs {
+  letter-spacing: -1em;
+  padding-left: 0;
+  list-style: none;
+  display: inline;
+}
+ul.sa-category-breadcrumbs > li {
+  display: inline-block;
+  letter-spacing: normal;
+  padding-left: 0.25rem !important;
+  padding-right: 0.25rem !important;
+}
+ul.sa-category-breadcrumbs > li:first-child {
+  border-left: none;
+}
+ul.sa-category-breadcrumbs > li:not(:first-child)::before {
+  content: "|";
+  padding-right: 0.5rem;
+  color: RGB(125, 125, 125);
+}
+
 #logo {
   background: center/contain no-repeat url("/assets/logo/polymer-white-18dp.svg");
   background-repeat: no-repeat;
@@ -85,28 +125,6 @@ body{
     background-color: #222;
 }
 */
-/* 문서에서 분류 표시 (문서show/탐색category) */
-ul.sarc-cat-list {
-  letter-spacing: -1em;
-  padding-left: 0;
-  list-style: none;
-  display: inline;
-}
-ul.sarc-cat-list > li {
-  display: inline-block;
-  letter-spacing: normal;
-  padding-left: 0.25rem !important;
-  padding-right: 0.25rem !important;
-}
-ul.sarc-cat-list > li:first-child {
-  border-left: none;
-}
-ul.sarc-cat-list > li:not(:first-child)::before {
-  content: "|";
-  padding-right: 0.5rem;
-  color: RGB(125, 125, 125);
-}
-
 span.sa-icon {
   background-position: center;
   background-size: contain;
@@ -124,22 +142,4 @@ span.sa-icon.sa-icon-archive {
 }
 span.sa-icon.sa-icon-folder {
   background-image: url("/assets/icons/folder.svg");
-}
-
-/* 경로 네비게이션의 중간 문자를 변환함 */
-#locationNav .breadcrumb-item + .breadcrumb-item::before {
-  content: ">";
-}
-
-/* 문서 보기 > 컨텐츠 부분 */
-.sa-article {
-  font-family: 나눔고딕, "맑은 고딕", "NanumGothic", "Malgun Gothic";
-  font-size: 1.125rem;
-  font-weight: normal;
-}
-.sa-article .sa-article-output {
-  /* 소스 코드 강조 블럭 */
-}
-.sa-article .sa-article-output pre > code {
-  font-size: 0.8em;
 }

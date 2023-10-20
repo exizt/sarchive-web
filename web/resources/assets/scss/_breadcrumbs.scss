@@ -1,0 +1,33 @@
+@charset "UTF-8";
+
+/* 경로 네비게이션의 중간 문자를 변환함 */
+#locationNav .breadcrumb-item+.breadcrumb-item::before {
+    content: ">";
+}
+
+
+/* 분류 category의 표현 (문서 show / 탐색 category) */
+ul.sa-category-breadcrumbs {
+    letter-spacing: -1em;
+    padding-left: 0;
+    list-style: none;
+    display:inline;
+
+    > li{
+        display: inline-block;
+        letter-spacing: normal;
+        padding-left: 0.25rem !important;
+        padding-right: 0.25rem !important;
+    }
+
+    > li:first-child{
+        border-left:none;
+    }
+
+    > li:not(:first-child)::before{
+        content: "|";
+        padding-right: 0.5rem;
+        color: RGB(125,125,125)
+    }
+}
+
