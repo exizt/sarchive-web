@@ -68,14 +68,13 @@ class FolderController extends Controller {
 
         // dataSet 생성
         $dataSet = $this->createViewData ();
-        $dataSet ['item'] = $folder;
-        $dataSet ['parameters']['archive_id'] = $archiveId;
-        $dataSet ['parentFolder'] = $parentFolder;
-        $dataSet ['cancelButtonLink'] = url()->previous();
+        $dataSet['item'] = $folder;
+        $dataSet['archive'] = $archive;
+        $dataSet['parameters']['archive_id'] = $archiveId;
+        $dataSet['parentFolder'] = $parentFolder;
+        $dataSet['cancelButtonLink'] = url()->previous();
         return view ( self::VIEW_PATH . '.create', $dataSet );
     }
-
-
 
     /**
      * 문서 편집

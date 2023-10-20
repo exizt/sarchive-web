@@ -5,7 +5,7 @@
     @include('modules.message.messages_and_errors.default')
     <form class="form-horizontal prevent" role="form" method="POST"
         action="{{ route($ROUTE_ID.'.store') }}">
-        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+        @csrf
         <input type="hidden" name="archive_id" value="{{ $archive->id }}">
 
         <div class="card mt-3">
