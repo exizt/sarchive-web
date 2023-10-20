@@ -300,8 +300,20 @@ class ExplorerController extends BaseController {
                 ->where ( 'id', $folderId )
                 ->firstOrFail ();
 
+            $folder_path = $currentFolder->system_path;
+            $max_depth = $currentFolder->depth + 2;
+
             // 하위 폴더 목록
-            // 노드의 부모 p2, p3, p4를 left join하여 만든 후 탐색을 하는 쿼리.
+            $masterList = SAFolder::select(['id','name','parent_id','depth', 'system_path', 'doc_count', 'doc_count_all as count'])
+                ->whereRaw ( 'left(system_path, length(?)) = ?', [$folder_path, $folder_path] )
+                ->where ('id', '!=', $currentFolder->id)
+                ->where ('archive_id', $archive->id)
+                ->where ('depth', '<=' , $max_depth)
+                ->orderBy ( 'depth', 'asc' )
+                ->orderBy ( 'index', 'asc' )
+                ->get();
+
+            /*
             $masterList = DB::select("select
                         n.parent_id as parent_id,
                         n.id,
@@ -314,10 +326,19 @@ class ExplorerController extends BaseController {
             where       ? in (n.parent_id,
                 p1.parent_id)
             order by    n.depth, n.index;",[$folderId]);
+            */
 
         } else {
             // 아카이브의 하위 폴더 목록
             // 3단계까지만 조회하게 제한함.
+            $masterList = SAFolder::select(['id','name','parent_id','depth', 'system_path', 'doc_count', 'doc_count_all as count'])
+                ->where ('archive_id', $archive->id)
+                ->where ('depth', '<=' , 2)
+                ->orderBy ( 'depth', 'asc' )
+                ->orderBy ( 'index', 'asc' )
+                ->get();
+
+            /*
             $masterList = DB::select("select
                                 n.parent_id as parent_id,
                                 n.id,
@@ -326,11 +347,11 @@ class ExplorerController extends BaseController {
                                 n.depth,
                                 n.system_path
             from        sa_folders n
-            left join   sa_folders p1 on p1.id = n.parent_id
             where       n.archive_id = ?
             and         n.depth <= 2
             order by    n.depth, n.index;",[$archiveId]);
             //order       by p1.index, p2.index, p3.index, p4.index, p5.index, p1.id;
+            */
         }
 
         $dataSet = array();
