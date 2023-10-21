@@ -117,14 +117,14 @@ span.sa-icon {
   vertical-align: text-bottom;
 }
 span.sa-icon.sa-icon-archive {
-  background-image: url("/assets/icons/archive.svg");
+  background-image: url("/assets/symbol/icons/archive.svg");
 }
 span.sa-icon.sa-icon-folder {
-  background-image: url("/assets/icons/folder.svg");
+  background-image: url("/assets/symbol/icons/folder.svg");
 }
 
 #logo {
-  background: center/contain no-repeat url("/assets/logo/polymer-white-18dp.svg");
+  background: center/contain no-repeat url("/assets/symbol/logo/polymer-white-18dp.svg");
   background-repeat: no-repeat;
   width: 2rem;
   height: 2rem;
