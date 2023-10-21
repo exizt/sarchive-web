@@ -29,25 +29,25 @@ function jsTreeHandler(){
         }
     });
 
-    var pFolderIdSel = getFolderIdSelectorOfParent()
-    var pFolderNameSel = getFolderNameSelectorOfParent()
+    const parent_selectedFolderId_id = getFolderIdSelectorOfParent()
+    const parent_selectedFolderName_id = getFolderNameSelectorOfParent()
     // jsTree 변경시 이벤트
     jsTree.on('changed.jstree', function(e, data){
         if(data && data.selected && data.selected.length){
-            var id = data.selected.join(':')
+            const id = data.selected.join(':')
             if(data.node.children.length == 0){
                 loadChildData(id)
             }
             // 선택된 상황이므로 이벤트 처리.
             if(typeof parent !== "undefined"){
-            var parSelectedFolderId = parent.document.getElementById(pFolderIdSel)
-            if(parSelectedFolderId != null){
-                // folderId 변경
-                parSelectedFolderId.value = id
+                var parent_selectedFolderId_el = parent.document.getElementById(parent_selectedFolderId_id)
+                if(parent_selectedFolderId_el != null){
+                    // folderId 변경
+                    parent_selectedFolderId_el.value = id
 
-                // folderName 변경
-                parent.document.getElementById(pFolderNameSel).value = data.node.text
-            }
+                    // folderName 변경
+                    parent.document.getElementById(parent_selectedFolderName_id).value = data.node.text
+                }
             }
         }
     });
@@ -63,8 +63,8 @@ function jsTreeHandler(){
             var ret = [];
             $.each(data, function(i, item){
                 //console.log(item);
-                var parent = (item.parent == '0') ? '#' : item.parent
-                var node = {
+                const parent = (item.parent == '0') ? '#' : item.parent
+                const node = {
                     id : item.id,
                     text : item.text,
                     parent: parent
@@ -86,14 +86,14 @@ function jsTreeHandler(){
         }
         loadData(params, function(data){
             $.each(data, function(i, item){
-            var node = {
-                id : item.id,
-                text : item.text,
-                parent: item.parent
-            }
-            if ( !isExcludedId(item.id) ) {
-                jstree_createNode(node)
-            }
+                const node = {
+                    id : item.id,
+                    text : item.text,
+                    parent: item.parent
+                }
+                if ( !isExcludedId(item.id) ) {
+                    jstree_createNode(node)
+                }
             })
             $(_jstreeSelector).jstree(true).open_node(parentId)
         })
@@ -154,16 +154,17 @@ function getArchiveId(){
  * '폴더 아이디'를 기입할 부모창의 selector id 값
  */
 function getFolderIdSelectorOfParent(){
-    var s = document.body.dataset.folderIdOfParent
-    return (typeof s === "undefined" || s == "")? "selectedFolderId" : s
+    return document.body.dataset.folderIdOfParent ?? "selectedFolderId"
+    // var s = document.body.dataset.folderIdOfParent
+    // return (typeof s === "undefined" || s == "")? "selectedFolderId" : s
 }
 
 /**
  * '폴더 이름'을 기입할 부모창의 selector id 값
  */
 function getFolderNameSelectorOfParent(){
-    var s =  document.body.dataset.folderNameOfParent
-    return (typeof s === "undefined" || s == "")? "selectedFolderName" : s
+    return document.body.dataset.folderNameOfParent ?? "selectedFolderName"
+    // return ( !!s ) ? s : "selectedFolderName"
 }
 
 /**
