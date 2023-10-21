@@ -34,16 +34,3 @@ var func = {
             return false;
     }
 }
-
-/**
- * folderSelector 호출
- */
-function loadFolderSelectorIframe(iframeId, archiveId, options){
-    var url = `/folder-selector?archive=${archiveId}`
-
-    if(typeof options !== "undefined"){
-        var s = new URLSearchParams(options).toString();
-        url += "&"+s
-    }
-    document.getElementById(iframeId).src = url;
-}
