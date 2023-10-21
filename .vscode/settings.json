@@ -27,6 +27,7 @@
         "lfolder",
         "lpage",
         "Nanum",
-        "rownum"
+        "rownum",
+        "updown"
     ],
 }
