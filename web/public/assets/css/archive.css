@@ -49,13 +49,13 @@ body {
 /* 문서 보기 > 컨텐츠 부분 */
 .sa-article {
   font-family: 나눔고딕, "맑은 고딕", "NanumGothic", "Malgun Gothic";
-  font-size: 1.125rem;
   font-weight: normal;
 }
 .sa-article .sa-article-output {
   /* 소스 코드 강조 블럭 */
 }
 .sa-article .sa-article-output pre > code {
+  font-size: 1.125rem;
   font-size: 0.8em;
 }
 
