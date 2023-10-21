@@ -2,7 +2,7 @@
 @section('title',"아카이브 목록 편집")
 @section('content')
 @push('scripts')
-<script src="/assets/js/sub_archive.js"></script>
+<script src="/assets/js/page-js/sub_archive.js"></script>
 @endpush
 {{-- 아카이브 목록 편집 (/archives/editableIndex) --}}
 <div class="container py-5" id="reorderArchive">
