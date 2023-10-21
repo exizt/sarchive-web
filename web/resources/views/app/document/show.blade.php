@@ -52,7 +52,7 @@
     <hr>
     <div class="d-flex justify-content-between">
         <div>
-            @if (session()->has('status_after_editing'))
+            @if ( $actionLinks->backOrList == "list" )
             <a class="btn btn-secondary btn-sm site-shortcut-key-z"
                 href="{{ $actionLinks->list }}" role="button">목록</a>
             @else

@@ -77,6 +77,23 @@ class DocumentController extends Controller {
         $actionLinks->edit = route(self::ROUTE_ID.'.edit',array_merge($linkParams,['doc'=>$document->id]));
         // '목록' 링크
         $actionLinks->list = $this->generateListLink($archive->id, $linkParams);
+
+        // 이전 링크를 분석할 필요가 있음.
+        // 이전 링크가 '편집 모드', '신규 모드'인 경우에는 '뒤로'가 아닌 '목록' 버튼이 나오게 되야 한다.
+        if (session()->has('status_after_editing')){
+            $actionLinks->backOrList = 'list';
+        } else {
+            // https://stackoverflow.com/questions/40690202/previous-route-name-in-laravel-5-1-5-8
+            $previousRouteName = app('router')->getRoutes()->match(app('request')->create(url()->previous()))->getName();
+            if($previousRouteName == 'doc.edit'){
+                $actionLinks->backOrList = 'list';
+            } else {
+                $actionLinks->backOrList = 'back';
+            }
+            $viewData['bodyParams']['debug'] = $previousRouteName;
+        }
+        // $viewData['bodyParams']['debug'] = $actionLinks->backOrList;
+
         $viewData['actionLinks'] = $actionLinks;
 
         // view 호출
