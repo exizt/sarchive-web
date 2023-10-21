@@ -1,41 +1,3 @@
-<script src="/assets/lib/tinymce/tinymce.min.js"></script>
-<script>
-tinymce.init({
-    selector:'textarea',
-    height:500,
-    menubar: false,
-    plugins: "code lists advlist codesample",
-    toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent code codesample',
-    forced_root_block : false,
-    force_br_newlines : true,
-    codesample_languages: [
-        {text: 'HTML/XML', value: 'markup'},
-        {text: 'JavaScript', value: 'javascript'},
-        {text: 'CSS', value: 'css'},
-        {text: 'PHP', value: 'php'},
-        {text: 'Java', value: 'java'},
-        {text: 'C', value: 'c'},
-        {text: 'C++', value: 'cpp'},
-        {text: 'C#', value: 'csharp'},
-        {text: 'Ruby', value: 'ruby'},
-        {text: 'Python', value: 'python'},
-        {text: 'Bash', value: 'bash'},
-        {text: 'PowerShell', value: 'powershell'},
-        {text: 'SQL', value: 'sql'},
-        {text: 'Wiki Markup', value: 'wiki'},
-        {text: 'JSON', value: 'json'},
-        {text: 'INI', value: 'ini'},
-    ],
-    init_instance_callback: function (editor) {
-        editor.on('keyup', function (e) {
-            // 사이트에서 이용되는 단축키 기능
-            if(typeof shortcutKeyEvent === "function"){
-                shortcutKeyEvent(e);
-            }
-        });
-    }
-});
-</script>
 <div class="">
     <div class="form-group">
         <input name="title" class="form-control" type="text" autofocus id="title" value="{{ $article->title }}" placeholder="제목 없음" aria-label="제목">
@@ -87,6 +49,38 @@ tinymce.init({
         </div>
     </div>
 </div>
+<!-- <script src="/assets/lib/tinymce/tinymce.min.js"></script> -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.11/tinymce.min.js" integrity="sha512-3tlegnpoIDTv9JHc9yJO8wnkrIkq7WO7QJLi5YfaeTmZHvfrb1twMwqT4C0K8BLBbaiR6MOo77pLXO1/PztcLg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/5.10.8/tinymce.min.js" integrity="sha512-Fwpo5bTphIDwASC+rpciyPlQL/tQkhLNviFX9fopa91iYw0KovDZSb6GRIF6Odfl1dcAVxvGPG3c9m3mwMrydQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+tinymce.init({
+    selector:'textarea',
+    height:500,
+    menubar: false,
+    plugins: "code lists advlist codesample",
+    toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent code codesample',
+    forced_root_block : false,
+    force_br_newlines : true,
+    codesample_languages: [
+        {text: 'HTML/XML', value: 'markup'},
+        {text: 'JavaScript', value: 'javascript'},
+        {text: 'CSS', value: 'css'},
+        {text: 'PHP', value: 'php'},
+        {text: 'Java', value: 'java'},
+        {text: 'C', value: 'c'},
+        {text: 'C++', value: 'cpp'},
+        {text: 'C#', value: 'csharp'},
+        {text: 'Ruby', value: 'ruby'},
+        {text: 'Python', value: 'python'},
+        {text: 'Bash', value: 'bash'},
+        {text: 'PowerShell', value: 'powershell'},
+        {text: 'SQL', value: 'sql'},
+        {text: 'Wiki Markup', value: 'wiki'},
+        {text: 'JSON', value: 'json'},
+        {text: 'INI', value: 'ini'},
+    ]
+});
+</script>
 <script>
     documentReady(function(){
         /*
