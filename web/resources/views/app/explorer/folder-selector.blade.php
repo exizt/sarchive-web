@@ -33,7 +33,7 @@ function jsTreeHandler(){
     if(data && data.selected && data.selected.length){
         var id = data.selected.join(':')
         if(data.node.children.length == 0){
-        loadChildData(id)
+            loadChildData(id)
         }
         // 선택된 상황이므로 이벤트 처리.
         if(typeof parent !== "undefined"){

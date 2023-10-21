@@ -5,25 +5,28 @@
 	<div class="my-3">
 		<h3>폴더 목록</h3>
 	</div>
+    {{-- ajax 결과로 펼쳐지는 messages 영역 --}}
 	<div id="messages">
-		<div class="shh-alert-msg-tpl alert alert-success alert-dismissible fade show" role="alert" style="display:none">
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-			</button>
+		<div class="alert alert-success alert-dismissible fade show shh-alert-msg-tpl" role="alert" style="display:none">
+			<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
 		</div>
 	</div>
+    {{-- tabs 영역 --}}
 	<ul class="nav nav-tabs" id="navTab">
 		@foreach ($archiveList as $item)
 		<li class="nav-item"><a class="nav-link" href="#" data-profile="{{$item->id}}">{{$item->name}}</a></li>
 		@endforeach
 	</ul>
-
+    {{-- jsTree 영역 --}}
 	<div id="tree-container" class="mt-1 mb-3"></div>
-	<button id="btnFolderDataSave" class="btn btn-sm btn-primary disabled">저장</button>
-	<button id="shh-btn-create" class="btn btn-sm btn-outline-success">게시판 추가</button>
-	<button id="shh-btn-rename" class="btn btn-sm btn-outline-success">이름 변경</button>
-	<button id="shh-btn-delete" class="btn btn-sm btn-outline-success">삭제</button>
-	<button id="shh-btn-save-test" class="btn btn-sm btn-outline-success">저장 (테스트)</button>
+    {{-- Buttons --}}
+    <nav>
+        <button id="btnFolderDataSave" class="btn btn-sm btn-primary">저장</button>
+        <button id="shh-btn-create" class="btn btn-sm btn-outline-success">게시판 추가</button>
+        <button id="shh-btn-rename" class="btn btn-sm btn-outline-success">이름 변경</button>
+        <button id="shh-btn-delete" class="btn btn-sm btn-outline-success">삭제</button>
+        <button id="shh-btn-save-test" class="btn btn-sm btn-outline-success">저장 (테스트)</button>
+    </nav>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
