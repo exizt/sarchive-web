@@ -30,7 +30,7 @@ function attachFolderSelectorModal() {
         const folderNameTargetSelector = target.getAttribute("data-folder-name-target") ?? ""
         this.setAttribute("data-folder-name-target", folderNameTargetSelector)
 
-        loadIframe("jsTreeIframe",getArchiveId(), {
+        loadIframe(getArchiveId(), {
             idReturn: "selectedFolderId",
             nameReturn: "selectedFolderName",
             excluded: excludedIds
@@ -39,14 +39,16 @@ function attachFolderSelectorModal() {
         /**
          * Modal 내의 iframe에 folderSelector 로드
          */
-        function loadIframe(iframeId, archiveId, options) {
+        function loadIframe(archiveId, options) {
             var url = `/folder-selector?archive=${archiveId}`
 
             if(typeof options !== "undefined"){
                 var s = new URLSearchParams(options).toString();
                 url += "&"+s
             }
-            document.getElementById(iframeId).src = url;
+            const iframe = document.getElementById("jsTreeIframe")
+            iframe.src = url;
+            // iframe.setAttribute("width", "100%")
         }
     }
 
