@@ -1,28 +1,28 @@
 <div class="">
-    <div class="form-group">
+    <div class="mb-3">
         <input name="title" class="form-control" type="text" autofocus id="title" value="{{ $article->title }}" placeholder="제목 없음" aria-label="제목">
     </div>
 
-    <div class="form-group">
+    <div class="mb-3">
         <textarea name="content" class="form-control" rows="14" id="content" placeholder="내용">{!! $article->content !!}</textarea>
     </div>
 
-    <div class="form-group">
-        <label for="folderName">폴더 선택</label>
+    <div class="mb-3">
+        <label class="mb-2" for="folderName">폴더 선택</label>
         <input id="folderName" class="form-control" type="text" placeholder="" readonly @isset($folder) value="{{ $folder->name }}" @endisset>
         <input name="folder_id" type="hidden" id="folder_id" @isset($folder) value="{{ $folder->id }}" @endisset>
         <small class="text-mute font-italic font-weight-light">* 미선택시 루트 경로가 됩니다.</small>
     </div>
 
-    <div class="form-group">
-        <label data-auto-click="true">분류 (ex: [분류명A] [분류명B])</label>
+    <div class="mb-3">
+        <label class="mb-2" data-auto-click="true">분류 (ex: [분류명A] [분류명B])</label>
         <input name="category" type="text" class="form-control" value="{{ $article->category }}" placeholder="" aria-label="">
         <small class="text-mute font-italic font-weight-light">* 여러 개를 지정할 수 있는 분류입니다.</small>
     </div>
 
 
-    <div class="form-group">
-        <label for="articleReference">원문 출처</label>
+    <div class="mb-3">
+        <label class="mb-2" for="articleReference">원문 출처</label>
         &nbsp;<span class="badge badge-secondary shh-evt-append-ref" data-value="나">내가 작성함</span>
         &nbsp;<span class="badge badge-secondary shh-evt-append-ref" data-value="펌">펌글</span>
         &nbsp;<span class="badge badge-secondary shh-evt-append-ref" data-value="">비우기</span>

@@ -30,7 +30,7 @@
                     </span>
                 </div>
             </div>
-            <p class="mb-1 pl-md-3 sa-list-item-summary">
+            <p class="mb-1 ps-md-3 sa-list-item-summary">
                 <small>{{ $item->comments }}</small>
             </p>
         </a>
@@ -40,7 +40,7 @@
     <div class="d-flex w-100 justify-content-between">
         <div>
             <a href="{{ route($ROUTE_ID.'.create') }}" class="btn btn-outline-success btn-sm shh-ordermode-hide">신규</a>
-            <a href="{{ route($ROUTE_ID.'.index') }}" class="btn btn-outline-secondary btn-sm">아카이브 선택으로 돌아가기</a>
+            <a href="{{ route($ROUTE_ID.'.index') }}" class="text-secondary mx-2" style="font-size:14px">아카이브 선택으로 돌아가기</a>
         </div>
         <span>
             <a href="#" id="btnOrderEditModeToggle" class="btn btn-outline-success btn-sm shh-ordermode-hide">순서변경</a>

@@ -17,7 +17,7 @@
                         <button type="submit" class="btn btn-outline-success btn-sm" name="action" value="continue">중간 저장</button>
                         <a class="btn btn-outline-secondary btn-sm site-shortcut-key-z" href="{{ route($ROUTE_ID.'.editableIndex') }}" role="button">목록으로</a>
                     </div>
-                    <button type="button" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#modal-delete">삭제</button>
+                    <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-delete">삭제</button>
                 </div>
             </div>
         </div>

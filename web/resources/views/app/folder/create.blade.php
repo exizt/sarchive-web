@@ -8,15 +8,15 @@
         @csrf
         <input type="hidden" name="archive_id" value="{{ $archive->id }}">
 
-        <div class="card mt-3">
-            <h5 class="card-header">폴더 추가</h5>
+        <h5 class="">폴더 추가</h5>
+        <div class="card">
             <div class="card-body px-1 px-md-3">
                 @include($VIEW_PATH.'._form')
-                <div>
+                <nav>
                     <button type="submit" class="btn btn-primary btn-sm site-shortcut-key-s">저장</button>
                     <a class="text-secondary mx-2 site-shortcut-key-z" style="font-size:14px"
                     href="javascript:history.back()" role="button">취소</a>
-                </div>
+                </nav>
             </div>
         </div>
     </form>

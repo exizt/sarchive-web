@@ -19,16 +19,15 @@
     <div class="sa-article">
         <h3 class="">{{ $article->title }}</h3>
         <div class="d-flex justify-content-between">
-            <small class="text-muted font-italic font-weight-light">
-                {{ $article->created_at->format('Y-m-d') }}
-                (updated {{ $article->updated_at->format('Y-m-d') }})
+            <small class="text-muted font-weight-light small">
+                <em>{{ $article->created_at->format('Y-m-d') }} (updated {{ $article->updated_at->format('Y-m-d') }})</em>
             </small>
-            <div class="text-right">
-                <a class="btn btn-sm btn-outline-info site-shortcut-key-e"
+            <nav>
+                <a class="btn btn-sm btn-outline-success site-shortcut-key-e"
                     href="{{ $actionLinks->edit }}" role="button">편집</a>
                 <a id="saArticleLikeBtn" class="btn btn-sm btn-outline-secondary" href="#" role="button"
                     data-document="{{$article->id}}">Like</a>
-            </div>
+            </nav>
         </div>
         <hr>
         <div class="sa-article-output">
@@ -62,7 +61,7 @@
             @endif
         </div>
         <div>
-            <a class="btn btn-outline-info btn-sm site-shortcut-key-e"
+            <a class="btn btn-outline-success btn-sm site-shortcut-key-e"
                 href="{{ $actionLinks->edit }}" role="button">편집</a>
         </div>
     </div>

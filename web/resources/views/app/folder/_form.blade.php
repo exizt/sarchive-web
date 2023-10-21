@@ -1,19 +1,19 @@
 <div class="">
-    <div class="form-group">
-        <label data-auto-click="true">폴더명</label>
+    <div class="mb-3">
+        <label class="mb-2" data-auto-click="true">폴더명</label>
         <input name="name" class="form-control" type="text" autofocus
             value="{{ $item->name }}" placeholder="명칭" aria-label="명칭">
     </div>
 
-    <div class="form-group">
-        <label data-auto-click="true">요약 설명</label>
+    <div class="mb-3">
+        <label class="mb-2" data-auto-click="true">요약 설명</label>
         <input name="comments" type="text" class="form-control"
             value="{{ $item->comments }}" placeholder="" aria-label="">
     </div>
 
 
-    <div class="form-group">
-        <label for="folderName">상위 폴더 선택</label>
+    <div class="mb-3">
+        <label class="mb-2" for="folderName">상위 폴더 선택</label>
         <input id="folderName" class="form-control" type="text" placeholder="" readonly
             @isset($parentFolder) value="{{ $parentFolder->name }}" @endisset>
         <input name="parent_id" type="hidden" id="parent_id" @isset($parentFolder) value="{{ $parentFolder->id }}" @endisset>

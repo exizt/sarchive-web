@@ -8,8 +8,8 @@
         @csrf
         <input type="hidden" name="archive_id" value="{{ $archive->id }}">
 
-        <div class="card mt-3">
-            <h5 class="card-header">신규 글 작성</h5>
+        <h5 class="">신규 글 작성</h5>
+        <div class="card">
             <div class="card-body px-1 px-md-3">
                 @include($VIEW_PATH.'._form')
                 <div>

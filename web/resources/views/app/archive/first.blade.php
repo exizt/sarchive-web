@@ -4,7 +4,7 @@
 <div class="search-wrap">
     @isset($archive->id)
     <form action="/archives/{{ $archive->id }}/search">
-        <input class="form-control form-control-lg mr-sm-2 site-shortcut-key-f"
+        <input class="form-control form-control-lg me-sm-2 site-shortcut-key-f"
         type="search" placeholder="{{$archive->name}}에서 검색"
         aria-label="Search" name="q" value="" autofocus>
     </form>

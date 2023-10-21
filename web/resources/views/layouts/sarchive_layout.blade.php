@@ -13,8 +13,11 @@
 <link rel="shortcut icon" href="/assets/symbol/favicon/favicon-2021.ico" />
 <link rel="icon" href="/assets/symbol/favicon/sarchive-favicon-2021-152px-compressed.png" sizes="152x152" />
 <link rel="apple-touch-icon" sizes="152x152" href="/assets/symbol/favicon/sarchive-favicon-2021-152px-compressed.png" />
-<!-- styles -->
+@if (env('APP_DEV_BS5'))
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" integrity="sha512-b2QcS5SsA8tZodcDtGRELiGv5SaKSk1vDHDaQRda0htPYWZ6046lr3kJ5bAAQdpV2mmA/4v0wQF9MyU6/pDIAg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+@else
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" integrity="sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA==" crossorigin="anonymous" />
+@endif
 <link rel="stylesheet" href="/assets/modules/scroll-to-top/scroll-to-top.min.css">
 <link rel="stylesheet" href="/assets/css/archive.css">
 @stack('layout-styles')
@@ -25,63 +28,71 @@
 <script src="/assets/modules/scroll-to-top/scroll-to-top.min.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="/assets/modules/jshotkey/jshotkey.min.js"></script>
+@if (env('APP_DEV_BS5'))
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js" integrity="sha512-X/YkDZyjTf4wyc2Vy16YGCPHwAY8rZJY+POgokZjQB2mhIRFJCckEGc6YyX9eNsPfn0PzThEuNs+uaomE5CO6A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+@else
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
 <!-- popper.JS : dropdown of bootstrap 을 위해 필요. (bootstrap 4.0.0 이후로 추가) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js" integrity="sha512-ubuT8Z88WxezgSqf3RLuNi5lmjstiJcyezx34yIU2gAHonIi27Na7atqzUZCOoY4CExaoFumzOsFQ2Ch+I/HCw==" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js" integrity="sha512-XKa9Hemdy1Ui3KSGgJdgMyYlUg1gM+QhL6cnlyTe2qzMCYm4nAZ1PsVerQzTTXzonUR+dmswHqgJPuwCq1MaAg==" crossorigin="anonymous"></script>
+@endif
 <!-- ## semi modules ## -->
 <script src="/assets/js/site-base.js"></script>
 @stack('scripts')
 </head>
 <body @isset($bodyParams) @foreach ($bodyParams as $k => $v) data-{{$k}}="{{$v}}" @endforeach @endisset >
-  <header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-      <a id="logo" class="navbar-brand mr-2" href="/"></a>
+    <header>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark" >
+        <div class="container-fluid">
+            <a id="logo" class="navbar-brand me-2" href="/"></a>
+            @isset($layoutParams['archiveId'])
+            <a class="navbar-brand" href="/archives/{{$layoutParams['archiveId']}}">
+                {{$layoutParams['archiveName'] ?? 'S아카이브'}}
+            </a>
+            @else
+            <a class="navbar-brand" href="/">S아카이브</a>
+            @endisset
+            <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-      @isset($layoutParams['archiveId'])
-      <a class="navbar-brand" href="/archives/{{$layoutParams['archiveId']}}">
-          {{$layoutParams['archiveName'] ?? 'S아카이브'}}
-      </a>
-      @else
-      <a class="navbar-brand" href="/">S아카이브</a>
-      @endisset
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto" id="shh-header-navbar"></ul>
-        @isset($layoutParams['archiveId'])
-        @if(($layoutMode ?? '') != 'first')
-        <form class="form-inline my-2 my-lg-0" action="/archives/{{ $layoutParams['archiveId'] }}/search">
-            <input class="form-control mr-sm-2 site-shortcut-key-f" type="search" placeholder="Search" aria-label="Search" name="q" value="{{ $parameters['q'] ?? ''}}">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
-        @endif
-        @endisset
-        <ul class="navbar-nav">
-          <li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink_My" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ Auth::user()->name }}</a>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink_My">
-              @isset($layoutParams['archiveId'])
-              <a class="dropdown-item site-shortcut-key-n site-shortcut-key-a" href="{{ route('doc.create',['archive'=>$layoutParams['archiveId']]) }}">글쓰기</a>
-              @endisset
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="/archives">아카이브 변경</a>
-              <a class="dropdown-item" href="/static/shortcut">단축키 일람</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="/admin">설정</a>
-              @if (Route::has('logout'))
-              <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">
-                &nbsp;Logout
-              </a>
-              <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">{{ csrf_field() }}</form>
-              @endif
-          </div>
-          </li>
-        </ul>
-      </div>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto" id="shh-header-navbar"></ul>
+                @isset($layoutParams['archiveId'])
+                @if(($layoutMode ?? '') != 'first')
+                <form class="d-flex" action="/archives/{{ $layoutParams['archiveId'] }}/search" role="search">
+                    <input class="form-control form-control-sm me-2 site-shortcut-key-f" type="search" placeholder="Search" name="q" value="{{ $parameters['q'] ?? ''}}">
+                    <button class="btn btn-sm btn-outline-success" type="submit">Search</button>
+                </form>
+                @endif
+                @endisset
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle ps-md-5" href="#"
+                            data-bs-toggle="dropdown">{{ Auth::user()->name }}</a>
+                        <div class="dropdown-menu dropdown-menu-end">
+                        @isset($layoutParams['archiveId'])
+                        <a class="dropdown-item site-shortcut-key-n site-shortcut-key-a" href="{{ route('doc.create',['archive'=>$layoutParams['archiveId']]) }}">글쓰기</a>
+                        @endisset
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/archives">아카이브 변경</a>
+                        <a class="dropdown-item" href="/static/shortcut">단축키 일람</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/admin">설정</a>
+                        @if (Route::has('logout'))
+                        <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                            &nbsp;Logout
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">{{ csrf_field() }}</form>
+                        @endif
+                    </div>
+                    </li>
+                </ul>
+            </div>
+        </div> <!-- div.container -->
     </nav>
-  </header>
+    </header>
   <div id="layoutBody">
     @if(($layoutMode ?? '') == 'admin')
       <div class="container-fluid mt-4 mb-5">
@@ -99,8 +110,8 @@
     @endif
   </div>
   <footer>
-    <div class="container-fluid text-right">
-      <p class="text-muted pt-5">© SH Hong. All rights reserved.</p>
+    <div class="container-fluid text-end">
+      <p class="text-muted pt-5 small">© SH Hong. All rights reserved.</p>
     </div>
   </footer>
 </body>
