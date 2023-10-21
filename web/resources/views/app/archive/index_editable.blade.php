@@ -6,7 +6,7 @@
 @endpush
 {{-- 아카이브 목록 편집 (/archives/editableIndex) --}}
 <div class="container py-5" id="reorderArchive">
-    @include('modules.message.messages_and_errors.toast')
+    @include('modules.message.messages_and_errors.default')
     <div class="row px-0 mx-0">
         <div class="d-flex w-100 justify-content-between">
             <h4 class="">아카이브 목록 편집</h4>
