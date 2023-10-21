@@ -25,6 +25,10 @@ body {
 }
 
 /* 레이아웃 우측 폴더 목록 네비게이션 (아카이브/카테고리) */
+#navFolderList {
+  /* 숫자가 표시되는 뱃지 */
+  /* 위아래 화살표가 나오는 공간 */
+}
 #navFolderList > a[data-depth="1"] {
   padding-left: 1.25rem;
 }
@@ -44,6 +48,37 @@ body {
   #navFolderList > a[data-depth="3"] {
     padding-left: 3rem;
   }
+}
+#navFolderList span.nav-count-badge {
+  border-radius: 0.7em;
+  background-color: rgb(115, 123, 129);
+  color: #fff;
+  display: inline-block;
+  padding: 0.3em 0.5em;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+}
+#navFolderList .nav-updown-wrap {
+  display: none;
+  width: 50px;
+  /* 위아래 화살표 뱃지 */
+}
+#navFolderList .nav-updown-wrap span.nav-updown-badge {
+  border-radius: 0.3em;
+  background-color: rgb(115, 123, 129);
+  color: #fff;
+  display: inline-block;
+  padding: 0.3em 0.5em;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
 }
 
 /* 문서 보기 > 컨텐츠 부분 */

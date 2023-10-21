@@ -1,8 +1,9 @@
 (function () {
-    // folderNav 목록의 셀렉터 아이디
+    // 버튼까지 포함한 영역의 selector id
+    const containerId = "navFolder"
+
+    // listGroup에 대한 selector id
     const navListSelectorId = "navFolderList"
-    // folderNav의 셀렉터 아이디
-    const navSelectorId = "navFolder"
 
     var documentReady = function(f) {
         document.readyState == 'loading' ? document.addEventListener("DOMContentLoaded", f) : f();
@@ -11,7 +12,7 @@
     documentReady(function(){
         if( !document.getElementById(navListSelectorId) ) return
         doAjaxFolderList(getArchiveId(), getFolderId())
-        bindEditModeBtn()
+        bindReorderMode()
     });
 
     /**
@@ -94,11 +95,11 @@
                             class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
                             data-id="${id}" data-label="${label}" data-depth="${depth}">
                                 ${label}
-                                <span class="badge badge-secondary badge-pill" data-visible="only_index">${count}</span>
-                                <span style="display:none;width:50px" data-visible="only_edit">
-                                    <span class="badge badge-secondary arch-indexEditMode-up">▲</span>
-                                    <span class="badge badge-secondary arch-indexEditMode-down">▼</span>
-                                </span>
+                                <span class="nav-count-badge" data-visible="only_index">${count}</span>
+                                <div class="nav-updown-wrap" data-visible="only_edit" style="display:none">
+                                    <span class="nav-updown-badge arch-indexEditMode-up">▲</span>
+                                    <span class="nav-updown-badge arch-indexEditMode-down">▼</span>
+                                </div>
                         </a><span style="display:none" id="${tempIdNode_prefix}${id}"></span>`
                     } else if(theme='tailwind') {
                         return ''
@@ -108,10 +109,14 @@
         }
     }
 
-    /* */
-    function bindEditModeBtn(){
+    /**
+     *  '변경' 버튼 클릭시. 순서 변경 모드로 전환.
+     */
+    function bindReorderMode(){
+        if( !document.getElementById(navListSelectorId) ) return
+
         // folderNav에서 '변경' 버튼.
-        document.getElementById('btnFolderNavEditModeToggle').addEventListener("click", changeIndexEditModeOn)
+        document.getElementById('btnFolderNavEditModeToggle').addEventListener("click", toggleReorderMode)
 
         // folderNav에서 '취소' 버튼.
         document.getElementById('btnFolderNavEditModeCancel').addEventListener("click", e=>{ location.reload() })
@@ -129,14 +134,25 @@
             return `#${navListSelectorId} > a[data-depth="${depth}"]`
         }
 
+        /**
+         * 모드 변경시 변경할 사항에 대한 선택.
+         */
         function getVisibleSelector(mode){
-            return `#${navSelectorId} *[data-visible="only_${mode}"]`
+            return `#${containerId} *[data-visible="only_${mode}"]`
+        }
+
+        /**
+         * 목록 중 하나의 아이템에 대한 가장 큰 범위
+         * @returns string
+         */
+        function getListItemSelector(){
+            return `#${navListSelectorId} > a[data-depth="1"]`
         }
 
         /**
          * 아카이브의 순서를 변경하는 기능
          */
-        function changeIndexEditModeOn(){
+        function toggleReorderMode(){
             // folderNav에 맞춘 작업
             // $(getDepthSelector(1)).addClass(listItemClassName);
             document.querySelectorAll(getDepthSelector(2)).forEach(e => e.remove());
@@ -152,7 +168,7 @@
                 e.style.display = 'block'
             });
             // 링크 기능을 해제.
-            document.querySelectorAll(getDepthSelector(1)).forEach(el => {
+            document.querySelectorAll(getListItemSelector()).forEach(el => {
                 el.href = "#"
             });
 
@@ -169,7 +185,7 @@
              */
             function moveUpItem(){
                 // console.log(this)
-                let item = this.closest(getDepthSelector(1))
+                let item = this.closest(getListItemSelector())
                 let before_item = item.previousElementSibling;
                 // console.log(before_item)
                 if( !! before_item ){
@@ -182,7 +198,7 @@
              */
             function moveDownItem(){
                 // console.log(this)
-                let item = this.closest(getDepthSelector(1))
+                let item = this.closest(getListItemSelector())
                 let next_item = item.nextElementSibling;
                 // console.log(before_item)
                 if( !! next_item){
@@ -196,7 +212,7 @@
          */
         function saveArchiveSort(){
             let dataList = [];
-            document.querySelectorAll(getDepthSelector(1)).forEach((el, index) => {
+            document.querySelectorAll(getListItemSelector()).forEach((el, index) => {
                 // console.log(index)
                 let item_id = el.dataset.id
                 let item_label = el.dataset.label

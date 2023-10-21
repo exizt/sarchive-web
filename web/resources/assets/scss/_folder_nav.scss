@@ -22,4 +22,37 @@
             padding-left: 3rem;
         }
     }
+    /* 숫자가 표시되는 뱃지 */
+    span.nav-count-badge {
+        border-radius: 0.7em;
+        background-color: rgb(115, 123, 129);
+        color: #fff;
+        display: inline-block;
+        padding: 0.3em 0.5em;
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        vertical-align: baseline;
+    }
+    /* 위아래 화살표가 나오는 공간 */
+    .nav-updown-wrap {
+        display: none;
+        width: 50px;
+        /* 위아래 화살표 뱃지 */
+        span.nav-updown-badge {
+            border-radius: 0.3em;
+            background-color: rgb(115, 123, 129);
+            color: #fff;
+            display: inline-block;
+            padding: 0.3em 0.5em;
+            font-size: 10px;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+        }
+    }
 }
