@@ -90,12 +90,17 @@ class ListLinker {
 
     /**
      * url 문자열에서 파라미터만 추출하는 함수
+     *
+     * 비었을 때에는 empty array 반환.
      */
     static public function getParametersFromUrl(string $url, array $allowed_keys, bool $int_filter=false): array
     {
         // parse_url: 전체 url에서 query string 부분만 추출하는 PHP 함수
         // https://www.php.net/manual/en/function.parse-url.php
         $parts = parse_url($url);
+        if( !isset($parts['query'])){
+            return array();
+        }
         return self::getParametersFromQueryString($parts['query'], $allowed_keys, $int_filter);
     }
 
