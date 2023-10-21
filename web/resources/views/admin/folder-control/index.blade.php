@@ -26,8 +26,12 @@
 	<button id="shh-btn-save-test" class="btn btn-sm btn-outline-success">저장 (테스트)</button>
 </div>
 
+<!--
 <script src="/assets/lib/jstree/jstree.min.js"></script>
 <link rel="stylesheet" href="/assets/lib/jstree/themes/default/style.min.css" />
+-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.16/themes/default/style.min.css" integrity="sha512-A5OJVuNqxRragmJeYTW19bnw9M2WyxoshScX/rGTgZYj5hRXuqwZ+1AVn2d6wYTZPzPXxDeAGlae0XwTQdXjQA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.16/jstree.min.js" integrity="sha512-ekwRoEshEqHU64D4luhOv/WNmhml94P8X5LnZd9FNOiOfSKgkY12cDFz3ZC6Ws+7wjMPQ4bPf94d+zZ3cOjlig==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 var _selectedArchiveId = "";
 var _jstreeSelector = "#tree-container";
