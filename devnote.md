@@ -4,9 +4,6 @@ SArchive 프로젝트 TODO
     * treeJS의 4 버전이 개발중인데 jquery를 사용하지 않았다. 이를 이용해볼 것.
 *  디자인 레이아웃
     * tailwind 검토해 볼 것
-    * bootstrap 5로 변경
-        * 관리자 레이아웃하고 일반 레이아웃하고 하나로 사용하는데, 이것을 분리할 것.
-        * 관리자 레이아웃에서 bs 5를 먼저 적용시키고, 아카이브 레이아웃에는 차차 적용시켜 나갈 것.
 - 검색 기능 강화
     - 카테고리별 검색이 되도록 할 것.
 - 폰트 가독성 : 더 좋은 폰트를 찾아보자.
@@ -23,9 +20,6 @@ SArchive 프로젝트 TODO
 jquery 코드가 남아있는 곳들
 - admin/folder-control/index.blade.php : jstree가 사용되어야 하므로 어쩔 수가 없음.
 - app/explorer/folder-selector.blade.php : jstree가 사용되어야 하므로 어쩔 수가 없음.
-- app/folder/_form.blade.php : 완료. (modal만 남음)
-- app/document/_form.blade.php : 완료 (modal만 남음)
-
 
 
 
@@ -33,6 +27,7 @@ jquery 코드가 남아있는 곳들
 ## 완료됨
 - 우측 네비게이션에 jquery 구문 제거.
 - 입력폼에서 엔터키 방지 부분을 jquery에서 바닐라 코드로 변경 (2023-10)
+- Bootstrap 4에서 5로 업그레이드 (2023-10)
 
 
 # 기획, 구성
