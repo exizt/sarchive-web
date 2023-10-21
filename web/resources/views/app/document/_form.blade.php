@@ -53,8 +53,8 @@ tinymce.init({
     </div>
 
     <div class="form-group">
-        <label for="article-category">분류 (ex: [분류명A] [분류명B])</label>
-        <input name="category" type="text" id="article-category" class="form-control" value="{{ $article->category }}" placeholder="" aria-label="">
+        <label data-auto-click="true">분류 (ex: [분류명A] [분류명B])</label>
+        <input name="category" type="text" class="form-control" value="{{ $article->category }}" placeholder="" aria-label="">
         <small class="text-mute font-italic font-weight-light">* 여러 개를 지정할 수 있는 분류입니다.</small>
     </div>
 

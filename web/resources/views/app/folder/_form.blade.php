@@ -1,13 +1,13 @@
 <div class="">
     <div class="form-group">
-        <label for="frm-item-name">폴더명</label>
-        <input name="name" class="form-control" type="text" autofocus id="frm-item-name"
+        <label data-auto-click="true">폴더명</label>
+        <input name="name" class="form-control" type="text" autofocus
             value="{{ $item->name }}" placeholder="명칭" aria-label="명칭">
     </div>
 
     <div class="form-group">
-        <label for="frm-item-text">요약 설명</label>
-        <input name="comments" type="text" id="frm-item-text" class="form-control"
+        <label data-auto-click="true">요약 설명</label>
+        <input name="comments" type="text" class="form-control"
             value="{{ $item->comments }}" placeholder="" aria-label="">
     </div>
 
