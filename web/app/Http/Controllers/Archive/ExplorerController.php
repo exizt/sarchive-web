@@ -251,7 +251,7 @@ class ExplorerController extends BaseController {
     }
 
     /**
-     * 폴더 선택
+     * 폴더 선택 Modal창 내에 Iframe으로 호출되는 부분
      */
     public function folderSelector(Request $request){
         $archiveId = $request->input('archive');
@@ -273,7 +273,7 @@ class ExplorerController extends BaseController {
         if(!empty($folderNameReturn) && $folderNameReturn != 'undefined'){
             $viewData['bodyParams']['folder-name-of-parent'] = $folderNameReturn;
         }
-        return view ( self::VIEW_PATH . '.folder-selector', $viewData );
+        return view ( 'app.folder-selector.main', $viewData );
     }
 
 
