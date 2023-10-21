@@ -15,8 +15,10 @@
      */
     function doAjax_Like_event(e){
         e.preventDefault()
-        console.log("dd")
-        var id = $(this).data("document")
+        // var id = $(this).data("document")
+        var id = this.dataset.document
+
+        console.log(id)
         // doAjax_Like(id)
 
         function doAjax_Like(doc_id){
