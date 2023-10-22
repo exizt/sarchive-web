@@ -3,12 +3,11 @@
 오래된 소스코드나 오래된 IT 정보, 노트 및 문서들을 보관하기 위한 프로젝트입니다.
 
 - 개발 문서 : https://swiki.asv.kr/wiki/개발:SArchive_프로젝트
-- Git
-    - `git@github.com:exizt/sarchive-web.git`
+- Git : `git@github.com:exizt/sarchive-web.git`
 - URL
     - Prod: https://sarchive.asv.kr
     - Local (예시): http://localhost:30082
-- 다루는 주제
+- 다루는 컨텐츠
     - 매우 오래된 소스코드 클립.
     - 오래된 IT 정보 등
 
