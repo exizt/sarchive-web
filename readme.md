@@ -20,23 +20,30 @@ git clone --recurse-submodules -j8 git@github.com:exizt/sarchive-web.git sarchiv
 ```
 
 ### 로컬 환경
-#### 셋팅
-1. 깃 클론
-2. 도커 컨테이너 설정
-    - `/.env.local.sample`을 복사해서 `/.env.local` 생성 후 값 입력. (디비 암호, 포트 등)
-3. 도커 컨테이너 생성
-    ```shell
-    sudo docker-compose --env-file=.env.local --project-directory=. up --build --force-recreate -d
-    ```
-4. 라라벨 설정
-    - `web/.env.local.example`을 복사해서 `web/.env` 생성 후 값 입력.
-    - 데이터베이스 연결 정보 등을 기입.
-5. 필요시 `APP_KEY` 갱신
-    ```shell
-    sudo docker-compose --env-file=.env.local --project-directory=. exec web php artisan key:generate
-    ```
-6. 데이터베이스 테이블 import (아래 참조)
-7. 웹 접속
+#### 셋팅 과정
+1\. 깃 클론
+
+2\. 도커 컨테이너 설정
+- `/.env.local.sample`을 복사해서 `/.env.local` 생성 후 값 입력. (디비 암호, 포트 등)
+
+3\. 도커 컨테이너 생성
+
+```shell
+sudo docker-compose --env-file=.env.local --project-directory=. up --build --force-recreate -d
+```
+
+4\. 라라벨 설정
+- `web/.env.local.example`을 복사해서 `web/.env` 생성 후 값 입력.
+- 데이터베이스 연결 정보 등을 기입.
+
+5\. 필요시 `APP_KEY` 갱신
+```shell
+sudo docker-compose --env-file=.env.local --project-directory=. exec web php artisan key:generate
+```
+
+6\. 데이터베이스 테이블 import (아래 참조)
+
+7\. 웹 접속
 
 
 #### 도커 컨테이너 시작
