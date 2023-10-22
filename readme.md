@@ -90,6 +90,7 @@ sudo docker exec -it php_laravel_web_1 bash -c "cd $(pwd) && cd web && php artis
 
 7\. 웹 접속
 
+<br><br>
 
 ## 업데이트
 ### 프로덕션 환경
@@ -112,7 +113,7 @@ sudo ./larabasekit/scripts/update.prod.sh php_laravel_web_1
 - composer 패키지 재설치
 - 설정 캐시 갱신
 
-
+<br><br>
 
 ## 데이터베이스 백업 및 복원
 (로컬 환경)
@@ -130,7 +131,7 @@ sudo docker-compose --env-file=.env.local --project-directory=. exec -T db sh -c
 
 > 프로덕션 환경에 관련해서는 `larabasekit/readme.md`를 참조할 것.
 
-<br>
+<br><br>
 
 ## 사용법
 ### Artisan
@@ -190,6 +191,8 @@ sudo docker-compose --env-file=.env.local --project-directory=. start
 sudo docker-compose --env-file=.env.local --project-directory=. exec web /bin/bash
 ```
 
+<br><br>
+
 ## 관리
 ### 백업 관리
 배포 환경에서 백업해야 하는 항목
@@ -197,6 +200,7 @@ sudo docker-compose --env-file=.env.local --project-directory=. exec web /bin/ba
 2. 데이터베이스 백업
 3. 파일 첨부 기능은 이용하지 않음.
 
+<br><br>
 
 ## 프로젝트 동작에 관한 추가 정보
 1. 이 프로젝트에서 필요로 하는 PHP 익스텐션
