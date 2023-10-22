@@ -8,7 +8,7 @@
             <div class="d-flex w-100 justify-content-between">
                 <h4 class="">분류 : {{ $category->name }}
                     &nbsp;&nbsp;&nbsp;
-                <a class="btn btn-outline-info btn-sm"
+                <a class="btn btn-outline-success btn-sm"
                     href="{{ route('category.edit',['archive'=>$archive->id,'category'=>$category->id]) }}"
                     role="button">편집</a>
             </h4>
