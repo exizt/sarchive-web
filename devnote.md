@@ -1,8 +1,13 @@
+# 문서 개요 
+> SArchive를 개발하기 위한 정보에 대한 모음.
+
+
 # TODO
-
 Todo 단기
-* 
+- navbar에 대한 css 구현이 필요.
+- 
 
+<br>
 
 중단기 Todo
 -  디자인 및 레이아웃
@@ -16,9 +21,6 @@ Todo 단기
 - 테마 설정 가능하게 : 컬러 테마 정도로만.
     - 다크 테마
 - 카테고리 기능을 그냥 없애도 될 거 같은데? (검토중..)
-
-
-
 
 
 
@@ -40,6 +42,55 @@ passed
 - 설정에서 폰트/폰트크기 변경 가능하게 => 그냥 브라우저에서 폰트 크기를 조절하는 게 나을 듯함.
 - jquery 제거
     - treeJS의 4 버전이 개발중인데 jquery를 사용하지 않았다. 이를 이용해볼 것 => 난해해서 사용 못하겠음.
+
+
+# 개발 환경 및 개발 작업
+## 개발 환경 셋팅
+
+> `readme.md`를 참조하여 로컬 환경에 셋팅을 먼저 진행한다. 그 이후의 작업이다.
+
+
+1. 개발 도구 : VSCode
+2. 필요한 것 : Docker, Docker-Compose
+3. VSCode 개발 환경에서 필요한 익스텐션
+    - PHP Intelephense (`bmewburn.vscode-intelephense-client`): PHP 구문 인텔리전스.
+    - CSS 관련
+        - Live Sass Compiler (`glenn2223.live-sass`): 필수. scss -> css
+    - Laravel 관련
+        - Laravel Snippets (`onecentlin.laravel5-snippets`): Laravel 구문 인텔리전스.
+        - Laravel Blade Snippets (`onecentlin.laravel-blade`): Laravel blade 구문 인텔리전스.
+        - Laravel Extra Intelilisense (`amiralizadeh9480.laravel-extra-intellisense`): Laravel 구문 인텔리전스.
+
+
+개발 환경 셋팅 과정
+1. VSCode로 프로젝트를 연다.
+2. VSCode 확장 기능을 적절히 셋팅한다.
+3. docker 명령으로 컨테이너를 실행시키고, 작업을 한다.
+
+
+### 셋팅 직후 추가 작업
+작업의 편의를 위해 다음의 심볼릭 링크를 생성한다.
+```shell
+ln -s ./larabasekit/scripts/dev/cmd-web.sh local.sh
+```
+* 로컬에서 명령어를 수행하기 쉽게 해주는 스크립트. 웹 컨테이너로 명령어를 전달한다.
+
+
+사용법 예시
+```shell
+./local.sh "ls -al"
+./local.sh "composer --version"
+```
+
+
+
+## 릴리즈 배포 및 버전 관리
+1. `web/config/_app.php`에서 버전 정보 수정 후 커밋
+2. 버전은 `v23.1` (`v`+`연도.`+`증분숫자`)의 형식으로 함.
+
+
+## 기타 정보
+
 
 
 # 구성
@@ -64,22 +115,28 @@ URL 구성 (접속 가능한 URL)
         * `/archives/1/category/{category_name}` : 해당 카테고리의 최근 게시물.
 
 
-## 코드 폴더 구성
+## 폴더 구성
+(메인 폴더 구성)
+- `larabasekit` : 라라벨 프로젝트 공통으로 쓰이는 스크립트 모음 (submodule)
+- `scripts` : 주로 사용되는 스크립트.
+- `web` : 라라벨 소스 코드.
+
+
+### 코드 폴더 구성
 Controllers (`web/app/Http/Controllers/`)
-* `Admin/` : 관리자 모드 관련
-* `Archive/` : 아카이브 관련
-* `Auth/` : 라라벨에서 추가된 인증 관련
-* _`CustomAuth/`_ : 심플 로그인 (로컬에서만 사용됨)
+- `Admin/` : 관리자 모드 관련
+- `Archive/` : 아카이브 관련
+- ~~`Auth/`~~ : 라라벨에서 추가된 인증 관련
+- ~~`CustomAuth/`~~ : 심플 로그인 (로컬에서만 사용됨)
 
 
 Views (`web/resources/views/`)
-* `admin/` : 관리자 모드 관련
-* `app/` : SArchive 관련 뷰.
-* _`custom_auth/`_ : 심플 로그인 (로컬에서만 사용됨)
-* `layouts/` : 레이아웃 구성
-* `modules/` : modal, messages 등
-* framework 관련
-    * ~~`auth/`~~ : 라라벨에서 추가된 인증 관련
-    * ~~`components/`~~ : 라라벨에서 추가된 컴포넌트들
-    * _`vendor/`_ : vendor에서 추가된 것들. pagination 등.
-
+- `admin/` : 관리자 모드 관련
+- `app/` : SArchive 관련 뷰.
+- ~~`custom_auth/`~~ : 심플 로그인 (로컬에서만 사용됨)
+- `layouts/` : 레이아웃 구성
+- `modules/` : modal, messages 등
+- framework 관련
+    - ~~`auth/`~~ : 라라벨에서 추가된 인증 관련
+    - ~~`components/`~~ : 라라벨에서 추가된 컴포넌트들
+    - `vendor/` : vendor에서 추가된 것들. pagination 등.
