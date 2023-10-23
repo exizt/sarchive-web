@@ -34,7 +34,7 @@ Todo 단기
     - jquery 코드가 남아있는 곳들
         - admin/folder-control/index.blade.php : jstree가 사용되어야 하므로 어쩔 수가 없음.
         - app/explorer/folder-selector.blade.php : jstree가 사용되어야 하므로 어쩔 수가 없음.
-
+- 문서 편집에서 '취소/뒤로'를 눌러서 '본문 읽기' 페이지에 왔을 때. '뒤로'를 누르면, 다시 에디터 페이지로 오게 되는 문제 해결.
 
 
 passed
