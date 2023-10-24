@@ -14,14 +14,14 @@
 <link rel="icon" href="/assets/symbol/favicon/sarchive-favicon-2021-152px-compressed.png" sizes="152x152" />
 <link rel="apple-touch-icon" sizes="152x152" href="/assets/symbol/favicon/sarchive-favicon-2021-152px-compressed.png" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" integrity="sha512-b2QcS5SsA8tZodcDtGRELiGv5SaKSk1vDHDaQRda0htPYWZ6046lr3kJ5bAAQdpV2mmA/4v0wQF9MyU6/pDIAg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<link rel="stylesheet" href="/assets/modules/scroll-to-top/scroll-to-top.min.css">
+<!-- <link rel="stylesheet" href="/assets/modules/scroll-to-top/scroll-to-top.min.css"> -->
 <link rel="stylesheet" href="/assets/css/archive.css">
 @stack('layout-styles')
 <!-- scripts -->
 <script type="module" src="/assets/js/app_mod.js"></script>
 <script src="/assets/js/common.js"></script>
 <script src="/assets/js/nav.js"></script>
-<script src="/assets/modules/scroll-to-top/scroll-to-top.min.js"></script>
+<script src="/assets/modules/scroll-top/scroll-top.mix.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="/assets/modules/jshotkey/jshotkey.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js" integrity="sha512-X/YkDZyjTf4wyc2Vy16YGCPHwAY8rZJY+POgokZjQB2mhIRFJCckEGc6YyX9eNsPfn0PzThEuNs+uaomE5CO6A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
