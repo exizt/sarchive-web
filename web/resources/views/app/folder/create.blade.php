@@ -13,8 +13,8 @@
             <div class="card-body px-1 px-md-3">
                 @include($VIEW_PATH.'._form')
                 <nav>
-                    <button type="submit" class="btn btn-primary btn-sm site-shortcut-key-s">저장</button>
-                    <a class="text-secondary mx-2 site-shortcut-key-z" style="font-size:14px"
+                    <button hotkey="s" type="submit" class="btn btn-primary btn-sm">저장</button>
+                    <a hotkey="z" class="text-secondary mx-2" style="font-size:14px"
                     href="javascript:history.back()" role="button">취소</a>
                 </nav>
             </div>

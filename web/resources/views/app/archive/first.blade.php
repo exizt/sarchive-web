@@ -4,14 +4,14 @@
 <div class="search-wrap">
     @isset($archive->id)
     <form action="/archives/{{ $archive->id }}/search">
-        <input class="form-control form-control-lg me-sm-2 site-shortcut-key-f"
+        <input hotkey="f" class="form-control form-control-lg me-sm-2"
         type="search" placeholder="{{$archive->name}}에서 검색"
         aria-label="Search" name="q" value="" autofocus>
     </form>
     <div class="text-center m-2">
-        <a class="btn btn-sm btn-outline-secondary site-shortcut-key-n site-shortcut-key-a"
+        <a hotkey="a" class="btn btn-sm btn-outline-secondary"
         href="{{ route('doc.create',['archive'=>$archive->id]) }}">문서 추가</a>
-        <a class="btn btn-sm btn-outline-secondary"
+        <a hotkey="w" class="btn btn-sm btn-outline-secondary"
         href="{{ route('explorer.archive',['archive'=>$archive->id]) }}">탐색</a>
     </div>
     </div>

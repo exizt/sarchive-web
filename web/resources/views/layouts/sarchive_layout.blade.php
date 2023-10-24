@@ -21,9 +21,9 @@
 <script type="module" src="/assets/js/app_mod.js"></script>
 <script src="/assets/js/common.js"></script>
 <script src="/assets/js/nav.js"></script>
-<script src="/assets/modules/scroll-top/scroll-top.mix.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-<script src="/assets/modules/jshotkey/jshotkey.min.js"></script>
+<script src="/assets/modules/scroll-top/scroll-top.mix.js"></script>
+<script type="module" src="/assets/modules/webhotkey/webhotkey.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js" integrity="sha512-X/YkDZyjTf4wyc2Vy16YGCPHwAY8rZJY+POgokZjQB2mhIRFJCckEGc6YyX9eNsPfn0PzThEuNs+uaomE5CO6A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <!-- ## semi modules ## -->
 <script src="/assets/js/site-base.js"></script>
@@ -51,7 +51,7 @@
                 @isset($layoutParams['archiveId'])
                 @if(($layoutMode ?? '') != 'first')
                 <form class="d-flex" action="/archives/{{ $layoutParams['archiveId'] }}/search" role="search">
-                    <input class="form-control form-control-sm me-2 site-shortcut-key-f" type="search" placeholder="Search" name="q" value="{{ $parameters['q'] ?? ''}}">
+                    <input hotkey="f" class="form-control form-control-sm me-2" type="search" placeholder="Search" name="q" value="{{ $parameters['q'] ?? ''}}">
                     <button class="btn btn-sm btn-outline-success" type="submit">Search</button>
                 </form>
                 @endif
@@ -62,7 +62,7 @@
                             data-bs-toggle="dropdown">{{ Auth::user()->name }}</a>
                         <div class="dropdown-menu dropdown-menu-end">
                         @isset($layoutParams['archiveId'])
-                        <a class="dropdown-item site-shortcut-key-n site-shortcut-key-a" href="{{ route('doc.create',['archive'=>$layoutParams['archiveId']]) }}">글쓰기</a>
+                        <a hotkey="a" class="dropdown-item" href="{{ route('doc.create',['archive'=>$layoutParams['archiveId']]) }}">글쓰기</a>
                         @endisset
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="/archives">아카이브 변경</a>

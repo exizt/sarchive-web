@@ -23,7 +23,7 @@
                 <em>{{ $article->created_at->format('Y-m-d') }} (updated {{ $article->updated_at->format('Y-m-d') }})</em>
             </small>
             <nav>
-                <a class="btn btn-sm btn-outline-success site-shortcut-key-e"
+                <a hotkey="e" class="btn btn-sm btn-outline-success"
                     href="{{ $actionLinks->edit }}" role="button">편집</a>
                 <a id="saArticleLikeBtn" class="btn btn-sm btn-outline-secondary" href="#" role="button"
                     data-document="{{$article->id}}">Like</a>
@@ -53,15 +53,15 @@
     <div class="d-flex justify-content-between">
         <div>
             @if ( $actionLinks->backOrList == "list" )
-            <a class="btn btn-secondary btn-sm site-shortcut-key-z"
+            <a hotkey="z" class="btn btn-secondary btn-sm"
                 href="{{ $actionLinks->list }}" role="button">목록</a>
             @else
-                <a class="btn btn-secondary btn-sm site-shortcut-key-z"
+                <a hotkey="z" class="btn btn-secondary btn-sm"
                     href="javascript:history.back()" role="button">뒤로</a>
             @endif
         </div>
         <div>
-            <a class="btn btn-outline-success btn-sm site-shortcut-key-e"
+            <a hotkey="e" class="btn btn-outline-success btn-sm"
                 href="{{ $actionLinks->edit }}" role="button">편집</a>
         </div>
     </div>

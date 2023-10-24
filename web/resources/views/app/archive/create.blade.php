@@ -11,8 +11,8 @@
             <div class="card-body">
                 @include($VIEW_PATH.'._form')
                 <div>
-                    <button type="submit" class="btn btn-primary btn-sm site-shortcut-key-s">아카이브 생성</button>
-                    <a class="text-secondary mx-2 site-shortcut-key-z" style="font-size:14px"
+                    <button type="submit" hotkey="s" class="btn btn-primary btn-sm">아카이브 생성</button>
+                    <a hotkey="z" class="text-secondary mx-2" style="font-size:14px"
                     href="javascript:history.back()" role="button">취소</a>
                 </div>
             </div>

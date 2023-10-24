@@ -13,8 +13,8 @@
                 @include($VIEW_PATH.'._form')
                 <div class="d-flex w-100 justify-content-between">
                     <div>
-                        <button type="submit" class="btn btn-primary btn-sm site-shortcut-key-s" name="action" value="finished">저장</button>
-                        <a class="btn btn-outline-secondary btn-sm site-shortcut-key-z"
+                        <button hotkey="s" type="submit" class="btn btn-primary btn-sm" name="action" value="finished">저장</button>
+                        <a hotkey="z" class="btn btn-outline-secondary btn-sm"
                             href="{{ route('explorer.category',['archive'=>$archive->id,'category'=>urlencode($item->name)]) }}" role="button">뒤로</a>
                     </div>
                     <button type="button" class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-delete">삭제</button>

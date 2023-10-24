@@ -13,9 +13,9 @@
             <div class="card-body px-1 px-md-3">
                 @include($VIEW_PATH.'._form')
                 <div>
-                    <button type="submit" class="btn btn-primary btn-sm site-shortcut-key-s">저장</button>
+                    <button type="submit" hotkey="s" class="btn btn-primary btn-sm">저장</button>
                     <button type="submit" class="btn btn-outline-success btn-sm" name="action" value="continue">저장 후 계속 편집</button>
-                    <a class="text-secondary mx-2 site-shortcut-key-z" style="font-size:14px"
+                    <a hotkey="z" class="text-secondary mx-2" style="font-size:14px"
                     href="javascript:history.back()" role="button">취소</a>
                 </div>
             </div>
