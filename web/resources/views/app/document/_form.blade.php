@@ -43,7 +43,6 @@ tinymce.init({
     menubar: false,
     plugins: "code lists advlist codesample",
     toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent code codesample',
-    forced_root_block : false,
     force_br_newlines : true,
     codesample_languages: [
         {text: 'HTML/XML', value: 'markup'},
@@ -64,6 +63,7 @@ tinymce.init({
         {text: 'INI', value: 'ini'},
     ]
 });
+// forced_root_blcok : 'p' 태그 등이 자동으로 생성되는 옵션(true일 때 p 태그가 자동으로 붙음). 6.0부터는 removed됨.
 </script>
 <script>
     documentReady(function(){

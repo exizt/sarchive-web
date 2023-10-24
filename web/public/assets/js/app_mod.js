@@ -25,7 +25,7 @@ documentReady(function(){
  */
 async function bindLabelAutoEvent(){
     await autoLabelHTML()
-    console.log("[bindLabelAutoEvent] after")
+    // console.log("[bindLabelAutoEvent] after")
     async function autoLabelHTML(){
         document.querySelectorAll('label[data-auto-click="true"]').forEach(el => {
             el.addEventListener("click", autoFocus)
